@@ -1,0 +1,285 @@
+package org.polkadot.types.codec;
+
+import org.polkadot.common.ReflectionUtils;
+import org.polkadot.types.Codec;
+import org.polkadot.types.Types;
+import org.polkadot.types.Types.ConstructorDef;
+import org.polkadot.types.primitive.Method;
+import org.polkadot.utils.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class Struct
+        //<
+        //// The actual Class structure, i.e. key -> Class
+        //S extends Map<String, Class<? extends Codec>>,
+        //// internal type, instance of classes mapped by key
+        //T extends Types.TypeDef,
+        //// input values, mapped by key can be anything (construction)
+        //V extends Map<String, Object>,
+        //// type names, mapped by key, name of Class in S
+        //E extends Map<String, Object>>
+        extends HashMap<String, Codec> implements Codec {
+
+    private static final Logger logger = LoggerFactory.getLogger(Method.class);
+
+
+    Map<String, String> jsonMap;
+    ConstructorDef constructorDef;
+
+
+    public Struct(ConstructorDef constructorDef, Object value, Map<String, String> json) {
+        Map<String, Codec> codecMap = decodeStruct(constructorDef, value, json);
+        this.putAll(codecMap);
+
+
+        this.jsonMap = json;
+        this.constructorDef = constructorDef;
+    }
+
+    public Struct(ConstructorDef constructorDef, Object value) {
+        this(constructorDef, value, new HashMap<>());
+    }
+
+
+    /**
+     * Decode input to pass into constructor.
+     *
+     * @param value   - Value to decode, one of:
+     *                - null
+     *                - undefined
+     *                - hex
+     *                - Uint8Array
+     *                - object with `{ key1: value1, key2: value2 }`, assuming `key1` and `key2`
+     *                are also keys in `Types`
+     *                - array with `[value1, value2]` assuming the array has the same length as
+     *                `Object.keys(Types)`
+     * @param jsonMap
+     */
+    private static Map<String, Codec> decodeStruct(ConstructorDef types, Object value, Map<String, String> jsonMap) {
+
+        if (Utils.isHex(value)) {
+            return decodeStruct(types, Utils.hexToU8a((String) value), jsonMap);
+        } else if (Utils.isU8a(value)) {
+            List<Codec> values = CodecUtils.decodeU8a((byte[]) value, types);
+
+            HashMap<String, Codec> ret = new HashMap<>();
+            List<String> names = types.getNames();
+            for (int i = 0; i < names.size(); i++) {
+                ret.put(names.get(i), values.get(i));
+            }
+            return ret;
+        } else if (value == null) {
+            return new HashMap<>(0);
+        }
+
+        return decodeStructFromObject(types, value, jsonMap);
+    }
+
+
+    private static Map<String, Codec> decodeStructFromObject(ConstructorDef types, Object value, Map<String, String> jsonMap) {
+        List<String> names = types.getNames();
+
+        Map<String, Codec> ret = new HashMap<>();
+
+
+        for (int i = 0; i < names.size(); i++) {
+            String key = names.get(i);
+            Types.ConstructorCodec type = types.getTypes().get(i);
+
+            // The key in the JSON can be snake_case (or other cases), but in our
+            // Types, result or any other maps, it's camelCase
+
+
+            if (value.getClass().isArray()) {
+                List<Object> valueList = CodecUtils.arrayLikeToList(value);
+                //Object[] stringArray = Arrays.copyOf(value, value.length, Object[].class);
+                Object v = valueList.get(i);
+                //if (v instanceof )
+
+                ret.put(key, genInstance(type, v));
+
+                /**
+                 * raw[key] = value[index] instanceof Types[key]
+                 *           ? value[index]
+                 *           : new Types[key](value[index]);
+                 */
+
+            } else if (value instanceof Map) {
+                Map valueMap = (Map) value;
+
+                String jsonKey = null;
+                if (jsonMap.containsKey(key) && !valueMap.containsKey(key)) {
+                    jsonKey = jsonMap.get(key);
+                } else {
+                    jsonKey = key;
+                }
+
+                Object mapped = valueMap.get(jsonKey);
+                ret.put(key, genInstance(type, mapped));
+            } else if (value instanceof List) {
+                List valueList = (List) value;
+                ret.put(key, genInstance(type, valueList.get(i)));
+            } else { //obj
+                Object field = ReflectionUtils.getField(value, key);
+                ret.put(key, genInstance(type, field));
+
+
+            }
+
+        }
+
+        return ret;
+
+    }
+
+    private static <T extends Codec> T genInstance(Types.ConstructorCodec<T> type, Object value) {
+        Class<T> tClass = type.getTClass();
+        //
+        if (tClass.isInstance(value) && !Utils.isContainer(value)) {
+            return (T) value;
+        } else {
+            T t1 = type.newInstance(value);
+            return t1;
+        }
+        //Type genericSuperclass = type.getClass().getGenericSuperclass();
+        //Type gType = ((ParameterizedType) type.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        //if (gType instanceof Class && value.getClass().isAssignableFrom((Class<?>) gType)) {
+        //    return (T) value;
+        //} else {
+        //    T t1 = type.newInstance(value);
+        //    return t1;
+        //}
+
+        //try {
+        //    Constructor<T> constructor = type.getConstructor(value.getClass());
+        //    T t = constructor.newInstance(value);
+        //    return t;
+        //} catch (InstantiationException e) {
+        //    e.printStackTrace();
+        //} catch (IllegalAccessException e) {
+        //    e.printStackTrace();
+        //} catch (InvocationTargetException e) {
+        //    e.printStackTrace();
+        //} catch (NoSuchMethodException e) {
+        //    e.printStackTrace();
+        //}
+
+        //return null;
+    }
+
+
+    /*
+    *
+     static with<
+    S extends ConstructorDef
+    > (Types: S): Constructor<Struct<S>> {
+    return class extends Struct<S> {
+      constructor (value?: any, jsonMap?: Map<keyof S, string>) {
+        super(Types, value, jsonMap);
+
+        (Object.keys(Types) as Array<keyof S>).forEach((key) => {
+          Object.defineProperty(this, key, {
+            enumerable: true,
+            get: () => this.get(key)
+          });
+        });
+      }
+    };
+  }
+    *
+    * */
+
+    static class Builder implements Types.ConstructorCodec<Struct> {
+        ConstructorDef types;
+
+        Builder(ConstructorDef types) {
+            this.types = types;
+        }
+        //
+        //Struct newInstance(Object value, Map<String, String> jsonMap) {
+        //    Struct instance = new Struct(types, value, jsonMap);
+        //    return instance;
+        //}
+
+        @Override
+        public Struct newInstance(Object... values) {
+            Struct instance = new Struct(types, values[0], (Map<String, String>) values[1]);
+            return instance;
+        }
+
+        @Override
+        public Class<Struct> getTClass() {
+            return Struct.class;
+        }
+    }
+
+    public static Types.ConstructorCodec<Struct> with(ConstructorDef types) {
+        return new Builder(types);
+    }
+
+    @Override
+    public int getEncodedLength() {
+        return 0;
+    }
+
+    @Override
+    public boolean eq(Object other) {
+        return false;
+    }
+
+    @Override
+    public String toHex() {
+        return null;
+    }
+
+    @Override
+    public Object toJson() {
+        return null;
+    }
+
+    @Override
+    public byte[] toU8a(boolean isBare) {
+        return new byte[0];
+    }
+
+    public static Types.ConstructorCodec<Struct> builder() {
+        return new Types.ConstructorCodec<Struct>() {
+
+            @Override
+            public Struct newInstance(Object... values) {
+                if (values.length == 2) {
+                    return new Struct(((ConstructorDef) values[0]), values[1], null);
+                } else {
+                    return new Struct(((ConstructorDef) values[0]), values[1], (Map<String, String>) values[2]);
+                }
+            }
+
+            @Override
+            public Class<Struct> getTClass() {
+                return Struct.class;
+            }
+        };
+
+        //
+        //return values -> {
+        //    if (values.length == 2) {
+        //        return new Struct(((ConstructorDef) values[0]), values[1], null);
+        //    } else {
+        //        return new Struct(((ConstructorDef) values[0]), values[1], (Map<String, String>) values[2]);
+        //    }
+        //};
+    }
+
+    public <T> T getField(String key) {
+        Codec codec = this.get(key);
+        if (codec == null) {
+            logger.error(" no such field named {}, current {}", key, this.keySet());
+        }
+        return (T) codec;
+    }
+}

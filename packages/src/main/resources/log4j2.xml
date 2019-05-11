@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="60">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT"> <!-- 定义类型为Console的Appender -->
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%level][%thread] %c{1} %L - %msg%n"/> <!-- 定义类型为Pattern的Layout -->
+    </Console>
+
+    <RollingFile name="RollingFile" fileName="logs/gs.log"
+                 filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+      <PatternLayout>
+        <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy/>
+        <SizeBasedTriggeringPolicy size="10 MB"/>
+      </Policies>
+    </RollingFile>
+
+  </Appenders>
+
+  <Loggers>
+    <Root level="info"> <!-- 定义Root Logger，其日志级别为error -->
+      <AppenderRef ref="Console"/> <!-- Root Logger的Appender引用上面定义的Console -->
+      <AppenderRef ref="RollingFile"/>
+    </Root>
+  </Loggers>
+</Configuration>
