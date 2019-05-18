@@ -13,6 +13,11 @@ public class Header extends Struct {
 
 
     static class HeaderValue {
+        //digest?: Digest | { logs: DigestItem[] },
+        //extrinsicsRoot?: AnyU8a,
+        //number?: AnyNumber,
+        //parentHash?: AnyU8a,
+        //stateRoot?: AnyU8a
         Digest digest;
         byte[] extrinsicsRoot;
         int number;

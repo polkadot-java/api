@@ -8,7 +8,7 @@ import org.polkadot.types.codec.Struct;
 import org.polkadot.types.codec.Vector;
 import org.polkadot.types.metadata.MetadataUtils;
 import org.polkadot.types.metadata.Types;
-import org.polkadot.types.metadata.v1.Storage.MetadataStorage;
+import org.polkadot.types.metadata.v1.Storage.MetadataStorageV1;
 import org.polkadot.types.primitive.Text;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class MetadataV1 extends Struct implements Types.MetadataInterface {
             super(new ConstructorDef()
                             .add("name", Text.class)
                             .add("prefix", Text.class)
-                            .add("storage", Option.with(Vector.with(TypesUtils.getConstructorCodec(MetadataStorage.class))))
+                            .add("storage", Option.with(Vector.with(TypesUtils.getConstructorCodec(Storage.MetadataStorageV1.class))))
                             .add("calls", Option.with(Vector.with(TypesUtils.getConstructorCodec(Calls.MetadataCall.class))))
                             .add("events", Option.with(Vector.with(TypesUtils.getConstructorCodec(Events.MetadataEvent.class))))
                     , value);
@@ -65,7 +65,7 @@ public class MetadataV1 extends Struct implements Types.MetadataInterface {
         /**
          * @description the associated module storage
          */
-        public Option<Vector<Storage.MetadataStorage>> getStorage() {
+        public Option<Vector<MetadataStorageV1>> getStorage() {
             return this.getField("storage");
         }
     }

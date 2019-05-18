@@ -3,16 +3,33 @@ package org.polkadot.example;
 import com.onehilltech.promises.Promise;
 import org.polkadot.api.promise.ApiPromise;
 import org.polkadot.direct.IRpcFunction;
+import org.polkadot.rpc.provider.ws.WsProvider;
 import org.polkadot.types.type.Header;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 public class ListenToBlocks {
+
+    static String endPoint = "wss://poc3-rpc.polkadot.io/";
+    //static String endPoint = "wss://substrate-rpc.parity.io/";
+    //static String endPoint = "ws://45.76.157.229:9944/";
+    //static String endPoint = "ws://127.0.0.1:9944";
+
+    static void initEndPoint(String[] args) {
+        if (args != null && args.length >= 1) {
+            endPoint = args[0];
+            System.out.println(" connect to endpoint [" + endPoint + "]");
+        } else {
+            System.out.println(" connect to default endpoint [" + endPoint + "]");
+        }
+    }
+
     public static void main(String[] args) {
+        // Create an await for the API
+        //Promise<ApiPromise> ready = ApiPromise.create();
+        initEndPoint(args);
 
-        Promise<ApiPromise> ready = ApiPromise.create();
+        WsProvider wsProvider = new WsProvider(endPoint);
 
-        AtomicReference<IRpcFunction.Unsubscribe> unsubscribe = new AtomicReference<>();
+        Promise<ApiPromise> ready = ApiPromise.create(wsProvider);
 
         ready.then(api -> {
             IRpcFunction subscribeNewHead = api.rpc().chain().function("subscribeNewHead");
@@ -22,11 +39,8 @@ public class ListenToBlocks {
                         //System.out.println("Chain is at block: " + JSON.toJSONString(header));
                         System.out.println("Chain is at block: " + header.getBlockNumber());
                     });
-            System.out.println("invoke " + invoke.getStatus() + ": " + invoke.getName());
             return invoke;
         }).then((IRpcFunction.Unsubscribe<Promise> result) -> {
-            unsubscribe.set(result);
-            System.out.println(" set unsubscribe " + unsubscribe);
             return null;
         })._catch((err) -> {
             err.printStackTrace();
@@ -40,10 +54,5 @@ public class ListenToBlocks {
             e.printStackTrace();
         }
 
-        System.out.println("do unsubscribe = " + unsubscribe);
-
-        if (unsubscribe.get() != null) {
-            unsubscribe.get().unsubscribe();
-        }
     }
 }

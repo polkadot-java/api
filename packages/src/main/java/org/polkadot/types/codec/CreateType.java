@@ -113,15 +113,15 @@ public class CreateType {
     }
 
     private static String startingWith(String type, String start, String end) {
-        if (start.length() >= type.length()) {
+        if (start.length() >= type.length() || end.length() >= type.length()) {
             return null;
         }
         if (!type.substring(0, start.length()).equals(start)) {
             return null;
         }
-//    assert(type[type.length - 1] === end, `Expected '${start}' closing with '${end}'`);
+        assert type.substring(type.length() - end.length()).equals(end) : "Expected " + start + " closing with " + end;
 
-        return type.substring(start.length(), type.length() - start.length() - 1);
+        return type.substring(start.length(), type.length() - end.length());
     }
 
     public static TypeDef getTypeDef(String type) {

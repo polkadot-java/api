@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.polkadot.types.TypesUtils;
 import org.polkadot.types.codec.Vector;
 import org.polkadot.types.metadata.v0.Modules;
+import org.polkadot.types.primitive.Bytes;
 import org.polkadot.types.primitive.StorageKey;
 import org.polkadot.types.primitive.Text;
 
@@ -46,6 +47,9 @@ public class Substrate {
         metaValues.put("documentation", new Vector<Text>(TypesUtils.getConstructorCodec(Text.class), Lists.newArrayList(substrateMetadata.getDocumentation())));
         metaValues.put("modifier", new Modules.StorageFunctionModifier(1));
         metaValues.put("type", new Modules.StorageFunctionType(substrateMetadata.getType(), 0));
+        //workthrough
+        metaValues.put("name", new Text("name"));
+        metaValues.put("default", new Bytes(null));
 
         Modules.StorageFunctionMetadata storageFunctionMetadata = new Modules.StorageFunctionMetadata(metaValues) {
             @Override
@@ -117,4 +121,14 @@ public class Substrate {
                     "u32"
             ));
 
+    public static Types.ModuleStorage substrate = new Types.ModuleStorage();
+
+    static {
+        substrate.addFunction("code", code);
+        substrate.addFunction("heapPages", heapPages);
+        substrate.addFunction("authorityCount", authorityCount);
+        substrate.addFunction("authorityPrefix", authorityPrefix);
+        substrate.addFunction("extrinsicIndex", extrinsicIndex);
+        substrate.addFunction("changesTrieConfig", changesTrieConfig);
+    }
 }

@@ -18,7 +18,7 @@ import java.math.BigInteger;
 //TODO export default class Compact extends Base<UInt | Moment> implements Codec {
 public class Compact extends Base<UInt> implements Codec {
 
-    public Compact(Types.ConstructorCodec<UInt> type, Object value) {
+    public Compact(Types.ConstructorCodec<? extends UInt> type, Object value) {
         super(Compact.decodeCompact(type, value));
     }
 
@@ -44,7 +44,7 @@ public class Compact extends Base<UInt> implements Codec {
         return new Builder(type);
     }
 
-    static UInt decodeCompact(Types.ConstructorCodec<UInt> type, Object value) {
+    static UInt decodeCompact(Types.ConstructorCodec<? extends UInt> type, Object value) {
         if (value instanceof Compact) {
             return type.newInstance(((Compact) value).raw);
         } else if (value instanceof String) {

@@ -28,7 +28,7 @@ public class MetadataV3 extends Struct implements Types.MetadataInterface {
             super(new ConstructorDef()
                             .add("name", Text.class)
                             .add("prefix", Text.class)
-                            .add("storage", Option.with(Vector.with(TypesUtils.getConstructorCodec(Storage.MetadataStorage.class))))
+                            .add("storage", Option.with(Vector.with(TypesUtils.getConstructorCodec(Storage.MetadataStorageV3.class))))
                             .add("calls", Option.with(Vector.with(TypesUtils.getConstructorCodec(Calls.MetadataCall.class))))
                             .add("events", Option.with(Vector.with(TypesUtils.getConstructorCodec(Events.MetadataEvent.class))))
                     , value);
@@ -66,7 +66,7 @@ public class MetadataV3 extends Struct implements Types.MetadataInterface {
         /**
          * @description the associated module storage
          */
-        public Option<Vector<Storage.MetadataStorage>> getStorage() {
+        public Option<Vector<Storage.MetadataStorageV3>> getStorage() {
             return this.getField("storage");
         }
     }

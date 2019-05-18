@@ -1,11 +1,9 @@
 package org.polkadot.types.codec;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.joou.UByte;
 import org.polkadot.types.Codec;
 import org.polkadot.utils.Utils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -17,9 +15,10 @@ import java.util.Arrays;
  * actual lengths instead of used directly.
  * @noInheritDoc
  */
-public class U8a extends ArrayList<UByte> implements Codec {
+//public class U8a extends ArrayList<UByte> implements Codec {
+public class U8a implements Codec {
 
-    byte[] raw = null;
+    public byte[] raw = null;
 
     public U8a(Object value) {
         raw = decodeU8a(value);

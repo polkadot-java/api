@@ -2,6 +2,10 @@ package org.polkadot.api;
 
 
 import com.onehilltech.promises.Promise;
+import org.apache.commons.lang3.ArrayUtils;
+import org.polkadot.api.Types.QueryableModuleStorage;
+import org.polkadot.api.Types.QueryableStorage;
+import org.polkadot.api.Types.QueryableStorageFunction;
 import org.polkadot.api.rx.Types.RxResult;
 import org.polkadot.api.types.DecoratedRpc;
 import org.polkadot.api.types.DecoratedRpc.DecoratedRpcMethod;
@@ -11,23 +15,29 @@ import org.polkadot.common.EventEmitter;
 import org.polkadot.common.ReflectionUtils;
 import org.polkadot.direct.IApi;
 import org.polkadot.direct.IModule;
+import org.polkadot.direct.IRpcFunction;
 import org.polkadot.direct.IRpcModule;
+import org.polkadot.rpc.core.IRpc;
 import org.polkadot.rpc.core.RpcCore;
 import org.polkadot.rpc.provider.IProvider;
 import org.polkadot.rpc.rx.RpcRx;
 import org.polkadot.rpc.rx.types.IRpcRx;
 import org.polkadot.type.storage.FromMetadata;
+import org.polkadot.type.storage.Types.ModuleStorage;
 import org.polkadot.type.storage.Types.Storage;
 import org.polkadot.types.Types.CodecArg;
 import org.polkadot.types.Types.CodecCallback;
 import org.polkadot.types.metadata.Metadata;
+import org.polkadot.types.primitive.Method;
+import org.polkadot.types.primitive.StorageKey;
+import org.polkadot.types.primitive.U64;
 import org.polkadot.types.rpc.RuntimeVersion;
 import org.polkadot.types.type.Hash;
 
 import java.util.List;
 import java.util.Map;
 
-public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<CodecResult, SubscriptionResult> {
+public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<CodecResult, QueryableStorage> {
 
 
     public enum ApiType {
@@ -60,7 +70,9 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
     private Metadata runtimeMetadata;
     private RuntimeVersion runtimeVersion;
 
-    private Storage storage;
+    private Storage oriStorage;
+    private QueryableStorage storage;
+    private Method.ModulesWithMethods extrinsics;
 
     public ApiBase(IProvider provider, ApiType apiType) {
 
@@ -140,15 +152,24 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
                 ApiBase.this.rpc().state().function("getMetadata").invoke(),
                 ApiBase.this.rpc().chain().function("getRuntimeVersion").invoke(),
                 ApiBase.this.rpc().chain().function("getBlockHash").invoke(0)
+                //
+                //ApiBase.this.rpc().chain().function("getRuntimeVersion").invoke()
         ).then((results) -> {
             ApiBase.this.runtimeMetadata = (Metadata) results.get(0);
             ApiBase.this.runtimeVersion = (RuntimeVersion) results.get(1);
             ApiBase.this.genesisHash = (Hash) results.get(2);
 
+
 //    const extrinsics = extrinsicsFromMeta(this.runtimeMetadata.asV0);
             //    const storage = storageFromMeta(this.runtimeMetadata.asV0);
+            Method.ModulesWithMethods modulesWithMethods = org.polkadot.type.extrinsics.FromMetadata.fromMetadata(ApiBase.this.runtimeMetadata.asV0());
             Storage storage = FromMetadata.fromMetadata(ApiBase.this.runtimeMetadata.asV0());
-            ApiBase.this.storage = storage;
+            ApiBase.this.oriStorage = storage;
+            ApiBase.this.storage = decorateStorage(storage);
+            ApiBase.this.extrinsics = modulesWithMethods;
+
+
+            //ApiBase.this.runtimeVersion = (RuntimeVersion) results.get(0);
 
             this.emit(IProvider.ProviderInterfaceEmitted.ready, this);
 
@@ -223,8 +244,13 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
         return null;
     }
 
+
+    public Storage queryOri() {
+        return oriStorage;
+    }
+
     @Override
-    public IModule query() {
+    public QueryableStorage query() {
         return storage;
     }
 
@@ -252,4 +278,102 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
     public EventEmitter once(IProvider.ProviderInterfaceEmitted type, EventEmitter.EventListener handler) {
         return this.eventemitter.once(type, handler);
     }
+
+    private QueryableStorage decorateStorage(Storage storage) {
+        QueryableStorage queryableStorage = new QueryableStorage();
+        for (String sectionName : storage.sectionNames()) {
+
+            QueryableModuleStorage moduleStorage = new QueryableModuleStorage();
+
+            ModuleStorage section = storage.section(sectionName);
+            for (String functionName : section.functionNames()) {
+                StorageKey.StorageFunction function = section.function(functionName);
+                QueryableStorageFunction storageFunction = decorateStorageEntry(function);
+
+                moduleStorage.addFunction(functionName, storageFunction);
+            }
+            queryableStorage.addSection(sectionName, moduleStorage);
+        }
+        return queryableStorage;
+    }
+
+    private QueryableStorageFunction decorateStorageEntry(StorageKey.StorageFunction function) {
+
+        // These signatures are allowed and exposed here -
+        //   (arg?: CodecArg): CodecResult;
+        //   (arg: CodecArg, callback: CodecCallback): SubscriptionResult;
+        //   (callback: CodecCallback): SubscriptionResult;
+
+        QueryableStorageFunction queryableStorageFunction = new QueryableStorageFunction() {
+            @Override
+            public byte[] apply(Object... args) {
+                return new byte[0];
+            }
+
+            @Override
+            public Object toJson() {
+                return null;
+            }
+
+            @Override
+            public Promise call(Object... _args) {
+
+
+                Object callback = null;
+                Object[] args = null;
+                if (ArrayUtils.isNotEmpty(_args)
+                        && _args[_args.length - 1] instanceof IRpcFunction.SubscribeCallback) {
+                    callback = _args[_args.length - 1];
+                    if (_args.length == 1) {
+                        args = new Object[0];
+                    } else {
+                        args = ArrayUtils.subarray(_args, 0, _args.length - 1);
+                    }
+                }
+
+
+                if (function.getHeadKey() != null && args.length == 0) {
+                    //TODO
+                    //return this.decorateStorageEntryLinked(method, onCall, callback);
+                }
+
+
+
+                IRpcModule rpc = ApiBase.this.rpc();
+                IRpc.RpcInterfaceSection state = rpc.state();
+                IRpcFunction subscribeStorage = state.function("subscribeStorage");
+                return subscribeStorage.invoke(
+                        new Object[]{new Object[]{new Object[]{function, args}}, callback}
+                );
+            }
+
+            @Override
+            public Promise at(Hash hash, Object arg) {
+                return null;
+            }
+
+            @Override
+            public Promise<Hash> hash(Object arg) {
+                return null;
+            }
+
+            @Override
+            public String key(Object arg) {
+                return null;
+            }
+
+            @Override
+            public Promise<U64> size(Object arg) {
+                return null;
+            }
+
+            @Override
+            public Promise subCall(Object args, CodecCallback callback) {
+                return null;
+            }
+        };
+
+        return queryableStorageFunction;
+    }
+
 }

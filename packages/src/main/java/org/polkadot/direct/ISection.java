@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class ISection<F extends IFunction> {
     private static final Logger logger = LoggerFactory.getLogger(ISection.class);
@@ -24,5 +25,9 @@ public abstract class ISection<F extends IFunction> {
         }
         this.functions.put(name, function);
         return result;
+    }
+
+    public Set<String> functionNames() {
+        return this.functions.keySet();
     }
 }

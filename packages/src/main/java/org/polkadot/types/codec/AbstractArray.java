@@ -40,23 +40,26 @@ public class AbstractArray<T extends Codec> extends ArrayList<T> implements Code
     @Override
     public boolean eq(Object other) {
         //TODO 2019-05-07 19:13     return compareArray(this, other);
-        return super.equals(other);
+        return CodecUtils.compareArray(this, other);
     }
 
     @Override
     public String toHex() {
-        return Utils.u8aToHex(this.toU8a(false));
+        return Utils.u8aToHex(this.toU8a());
     }
 
     @Override
     public Object toJson() {
-        return JSONArray.toJSON(this);
+        List<Object> collect = this.stream().map(e ->
+                e.toJson()
+        ).collect(Collectors.toList());
+        return JSONArray.toJSON(collect);
     }
 
     @Override
     public byte[] toU8a(boolean isBare) {
         List<byte[]> encoded = this.stream().map(e -> e.toU8a(isBare)).collect(Collectors.toList());
-        if (isBare) {
+        if (!isBare) {
             encoded.add(0, Utils.compactToU8a(this.length()));
         }
         return Utils.u8aConcat(encoded);
@@ -77,16 +80,14 @@ public class AbstractArray<T extends Codec> extends ArrayList<T> implements Code
     //}
 
     /**
-     * @description Maps the array with the callback
      * @param callbackfn The mapping function
-     * @param thisArg The `this` onject to apply the result to
+     * @param thisArg    The `this` onject to apply the result to
+     * @description Maps the array with the callback
      */
     //map<U> (callbackfn: (value: T, index: number, array: Array<T>) => U, thisArg?: any): Array<U> {
     //      return this.toArray().map(callbackfn, thisArg);
     //  }
-
-
     public <T> T getFiled(int index) {
         return (T) get(index);
     }
- }
+}

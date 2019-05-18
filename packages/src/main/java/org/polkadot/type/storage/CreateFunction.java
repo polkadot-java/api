@@ -7,6 +7,7 @@ import org.polkadot.types.metadata.v0.Modules;
 import org.polkadot.types.metadata.v2.Storage;
 import org.polkadot.types.primitive.Bytes;
 import org.polkadot.types.primitive.StorageKey;
+import org.polkadot.utils.CryptoUtils;
 import org.polkadot.utils.Utils;
 
 import java.util.LinkedHashMap;
@@ -66,6 +67,7 @@ public class CreateFunction {
         // - storage.balances.freeBalance(address)
         // - storage.timestamp.blockPeriod()
         StorageKey.StorageFunction storageFn = new StorageKey.StorageFunction() {
+            String strKey = stringKey;
             @Override
             public byte[] apply(Object... args) {
                 byte[] key = rawKey;
@@ -83,7 +85,7 @@ public class CreateFunction {
                 return Utils.compactAddLength(
                         isUnhashed
                                 ? key
-                                : Utils.xxhashAsU8a(key, 128)
+                                : CryptoUtils.xxhashAsU8a(key, 128)
                 );
             }
 
@@ -94,7 +96,7 @@ public class CreateFunction {
         };
 
         if (meta.getType().isMap() && meta.getType().asMap().isLinked()) {
-            byte[] keyHash = Utils.xxhashAsU8a("head of " + stringKey, 128);
+            byte[] keyHash = CryptoUtils.xxhashAsU8a(("head of " + stringKey).getBytes(), 128);
             StorageKey.StorageFunction keyFn = new StorageKey.StorageFunction() {
                 @Override
                 public byte[] apply(Object... args) {

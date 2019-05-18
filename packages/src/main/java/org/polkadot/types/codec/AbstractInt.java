@@ -31,7 +31,7 @@ public abstract class AbstractInt extends BigInteger implements Codec {
         } else if (Utils.isU8a(value)) {
             // NOTE When passing u8a in (typically from decoded data), it is always LE
             try {
-                byte[] subarray = ArrayUtils.subarray((byte[]) value, 0, bitLength / 8);
+                byte[] subarray = ArrayUtils.subarray(Utils.u8aToU8a(value), 0, bitLength / 8);
                 //TODO return u8aToBn(value.subarray(0, bitLength / 8), { isLe: true, isNegative }).toString();
                 return Utils.u8aToBn(subarray, true, isNegative).toString();
             } catch (Exception e) {
@@ -79,7 +79,9 @@ public abstract class AbstractInt extends BigInteger implements Codec {
         //                    ? hexToBn(other.toString(), { isLe: false, isNegative: this._isNegative })
         //    : bnToBn(other)
         //);
-        BigInteger bigInteger = Utils.isHex(other) ? Utils.hexToBn(other, false, this.isNegative) : Utils.bnToBn(other);
+        BigInteger bigInteger = Utils.isHex(other)
+                ? Utils.hexToBn(other, false, this.isNegative)
+                : Utils.bnToBn(other);
 
         return super.equals(bigInteger);
     }
@@ -88,7 +90,7 @@ public abstract class AbstractInt extends BigInteger implements Codec {
     /**
      * @description Returns the BN representation of the number. (Compatibility)
      */
-    BigInteger toBn() {
+    public BigInteger toBn() {
         return this;
     }
 
@@ -108,7 +110,7 @@ public abstract class AbstractInt extends BigInteger implements Codec {
         //            ? this.toHex()
         //            : this.toNumber();
         //}
-        return this.isHexJson ? this.toHex() : this;
+        return this.isHexJson ? this.toHex() : this.intValue();
     }
 
 

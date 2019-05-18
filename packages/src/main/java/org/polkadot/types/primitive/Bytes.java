@@ -47,7 +47,7 @@ public class Bytes extends U8a {
             return Bytes.decodeBytes(Utils.compactAddLength(u8a));
         } else if (value instanceof U8a) {
             // This is required. In the case of a U8a we already have gotten rid of the length,
-            // i.e. new Bytes(new Bytes(...)) will work as expected
+            // i.e. new Bytes(new Bytes(...)) will work as expected TODO
             return ((U8a) value).toU8a();
         } else if (Utils.isU8a(value)) {
             // handle all other Uint8Array inputs, these do have a length prefix
@@ -80,7 +80,7 @@ public class Bytes extends U8a {
     public byte[] toU8a(boolean isBare) {
         return isBare
                 ? super.toU8a(isBare)
-                : Utils.compactAddLength(super.toU8a());
+                : Utils.compactAddLength(this.raw);
     }
 
 }

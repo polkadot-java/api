@@ -1,8 +1,12 @@
 package org.polkadot.types.codec;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.tuple.Pair;
 import org.polkadot.types.Codec;
 import org.polkadot.types.Types;
+import org.polkadot.types.primitive.Null;
 import org.polkadot.utils.Utils;
 
 import java.util.Arrays;
@@ -187,33 +191,70 @@ public class EnumType<T> extends Base<Codec> implements Codec {
         return this.index;
     }
 
+    /**
+     * @description Checks if the Enum points to a [[Null]] type (deprecated, use isNone)
+     */
+    public boolean isNull() {
+        return this.raw instanceof Null;
+    }
+
     @Override
     public int getEncodedLength() {
-        return 0;
+        return 1 + this.raw.getEncodedLength();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return this.raw.isEmpty();
+    }
+
+    public boolean isNone() {
+        return this.isNull();
     }
 
     @Override
     public boolean eq(Object other) {
-        return false;
+
+        // cater for the case where we only pass the enum index
+        if (other instanceof Number) {
+            return this.toNumber() == ((Number) other).intValue();
+        }
+
+
+        // compare the actual wrapper value
+        return this.value().eq(other);
     }
 
     @Override
     public String toHex() {
-        return null;
+        return Utils.u8aToHex(this.toU8a());
     }
 
     @Override
     public Object toJson() {
-        return null;
+        JSONObject jsonObject = new JSONObject();
+        String type = this.getType();
+        jsonObject.put(type, this.raw.toJson());
+        return jsonObject;
+    }
+
+    @Override
+    public String toString() {
+        return this.isNull()
+                ? this.getType()
+                : JSON.toJSONString(this.toJson());
     }
 
     @Override
     public byte[] toU8a(boolean isBare) {
-        return new byte[0];
+        Integer index = this.indexes.get(this.index);
+        return Utils.u8aConcat(Lists.newArrayList(new byte[]{
+                index.byteValue()
+        }, this.raw.toU8a(isBare)));
+    }
+
+
+    public boolean isType(String value) {
+        return this.getType().equals(value);
     }
 }

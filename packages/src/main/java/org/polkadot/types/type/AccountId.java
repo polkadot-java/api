@@ -1,5 +1,6 @@
 package org.polkadot.types.type;
 
+import org.polkadot.common.keyring.address.AddressUtils;
 import org.polkadot.types.codec.U8a;
 import org.polkadot.types.codec.U8aFixed;
 import org.polkadot.utils.Utils;
@@ -19,8 +20,8 @@ public class AccountId extends U8aFixed {
 
     static String encode(U8a value) {
         //TODO 2019-05-10 03:30 decodeAddress, encodeAddress } from '@polkadot/keyring';
-        //return encodeAddress(value);
-        return new String(value.toU8a());
+        return AddressUtils.encodeAddress(value.toU8a());
+        //return new String(value.toU8a());
     }
 
     //private static decodeAccountId (value: AnyU8a | AnyString): Uint8Array {
@@ -31,7 +32,7 @@ public class AccountId extends U8aFixed {
             return Utils.hexToU8a(value.toString());
         } else if (value instanceof String) {
             //TODO 2019-05-10 03:30 decodeAddress, encodeAddress } from '@polkadot/keyring';
-            //return decodeAddress((value as String).toString());
+            return AddressUtils.decodeAddress((String) value);
         }
         return (byte[]) value;
     }

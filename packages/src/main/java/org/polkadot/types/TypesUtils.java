@@ -1,11 +1,14 @@
 package org.polkadot.types;
 
+import org.polkadot.types.primitive.Null;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TypesUtils {
 
@@ -20,11 +23,18 @@ public class TypesUtils {
         } catch (InvocationTargetException e) {
         } catch (NoSuchMethodException e) {
         }
-        logger.debug(" no builder for {} ", clazz);
+        //logger.debug(" no builder for {} ", clazz);
         return null;
     }
 
+    public static Map<Class, Types.ConstructorCodec> constructorCodecMap = new ConcurrentHashMap<>();
+
     public static <T extends Codec> Types.ConstructorCodec<T> getConstructorCodec(Class<T> clazz) {
+        return constructorCodecMap.computeIfAbsent(clazz, clz -> getConstructorCodecInner(clz));
+    }
+
+    private static <T extends Codec> Types.ConstructorCodec<T> getConstructorCodecInner(Class<T> clazz) {
+
 
         Types.ConstructorCodec<T> builderConstructorCodec = getBuilderConstructorCodec(clazz);
         if (builderConstructorCodec != null) {
@@ -43,7 +53,7 @@ public class TypesUtils {
                 }
 
 
-                Constructor<?> constructor = constructors[0];
+                Constructor<?> constructor = null;
 
                 //TODO match type
                 for (Constructor<?> con : constructors) {
@@ -53,8 +63,17 @@ public class TypesUtils {
                     }
                 }
 
+                if (constructor == null) {
+                    if (!Null.class.isAssignableFrom(clazz)) {
+                        logger.error("can not find match constructor {}, {}, {}"
+                                , clazz, constructors, values.length);
+                    }
+                    constructor = constructors[0];
+                }
+
+
                 if (constructors.length > 1) {
-                    logger.error(" codec class has move than one constructor {}, {}", clazz, constructors);
+                    //logger.error(" codec class has move than one constructor {}, {}", clazz, constructors);
                 }
 
 

@@ -9,6 +9,7 @@ import org.polkadot.types.Types;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CodecUtils {
     /**
@@ -100,4 +101,82 @@ public class CodecUtils {
         return ret;
     }
 
+    //TODO 2019-05-13 09:54 check
+    public static boolean compareMap(Map map1, Object obj) {
+
+        if (obj.getClass().isArray()) {
+            List<Object> objectList = arrayLikeToList(obj);
+            if (objectList.size() != map1.size()) {
+                return false;
+            }
+            for (Object o : objectList) {
+                List<Object> entry = arrayLikeToList(o);
+                if (entry.size() != 2) {
+                    return false;
+                }
+
+                Object v1 = map1.get(entry.get(0));
+
+                if (v1 == null) {
+                    return false;
+                }
+
+                if (v1 instanceof Codec && !((Codec) v1).eq(entry.get(1))) {
+                    return false;
+                }
+                if (!v1.equals(entry.get(1))) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        Map<Object, Object> map2 = null;
+        if (obj instanceof Map) {
+            map2 = (Map<Object, Object>) obj;
+        } else {
+            return false;
+        }
+        if (map1.size() != map2.size()) {
+            return false;
+        }
+
+        for (Object _entry : map1.entrySet()) {
+            Map.Entry entry = (Map.Entry) _entry;
+            Object v2 = map2.get(entry.getKey());
+            if (v2 == null) {
+                return false;
+            }
+
+            if (v2 instanceof Codec && entry.getValue() instanceof Codec) {
+                if (!((Codec) v2).eq(entry.getValue())) {
+                    return false;
+                }
+            }
+
+            if (!v2.equals(entry.getValue())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    public static boolean compareArray(List list, Object other) {
+        List<Object> objects = arrayLikeToList(other);
+        if (objects.size() != list.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < list.size(); i++) {
+            Object o = list.get(i);
+            if (o instanceof Codec && !((Codec) o).eq(objects.get(i))) {
+                return true;
+            } else if (!o.equals(objects.get(i))){
+                return false;
+            }
+        }
+        return true;
+    }
 }
