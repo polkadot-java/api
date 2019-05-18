@@ -1,17 +1,16 @@
 package org.polkadot.types.codec;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.polkadot.types.Codec;
 import org.polkadot.types.Types;
 import org.polkadot.utils.Utils;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -36,6 +35,12 @@ public class Vector<T extends Codec> extends AbstractArray<T> {
         List<T> ret = new ArrayList<>();
         if (value instanceof List) {
             for (Object obj : ((List) value)) {
+                genInstance(ret, type, obj);
+            }
+            return ret;
+        } else if (value.getClass().isArray() && !(value instanceof byte[])){
+            List<Object> objects = CodecUtils.arrayLikeToList(value);
+            for (Object obj : objects) {
                 genInstance(ret, type, obj);
             }
             return ret;
@@ -68,20 +73,22 @@ public class Vector<T extends Codec> extends AbstractArray<T> {
 
         byte[] u8a = Utils.u8aToU8a(value);
         Pair<Integer, BigInteger> pair = Utils.compactFromU8a(u8a);
+        int offset = pair.getKey();
+        int length = pair.getValue().intValue();
+
         List<Types.ConstructorCodec> typeList = new ArrayList<>();
-        for (int i = 0; i < pair.getValue().intValue(); i++) {
+        for (int i = 0; i < length; i++) {
             typeList.add(type);
         }
 
-
         List results = Lists.newArrayList();
-        CodecUtils.decodeU8a(Arrays.copyOfRange(u8a, pair.getKey(), u8a.length), typeList, results);
+        CodecUtils.decodeU8a(ArrayUtils.subarray(u8a, offset, u8a.length), typeList, results);
         return results;
     }
 
     private static <T extends Codec> void genInstance(List<T> all, Types.ConstructorCodec<T> type, Object value) {
         Class<T> tClass = type.getTClass();
-        if (tClass.isInstance(value)) {
+        if (tClass.isInstance(value) && !Utils.isContainer(value)) {
             all.add((T) value);
         } else {
             T t1 = type.newInstance(value);

@@ -1,6 +1,7 @@
 package org.polkadot.types;
 
 import org.polkadot.types.metadata.v0.Modules;
+import org.polkadot.types.primitive.Method;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -25,6 +26,8 @@ public interface Types {
     //    T instance(List<?> value);
     //}
 
+    interface IHash extends Codec {
+    }
     //interface IHash extends U8a {}
 
 
@@ -168,6 +171,67 @@ export type RegistryTypes = {
 
         BigInteger getSpecVersion();
 
+    }
+
+    interface IExtrinsic extends IMethod {
+        IHash getHash();
+
+        boolean isSigned();
+
+        Method getMethod();
+
+        IExtrinsicSignature getSignature();
+
+        //addSignature(signer:Address|Uint8Array, signature:Uint8Array, nonce:AnyNumber, era?:Uint8Array):IExtrinsic;
+
+        IExtrinsic addSignature(Object signer, byte[] signature, Object nonce, byte[] era);
+
+        //sign(account:KeyringPair, options:SignatureOptions):IExtrinsic;
+        IExtrinsic sign(org.polkadot.common.keyring.Types.KeyringPair account, Types.SignatureOptions options) ;
+    }
+
+    class SignatureOptions {
+        Object blockHash;
+        byte[] era;
+        Object nonce;
+        RuntimeVersionInterface version;
+
+        public Object getBlockHash() {
+            return blockHash;
+        }
+
+        public void setBlockHash(Object blockHash) {
+            this.blockHash = blockHash;
+        }
+
+        public byte[] getEra() {
+            return era;
+        }
+
+        public void setEra(byte[] era) {
+            this.era = era;
+        }
+
+        public Object getNonce() {
+            return nonce;
+        }
+
+        public void setNonce(Object nonce) {
+            this.nonce = nonce;
+        }
+
+        public RuntimeVersionInterface getVersion() {
+            return version;
+        }
+
+        public void setVersion(RuntimeVersionInterface version) {
+            this.version = version;
+        }
+
+    }
+
+    interface IExtrinsicSignature extends Codec {
+        boolean isSigned();
     }
 
 }

@@ -27,7 +27,7 @@ repositories {
 dependencies {
     compile fileTree(dir: 'libs', includes: ['*jar'])
 
-    compile group: 'it.unimi.dsi', name: 'fastutil', version: '8.1.0'
+//    compile group: 'it.unimi.dsi', name: 'fastutil', version: '8.1.0'
 
 // https://mvnrepository.com/artifact/org.jdeferred.v2/jdeferred-core
 //    compile group: 'org.jdeferred.v2', name: 'jdeferred-core', version: '2.0.0-beta2'
@@ -70,6 +70,11 @@ dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.1'
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-text
+    compile group: 'org.apache.commons', name: 'commons-text', version: '1.6'
+
+    compile 'org.bitcoinj:bitcoinj-core:0.15.2'
 
     implementation 'org.lz4:lz4-java:1.5.1'
 

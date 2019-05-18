@@ -37,4 +37,9 @@ public class UInt extends AbstractInt {
     public byte[] toU8a(boolean isBare) {
         return Utils.bnToU8a(this, true, false, this.bitLength());
     }
+
+
+    public int toNumber() {
+        return this.intValue();
+    }
 }

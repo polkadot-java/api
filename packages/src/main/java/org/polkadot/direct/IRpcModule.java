@@ -1,6 +1,9 @@
 package org.polkadot.direct;
 
+import com.google.common.collect.Sets;
 import org.polkadot.rpc.core.IRpc;
+
+import java.util.Set;
 
 public interface IRpcModule extends IModule<IRpc.RpcInterfaceSection> {
     IRpc.RpcInterfaceSection author();
@@ -10,6 +13,12 @@ public interface IRpcModule extends IModule<IRpc.RpcInterfaceSection> {
     IRpc.RpcInterfaceSection state();
 
     IRpc.RpcInterfaceSection system();
+
+
+    @Override
+    default Set<String> sectionNames() {
+        return Sets.newHashSet("author", "chain", "state", "system");
+    }
 
     @Override
     default IRpc.RpcInterfaceSection section(String section) {

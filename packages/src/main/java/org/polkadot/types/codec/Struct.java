@@ -1,5 +1,8 @@
 package org.polkadot.types.codec;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.polkadot.common.ReflectionUtils;
 import org.polkadot.types.Codec;
 import org.polkadot.types.Types;
@@ -10,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +27,7 @@ public class Struct
         //V extends Map<String, Object>,
         //// type names, mapped by key, name of Class in S
         //E extends Map<String, Object>>
-        extends HashMap<String, Codec> implements Codec {
+        extends LinkedHashMap<String, Codec> implements Codec {
 
     private static final Logger logger = LoggerFactory.getLogger(Method.class);
 
@@ -67,7 +71,7 @@ public class Struct
         } else if (Utils.isU8a(value)) {
             List<Codec> values = CodecUtils.decodeU8a((byte[]) value, types);
 
-            HashMap<String, Codec> ret = new HashMap<>();
+            LinkedHashMap<String, Codec> ret = Maps.newLinkedHashMap();
             List<String> names = types.getNames();
             for (int i = 0; i < names.size(); i++) {
                 ret.put(names.get(i), values.get(i));
@@ -84,8 +88,7 @@ public class Struct
     private static Map<String, Codec> decodeStructFromObject(ConstructorDef types, Object value, Map<String, String> jsonMap) {
         List<String> names = types.getNames();
 
-        Map<String, Codec> ret = new HashMap<>();
-
+        LinkedHashMap<String, Codec> ret = Maps.newLinkedHashMap();
 
         for (int i = 0; i < names.size(); i++) {
             String key = names.get(i);
@@ -146,53 +149,8 @@ public class Struct
             T t1 = type.newInstance(value);
             return t1;
         }
-        //Type genericSuperclass = type.getClass().getGenericSuperclass();
-        //Type gType = ((ParameterizedType) type.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        //if (gType instanceof Class && value.getClass().isAssignableFrom((Class<?>) gType)) {
-        //    return (T) value;
-        //} else {
-        //    T t1 = type.newInstance(value);
-        //    return t1;
-        //}
-
-        //try {
-        //    Constructor<T> constructor = type.getConstructor(value.getClass());
-        //    T t = constructor.newInstance(value);
-        //    return t;
-        //} catch (InstantiationException e) {
-        //    e.printStackTrace();
-        //} catch (IllegalAccessException e) {
-        //    e.printStackTrace();
-        //} catch (InvocationTargetException e) {
-        //    e.printStackTrace();
-        //} catch (NoSuchMethodException e) {
-        //    e.printStackTrace();
-        //}
-
-        //return null;
     }
 
-
-    /*
-    *
-     static with<
-    S extends ConstructorDef
-    > (Types: S): Constructor<Struct<S>> {
-    return class extends Struct<S> {
-      constructor (value?: any, jsonMap?: Map<keyof S, string>) {
-        super(Types, value, jsonMap);
-
-        (Object.keys(Types) as Array<keyof S>).forEach((key) => {
-          Object.defineProperty(this, key, {
-            enumerable: true,
-            get: () => this.get(key)
-          });
-        });
-      }
-    };
-  }
-    *
-    * */
 
     static class Builder implements Types.ConstructorCodec<Struct> {
         ConstructorDef types;
@@ -200,11 +158,6 @@ public class Struct
         Builder(ConstructorDef types) {
             this.types = types;
         }
-        //
-        //Struct newInstance(Object value, Map<String, String> jsonMap) {
-        //    Struct instance = new Struct(types, value, jsonMap);
-        //    return instance;
-        //}
 
         @Override
         public Struct newInstance(Object... values) {
@@ -224,27 +177,41 @@ public class Struct
 
     @Override
     public int getEncodedLength() {
-        return 0;
+        int allLength = 0;
+        for (Codec value : this.values()) {
+            allLength += value.getEncodedLength();
+        }
+        return allLength;
     }
+
+    /**
+     * @description Converts the Object to an standard JavaScript Array
+     */
+    public List<Codec> toArray() {
+        return Lists.newArrayList(this.values());
+    }
+
 
     @Override
     public boolean eq(Object other) {
-        return false;
+        return CodecUtils.compareMap(this, other);
     }
 
     @Override
     public String toHex() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Object toJson() {
-        return null;
+        JSONObject jsonObject = new JSONObject();
+        this.forEach((k,v) -> jsonObject.put(k,v));
+        return jsonObject;
     }
 
     @Override
     public byte[] toU8a(boolean isBare) {
-        return new byte[0];
+        throw new UnsupportedOperationException();
     }
 
     public static Types.ConstructorCodec<Struct> builder() {
@@ -265,14 +232,6 @@ public class Struct
             }
         };
 
-        //
-        //return values -> {
-        //    if (values.length == 2) {
-        //        return new Struct(((ConstructorDef) values[0]), values[1], null);
-        //    } else {
-        //        return new Struct(((ConstructorDef) values[0]), values[1], (Map<String, String>) values[2]);
-        //    }
-        //};
     }
 
     public <T> T getField(String key) {
@@ -282,4 +241,16 @@ public class Struct
         }
         return (T) codec;
     }
+
+    @Override
+    public boolean isEmpty() {
+        for (Codec value : this.values()) {
+            if (!value.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
 }

@@ -150,7 +150,7 @@ public class WsProvider implements IWsProvider {
 
                 @Override
                 public void onMessage(String message) {
-                    logger.info("WebSocket onMessage:{}", message);
+                    logger.debug("WebSocket onMessage:{}", message);
 
                     JsonRpcResponse response = JSONObject.parseObject(message, JsonRpcResponse.class);
                     if (StringUtils.isEmpty(response.getMethod())) {
@@ -202,7 +202,7 @@ public class WsProvider implements IWsProvider {
 
         String subId = method + "::" + response.getParams().getSubscription();
 
-        logger.info("handling: response =', {}, 'subscription =', {}", response, subId);
+        logger.debug("handling: response =', {}, 'subscription =', {}", response, subId);
 
         WsStateSubscription handler = this.subscriptions.get(subId);
 
@@ -220,12 +220,13 @@ public class WsProvider implements IWsProvider {
             Object result = this.coder.decodeResponse(response);
             handler.getCallBack().callback(null, result);
         } catch (Exception e) {
+            e.printStackTrace();
             handler.getCallBack().callback(e, null);
         }
     }
 
     private void onSocketMessageResult(JsonRpcResponse response) {
-        logger.info("handling response {}, {}", response, response.getId());
+        logger.debug("handling response {}, {}", response, response.getId());
 
         WsStateAwaiting handler = this.handlers.get(response.getId());
         if (handler == null) {
@@ -292,13 +293,14 @@ public class WsProvider implements IWsProvider {
                     }
                 };
 
-                logger.info("call {}, {}, {}, {}", method, params, json, subscription);
+                logger.debug("call {} {}, {}, {}, {}", id, method, params, json, subscription);
 
                 this.handlers.put(id, new WsStateAwaiting(callback, method, params, subscription));
                 if (this.isConnected() && this.webSocket != null) {
                     this.webSocket.send(json);
                 } else {
-                    this.queued.set(id, json);
+                    //this.queued.set(id, json);
+                    this.queued.add(json);
                 }
             } catch (Exception e1) {
                 handler.reject(e1);

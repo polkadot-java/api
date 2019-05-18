@@ -106,18 +106,20 @@ public class StorageKey extends Bytes {
         return null;
     }
 
-    static byte[] decodeStorageKey(Object value) {
+    static Object decodeStorageKey(Object value) {
         if (value instanceof IFunction) {
             return ((StorageFunction) value).apply();
         } else if (value.getClass().isArray()) {
             List<Object> elements = CodecUtils.arrayLikeToList(value);
             Object remove = elements.remove(0);
             if (remove instanceof StorageFunction) {
-                return ((StorageFunction) remove).apply(elements.toArray(ArrayUtils.EMPTY_OBJECT_ARRAY));
+                Object arg = elements.get(0);
+                List<Object> args = CodecUtils.arrayLikeToList(arg);
+                return ((StorageFunction) remove).apply(args.toArray(ArrayUtils.EMPTY_OBJECT_ARRAY));
             }
         }
 
-        return (byte[]) value;
+        return value;
     }
 
 

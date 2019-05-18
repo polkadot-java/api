@@ -5,7 +5,11 @@ import com.google.common.primitives.UnsignedBytes;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.text.CaseUtils;
 import org.polkadot.types.codec.CodecUtils;
+import org.polkadot.types.codec.Compact;
+import org.polkadot.types.codec.Option;
+import org.polkadot.types.codec.U8a;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -37,15 +41,16 @@ public class Utils {
         return isHex(value, -1, false);
     }
 
-    public static boolean isHex(Object _value, int bitLength, boolean ignoreLength) {
-        CharSequence value = _value.toString();
-        boolean isValidHex = value.equals("0x") || (value instanceof String && Pattern.matches(HEX_REGEX, value));
+    public static boolean isHex(Object value, int bitLength, boolean ignoreLength) {
+        //CharSequence value = _value.toString();
+        boolean isValidHex = value.equals("0x") || (value instanceof String && Pattern.matches(HEX_REGEX, (CharSequence) value));
 
         if (isValidHex && bitLength != -1) {
-            return value.length() == (2 + (int) Math.ceil(bitLength / 4));
+            String strValue = (String) value;
+            return strValue.length() == (2 + (int) Math.ceil(bitLength / 4));
         }
 
-        return isValidHex && (ignoreLength || (value.length() % 2 == 0));
+        return isValidHex && (ignoreLength || (((String) value).length() % 2 == 0));
     }
 
 
@@ -162,7 +167,8 @@ public class Utils {
      */
     //export default function isU8a (value?: any): value is Uint8Array {
     public static boolean isU8a(Object value) {
-        return value instanceof byte[];
+        return value instanceof byte[]
+                || value instanceof U8a;
     }
 
 
@@ -293,6 +299,10 @@ public class Utils {
      * ```
      */
     //export default function bnToHex (value?: BN | number | null, options: number | Options = { bitLength: -1, isLe: false, isNegative: false }): string {
+    public static String bnToHex(BigInteger value, int bitLength) {
+        return bnToHex(value, false, false, bitLength);
+    }
+
     public static String bnToHex(BigInteger value, boolean isLe, boolean isNegtive, int bitLength) {
         /*
         *
@@ -332,41 +342,15 @@ public class Utils {
     //export default function bnToU8a (value: BN | number | null, options?: Options): Uint8Array;
     //export default function bnToU8a (value: BN | number | null, bitLength?: number, isLe?: boolean): Uint8Array;
     //export default function bnToU8a (value: BN | number | null, arg1: number | Options = { bitLength: -1, isLe: true, isNegative: false },arg2?: boolean): Uint8Array {
-    public static byte[] bnToU8a(BigInteger value, boolean isLe, boolean isNegtive, int bitLength) {
+    public static byte[] bnToU8a(BigInteger value, boolean isLe, int bitLength) {
+        return bnToU8a(value, isLe, false, bitLength);
+    }
 
-        /*
-        * const _options: Options = {
-    isLe: true,
-    isNegative: false,
-    bitLength: -1,
-    ...isNumber(arg1) ? { bitLength: arg1, isLe: arg2 } : arg1
-  };
-
-  const valueBn = bnToBn(value);
-  let byteLength = _options.bitLength === -1
-    ? Math.ceil(valueBn.bitLength() / 8)
-    : Math.ceil(_options.bitLength! / 8);
-
-  if (!value) {
-    return _options.bitLength === -1
-      ? new Uint8Array([])
-      : new Uint8Array(byteLength);
-  }
-
-  const output = new Uint8Array(byteLength);
-  const bn = _options.isNegative ? valueBn.toTwos(byteLength * 8) : valueBn;
-
-  output.set(
-    bn.toArray(_options.isLe ? 'le' : 'be', byteLength),
-    0
-  );
-
-  return output;*/
-
+    public static byte[] bnToU8a(BigInteger value, boolean isLe, boolean isNegative, int bitLength) {
         BigInteger valueBn = bnToBn(value);
         int byteLength;
         if (bitLength == -1) {
-            byteLength = (int) Math.ceil(valueBn.toByteArray().length / 8f);
+            byteLength = (int) Math.ceil(valueBn.bitLength() / 8f);
         } else {
             byteLength = (int) Math.ceil(bitLength / 8f);
         }
@@ -381,30 +365,41 @@ public class Utils {
 
         byte[] output = new byte[byteLength];
 
-        if (isNegtive) {
+        if (isNegative) {
             //TODO  valueBn.negate()
             //const bn = _options.isNegative ? valueBn.toTwos(byteLength * 8) : valueBn;
         }
 
-        //big-endian
-        byte[] bytes = valueBn.toByteArray();
         if (isLe) {
-            bytes = toByteArrayLittleEndianUnsigned(valueBn);
+            byte[] bytes = toByteArrayLittleEndianUnsigned(valueBn);
+            //arraycopy(Object src,  int  srcPos,
+            //Object dest, int destPos,
+            //int length);
+            System.arraycopy(bytes, 0, output, 0, bytes.length);
+        } else {
+            //big-endian
+            byte[] bytes = valueBn.toByteArray();
+            System.arraycopy(bytes, 0, output, output.length - bytes.length, bytes.length);
         }
-        if (output.length != bytes.length) {
-            throw new RuntimeException();
-        }
+        //if (output.length != bytes.length) {
+        //    throw new RuntimeException();
+        //}
 
-        return bytes;
+        return output;
 
     }
 
     public static void main(String[] argv) {
-        BigInteger bi = new BigInteger("1234");
+        System.out.println(System.currentTimeMillis());
+        BigInteger bi = BigInteger.valueOf(1557849267933L);
         System.out.println(java.util.Arrays.toString((bi.toByteArray())));
 
         System.out.println(java.util.Arrays.toString(toByteArrayLittleEndianUnsigned(bi)));
+
+        System.out.println(Arrays.toString(bnToU8a(bi, false, true, 64)));
+        System.out.println(Arrays.toString(bnToU8a(bi, true, true, 64)));
     }
+
 
     public static byte[] toByteArrayLittleEndianUnsigned(BigInteger bi) {
         byte[] extractedBytes = toByteArrayUnsigned(bi);
@@ -482,9 +477,9 @@ public class Utils {
         }
 
 
-        int length = new BigInteger(UnsignedBytes.toInt(input[0]) + "")
+        int length = BigInteger.valueOf(UnsignedBytes.toInt(input[0]))
                 .shiftRight(2)
-                .add(new BigInteger("4"))
+                .add(BigInteger.valueOf(4))
                 .intValue();
 
         int offset = length + 1;
@@ -512,8 +507,19 @@ public class Utils {
         if (value == null || value.length == 0) {
             return "";
         }
+
+
+        StringBuilder sb = new StringBuilder();
+        for (byte b : value) {
+            char ch = (char) UnsignedBytes.toInt(b);
+            sb.append(ch);
+        }
+
+        //TODO 2019-05-14 02:49 uint8
+
 //  return decoder.decode(value);
         return new String(value);
+        //return sb.toString();
     }
 
 
@@ -723,6 +729,10 @@ public class Utils {
             return (byte[]) value;
         }
 
+        if (value instanceof U8a) {
+            return ((U8a) value).raw;
+        }
+
         if (value.getClass().isArray()) {
             List<Object> objects = CodecUtils.arrayLikeToList(value);
             byte[] result = new byte[objects.size()];
@@ -734,64 +744,6 @@ public class Utils {
         }
 
         return (byte[]) value;
-    }
-
-
-    /**
-     * @name xxhashAsU8a
-     * @summary Creates a xxhash64 u8a from the input.
-     * @description From either a `string`, `Uint8Array` or a `Buffer` input, create the xxhash64 and return the result as a `Uint8Array` with the specified `bitLength`.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { xxhashAsU8a } from '@polkadot/util-crypto';
-     * <p>
-     * xxhashAsU8a('abc'); // => 0x44bc2cf5ad770999
-     * ```
-     */
-    //  export default function xxhashAsU8a (data: Buffer | Uint8Array | string, bitLength: number = 64): Uint8Array {
-    //const iterations = Math.ceil(bitLength / 64);
-    //
-    //      if (isReady()) {
-    //          return twox(u8aToU8a(data), iterations);
-    //      }
-    //
-    //const u8a = new Uint8Array(Math.ceil(bitLength / 8));
-    //
-    //      for (let seed = 0; seed < iterations; seed++) {
-    //          u8a.set(xxhash64AsBn(data, seed).toArray('le', 8), seed * 8);
-    //      }
-    //
-    //      return u8a;
-    //  }
-    public static byte[] xxhashAsU8a(Object data, int bitLength) {
-        if (bitLength <= 0) {
-            bitLength = 64;
-        }
-        //
-        //int iterations = (int) Math.ceil(bitLength / 64f);
-        //
-        //XXHashFactory factory = XXHashFactory.fastestInstance();
-        //
-        ////byte[] data = "12345345234572".getBytes("UTF-8");
-        //ByteArrayInputStream in = new ByteArrayInputStream((byte[]) data);
-        //
-        //int seed = 0x9747b28c; // used to initialize the hash value, use whatever
-        //// value you want, but always the same
-        //StreamingXXHash32 hash32 = factory.newStreamingHash32(seed);
-        //byte[] buf = new byte[8]; // for real-world usage, use a larger buffer, like 8192 bytes
-        //for (; ; ) {
-        //    int read = in.read(buf);
-        //    if (read == -1) {
-        //        break;
-        //    }
-        //    hash32.update(buf, 0, read);
-        //}
-        //int hash = hash32.getValue();
-        //TODO 2019-05-11 02:56
-        new UnsupportedOperationException().printStackTrace();
-        //TODO 2019-05-11 02:56
-        return (byte[]) data;
     }
 
 
@@ -821,6 +773,11 @@ public class Utils {
                 || object instanceof Map) {
             return true;
         }
+
+        if (object instanceof Option
+                || object instanceof Compact) {
+            return true;
+        }
         if (object.getClass().isArray()) {
             Class<?> componentType = object.getClass().getComponentType();
             if (componentType.isPrimitive()) {
@@ -835,4 +792,16 @@ public class Utils {
     //public static String substr(String str, int startIndex, int length) {
     //    return str.substring()
     //}
+
+    public static BigInteger toBn(Object value) {
+        if (value instanceof Number) {
+            return BigInteger.valueOf(((Number) value).longValue());
+        }
+
+        return new BigInteger(value.toString());
+    }
+
+    public static String stringCamelCase(String input) {
+        return CaseUtils.toCamelCase(input, false, '-', '_', ' ');
+    }
 }

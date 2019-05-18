@@ -65,7 +65,7 @@ public class Type extends Text {
         );
 
         for (Mapper mapping : mappings) {
-            System.out.println(value);
+            //System.out.println(value);
             value = mapping.apply(value);
         }
         return value.trim();
@@ -97,7 +97,10 @@ public class Type extends Text {
                 }
 
                 int end = findClosing(value, index + 1) - 14;
-
+                if (end < 0 || end >= value.length()
+                        || end + 14 < 0 || end + 14 >= value.length()) {
+                    continue;
+                }
                 if (value.substring(end, end + 14).equals(" as HasCompact")) {
                     String substring = value.substring(index + 1, end);
                     value = "Compact<" + substring + ">";
@@ -140,7 +143,7 @@ public class Type extends Text {
                         return start >= 0 && finalValue.substring(start, start + box.length()).equals(box);
                     }).findFirst().orElse(null);
 
-                    if (findBox != null) {
+                    if (findBox == null) {
                         int end = findClosing(value, index + 1);
                         value = value.substring(0, index) + value.substring(end + 1);
                     }

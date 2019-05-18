@@ -18,6 +18,29 @@ public interface Calls {
                     , value);
         }
 
+
+        /**
+         * @description The [[U16]] index for the call
+         */
+        public U16 getIndex() {
+            return this.getField("index");
+        }
+
+        /**
+         * @description The name for the call
+         */
+        public Text getName() {
+            return this.getField("name");
+        }
+
+        /**
+         * @description The call prefix (or section)
+         */
+        public Text getPrefix() {
+            return this.getField("prefix");
+        }
+
+
     }
 
     class OuterDispatchMetadata extends Struct {
@@ -26,6 +49,21 @@ public interface Calls {
                             .add("name", Text.class)
                             .add("calls", Vector.with(TypesUtils.getConstructorCodec(OuterDispatchCall.class)))
                     , value);
+        }
+
+
+        /**
+         * @description The [[OuterDispathCall]] wrapped
+         */
+        public Vector<OuterDispatchCall> getCalls() {
+            return this.getField("calls");
+        }
+
+        /**
+         * @description The name for the dispatch
+         */
+        public Text getName() {
+            return this.getField("name");
         }
     }
 

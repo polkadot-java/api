@@ -1,18 +1,17 @@
 package org.polkadot.types.primitive;
 
 import com.google.common.primitives.UnsignedBytes;
+import org.polkadot.direct.IFunction;
 import org.polkadot.types.Codec;
 import org.polkadot.types.Types;
+import org.polkadot.types.codec.Vector;
 import org.polkadot.types.codec.*;
 import org.polkadot.types.metadata.v0.Modules;
 import org.polkadot.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -28,14 +27,14 @@ public class Method extends Struct implements Types.IMethod {
     //const injected: { [index: string]: MethodFunction } = {};
     static final Map<String, MethodFunction> INJECTED = new HashMap();
 
-    static final MethodFunction FN_UNKNOWN = new MethodFunction(null, null, "unknown", "unknown") {
+    static final MethodFunction FN_UNKNOWN = new MethodFunction() {
         @Override
-        Method apply(Object... args) {
+        public Method apply(Object... args) {
             return null;
         }
 
         @Override
-        Object toJson() {
+        public Object toJson() {
             return null;
         }
     };
@@ -85,31 +84,65 @@ public class Method extends Struct implements Types.IMethod {
     //      section: string;
     //      toJSON: () => any;
     //  }
-    abstract static class MethodFunction {
-        public MethodFunction(U8a callIndex, Modules.FunctionMetadata meta, String method, String section) {
-            this.callIndex = callIndex;
-            this.meta = meta;
-            this.method = method;
-            this.section = section;
-        }
+    public abstract static class MethodFunction implements IFunction {
 
-        abstract Method apply(Object... args);
+        public abstract Method apply(Object... args);
 
-        U8a callIndex;
+        byte[] callIndex;
         Modules.FunctionMetadata meta;
         String method;
         String section;
 
-        abstract Object toJson();
+        public abstract Object toJson();
+
+        public byte[] getCallIndex() {
+            return callIndex;
+        }
+
+        public void setCallIndex(byte[] callIndex) {
+            this.callIndex = callIndex;
+        }
+
+        public Modules.FunctionMetadata getMeta() {
+            return meta;
+        }
+
+        public void setMeta(Modules.FunctionMetadata meta) {
+            this.meta = meta;
+        }
+
+        public String getMethod() {
+            return method;
+        }
+
+        public void setMethod(String method) {
+            this.method = method;
+        }
+
+        public String getSection() {
+            return section;
+        }
+
+        public void setSection(String section) {
+            this.section = section;
+        }
     }
+
     //  export interface Methods {
     //[key: string]: MethodFunction;
     //  }
+    public static class Methods extends LinkedHashMap<String, MethodFunction> {
+
+    }
+
     //
     //  export interface ModulesWithMethods {
     //[key: string]: Methods; // Will hold modules returned by state_getMetadata
     //  }
 
+    public static class ModulesWithMethods extends LinkedHashMap<String, Methods> {
+
+    }
 
     protected Modules.FunctionMetadata meta;
 
@@ -218,10 +251,10 @@ public class Method extends Struct implements Types.IMethod {
     }
 
     // If the extrinsic function has an argument of type `Origin`, we ignore it
-    static List<Modules.FunctionArgumentMetadata> filterOrigin(Modules.FunctionMetadata meta) {
+    public static List<Modules.FunctionArgumentMetadata> filterOrigin(Modules.FunctionMetadata meta) {
         // FIXME should be `arg.type !== Origin`, but doesn't work...
         if (meta != null) {
-            Vector<Modules.FunctionArgumentMetadata> arguments = meta.getField("arguments");
+            Vector<Modules.FunctionArgumentMetadata> arguments = meta.getArguments();
             List<Modules.FunctionArgumentMetadata> ret = arguments.stream()
                     .filter((Modules.FunctionArgumentMetadata argument) -> !argument.getType().toString().equals("Origin"))
                     .collect(Collectors.toList());

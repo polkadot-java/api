@@ -19,6 +19,28 @@ public interface Events {
                     , value);
 
         }
+
+
+        /**
+         * @description The arguments of [[Type]]
+         */
+        public Vector<Type> getArguments() {
+            return this.getField("arguments");
+        }
+
+        /**
+         * @description The [[Text]] documentation
+         */
+        Vector<Text> getDocumentation() {
+            return this.getField("documentation");
+        }
+
+        /**
+         * @description The name for the event
+         */
+        public Text getName() {
+            return this.getField("name");
+        }
     }
 
     class OuterEventMetadataEvent extends Tuple {

@@ -44,10 +44,13 @@ public class Digest extends Struct {
 
     /**
      * @name AuthoritiesChange
-     * @description
-     * Log for Authories changed
+     * @description Log for Authories changed
      */
-    //export class AuthoritiesChange extends Vector.with(AuthorityId) { }
+    public static class AuthoritiesChange extends Vector<AuthorityId> {
+        public AuthoritiesChange(Object value) {
+            super(TypesUtils.getConstructorCodec(AuthorityId.class), value);
+        }
+    }
 
     /**
      * @name ChangesTrieRoot

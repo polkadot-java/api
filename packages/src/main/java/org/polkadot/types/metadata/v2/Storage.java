@@ -110,8 +110,8 @@ public interface Storage {
      * @name MetadataModule
      * @description The definition of a storage function
      */
-    class MetadataStorage extends Struct {
-        public MetadataStorage(Object value) {
+    class MetadataStorageV2 extends Struct {
+        public MetadataStorageV2(Object value) {
             super(new Types.ConstructorDef()
                             .add("name", Text.class)
                             .add("modifier", MetadataStorageModifier.class)

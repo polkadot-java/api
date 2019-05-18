@@ -43,6 +43,35 @@ public interface Modules {
                             .add("documentation", Vector.with(TypesUtils.getConstructorCodec(Text.class)))
                     , value);
         }
+
+
+        /**
+         * @description The [[FunctionArgumentMetadata]] for arguments
+         */
+        public Vector<FunctionArgumentMetadata> getArguments() {
+            return this.getField("arguments");
+        }
+
+        /**
+         * @description The [[Text]] documentation
+         */
+        public Vector<Text> getDocumentation() {
+            return this.getField("documentation");
+        }
+
+        /**
+         * @description The `[sectionIndex, methodIndex]` call id
+         */
+        public U16 getId() {
+            return this.getField("id");
+        }
+
+        /**
+         * @description The call name
+         */
+        public Text getName() {
+            return this.getField("name");
+        }
     }
 
     class CallMetadata extends Struct {
@@ -52,6 +81,21 @@ public interface Modules {
                             .add("functions", Vector.with(TypesUtils.getConstructorCodec(FunctionMetadata.class)))
                     , value);
         }
+
+
+        /**
+         * @description The functions available as [[FunctionMetadata]]
+         */
+        public Vector<FunctionMetadata> getFunctions() {
+            return this.getField("functions");
+        }
+
+        /**
+         * @description The section name
+         */
+        public Text getName() {
+            return this.getField("name");
+        }
     }
 
     class ModuleMetadata extends Struct {
@@ -60,6 +104,21 @@ public interface Modules {
                             .add("name", Text.class)
                             .add("call", CallMetadata.class)
                     , value);
+        }
+
+
+        /**
+         * @description The calls as [[CallMetadata]]
+         */
+        public CallMetadata getCall() {
+            return this.getField("call");
+        }
+
+        /**
+         * @description The name
+         */
+        public Text getName() {
+            return this.getField("name");
         }
     }
 
@@ -113,7 +172,7 @@ public interface Modules {
     }
 
     //export class StorageFunctionType extends EnumType<PlainType | MapType> {
-    class StorageFunctionType extends EnumType<MapType> {
+    class StorageFunctionType extends EnumType {
         public StorageFunctionType(Object value, int index) {
             super(new Types.ConstructorDef()
                             .add("PlainType", PlainType.class)
@@ -142,7 +201,7 @@ public interface Modules {
         /**
          * @description The value as a [[Type]] value
          */
-        //TODO 2019-05-08 18:19 cast error
+        //TODO 2019-05-08 1819 cast error
         public PlainType asType() {
             return (PlainType) this.value();
         }
@@ -165,11 +224,11 @@ public interface Modules {
 
     class StorageFunctionMetadataValue {
         /**
-         * name: string | Text,
-         * modifier: StorageFunctionModifier | AnyNumber,
-         * type: StorageFunctionType,
-         * default: Bytes,
-         * documentation: Vector<Text> | Array<string>
+         * name string | Text,
+         * modifier StorageFunctionModifier | AnyNumber,
+         * type StorageFunctionType,
+         * default Bytes,
+         * documentation Vector<Text> | Array<string>
          */
 
         String name;
@@ -181,7 +240,7 @@ public interface Modules {
     }
 
     class StorageFunctionMetadata extends Struct {
-        //  constructor (value?: StorageFunctionMetadataValue | Uint8Array) {
+        //  constructor (value? StorageFunctionMetadataValue | Uint8Array) {
         public StorageFunctionMetadata(Object value) {
             super(new Types.ConstructorDef()
                             .add("name", Text.class)
@@ -208,7 +267,7 @@ public interface Modules {
             return this.getField("default");
         }
 
-        public Vector<Text> getDocumentation(){
+        public Vector<Text> getDocumentation() {
             return this.getField("documentation");
         }
     }
@@ -239,7 +298,7 @@ public interface Modules {
                     , value);
         }
 
-        public ModuleMetadata getModule(){
+        public ModuleMetadata getModule() {
             return this.getField("module");
         }
 

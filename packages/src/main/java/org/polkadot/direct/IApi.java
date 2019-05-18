@@ -4,7 +4,7 @@ import org.polkadot.api.ApiBase;
 import org.polkadot.common.EventEmitter;
 import org.polkadot.rpc.provider.IProvider;
 
-public interface IApi<C, S> {
+public interface IApi<C, S extends IModule> {
 
     //genesisHash: Hash;
     //hasSubscriptions: boolean;
@@ -22,7 +22,7 @@ public interface IApi<C, S> {
 
     IModule derive();
 
-    IModule query();
+    S query();
 
     IModule rpc();
 

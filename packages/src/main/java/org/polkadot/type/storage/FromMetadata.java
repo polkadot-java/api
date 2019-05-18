@@ -7,6 +7,7 @@ import org.polkadot.utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Extend a storage object with the storage modules & module functions present
@@ -49,8 +50,13 @@ public class FromMetadata {
             }
 
             @Override
+            public Set<String> sectionNames() {
+                return modules.keySet();
+            }
+
+            @Override
             public Types.ModuleStorage substrate() {
-                return null;
+                return Substrate.substrate;
             }
         };
     }

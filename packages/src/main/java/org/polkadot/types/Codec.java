@@ -22,8 +22,9 @@ public interface Codec {
 
     //TODO 2019-05-07 18:27 start check
     //public static Types.ConstructorCodec<? extends  Codec> builder();
-    default Types.ConstructorCodec getBuilder() {
-        return TypesUtils.getConstructorCodec(this.getClass());
+    static Types.ConstructorCodec getConstructorCodec() {
+        //return TypesUtils.getConstructorCodec(Thread.currentThread().getStackTrace()[1].getClassName());
+        return null;
     }
 
 }
