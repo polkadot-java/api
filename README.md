@@ -19,6 +19,23 @@ The API is split up into a number of internal packages -
 - [@polkadot/type](packages/src/main/java/org/polkadot/type/) Basic types such as extrinsics and storage.
 - [@polkadot/types](packages/src/main/java/org/polkadot/types/) Codecs for all Polkadot primitives.
 
+## Integrate the API into your projects
+
+Currently the library is under active development, the best way to use the library is to link to the source code directly.  
+
+To link to the source code directly,
+
+1. `git clone https://github.com/polkadot-java/api.git`
+2. import api gradle project to your workspace.
+
+Or you can build the library with Gradle then link to the JAR.
+
+1. `git clone https://github.com/polkadot-java/api.git`
+2. `cd root-folder-of-polkadot-java`
+3. `gradle build`
+4. Get the JARs in folder `build/libs/`
+5. Add the JARs into your projects.
+
 ## How to run examples
 
 1. Install substrate local node:  
