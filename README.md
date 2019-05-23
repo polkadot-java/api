@@ -60,9 +60,6 @@ Retrieval of chain data -- 100%
 Query of state -- 100%  
 Methods to retrieve system info -- 100%  
  
-B.balances, session, demoracacy, staking, consensus and other functions
-corresponding to Storage Extrinsics Events -- 100%  
-
 C.timestamp function corresponding to Storage, Extrinsics. -- 100%  
 
 D.type, including Primitive types, Substrate types, Codec types, RPC types,
