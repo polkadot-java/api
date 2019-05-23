@@ -61,7 +61,7 @@ Query of state -- 100%
 Methods to retrieve system info -- 100%  
  
 B.balances, session, demoracacy, staking, consensus and other functions
-corresponding to Storage Extrinsics Events -- 100%  
+corresponding to Storage Extrinsics Events -- 50%  
 
 C.timestamp function corresponding to Storage, Extrinsics. -- 100%  
 
