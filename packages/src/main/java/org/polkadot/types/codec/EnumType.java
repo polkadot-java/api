@@ -166,7 +166,7 @@ public class EnumType<T> extends Base<Codec> implements Codec {
     }
 
     /**
-     * @description Returns the number representation for the value
+     * Returns the number representation for the value
      */
     public int toNumber() {
         return this.index;
@@ -174,44 +174,59 @@ public class EnumType<T> extends Base<Codec> implements Codec {
 
 
     /**
-     * @description The value of the enum
+     * The value of the enum
      */
     public Codec value() {
         return this.raw;
     }
 
     /**
-     * @description The name of the type this enum value represents
+     * The name of the type this enum value represents
      */
     public String getType() {
         return this.def.getNames().get(this.index);
     }
 
+  /**
+   * The index of the metadata value
+   */
     public int index() {
         return this.index;
     }
 
     /**
-     * @description Checks if the Enum points to a [[Null]] type (deprecated, use isNone)
+     * Checks if the Enum points to a [[Null]] type (deprecated, use isNone)
      */
     public boolean isNull() {
         return this.raw instanceof Null;
     }
 
+  /**
+   * The length of the value when encoded as a Uint8Array
+   */
     @Override
     public int getEncodedLength() {
         return 1 + this.raw.getEncodedLength();
     }
 
+  /**
+   * Checks if the value is an empty value
+   */
     @Override
     public boolean isEmpty() {
         return this.raw.isEmpty();
     }
 
+  /**
+   * Checks if the Enum points to a [[Null]] type
+   */
     public boolean isNone() {
         return this.isNull();
     }
 
+  /**
+   * Compares the value of the input to see if there is a match
+   */
     @Override
     public boolean eq(Object other) {
 
@@ -225,11 +240,17 @@ public class EnumType<T> extends Base<Codec> implements Codec {
         return this.value().eq(other);
     }
 
+  /**
+   * Returns a hex string representation of the value
+   */
     @Override
     public String toHex() {
         return Utils.u8aToHex(this.toU8a());
     }
 
+  /**
+   * Converts the Object to JSON, typically used for RPC transfers
+   */
     @Override
     public Object toJson() {
         JSONObject jsonObject = new JSONObject();
@@ -238,6 +259,9 @@ public class EnumType<T> extends Base<Codec> implements Codec {
         return jsonObject;
     }
 
+  /**
+   * Returns the string representation of the value
+   */
     @Override
     public String toString() {
         return this.isNull()
@@ -245,6 +269,10 @@ public class EnumType<T> extends Base<Codec> implements Codec {
                 : JSON.toJSONString(this.toJson());
     }
 
+  /**
+   * Encodes the value as a Uint8Array as per the parity-codec specifications
+   * @param isBare true when the value has none of the type-specific prefixes (internal)
+   */
     @Override
     public byte[] toU8a(boolean isBare) {
         Integer index = this.indexes.get(this.index);

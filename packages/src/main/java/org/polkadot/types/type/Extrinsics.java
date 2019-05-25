@@ -5,7 +5,7 @@ import org.polkadot.types.codec.Vector;
 
 /**
  * @name Extrinsics
- * @description A [[Vector]] of [[Extrinsic]]
+ * A [[Vector]] of [[Extrinsic]]
  */
 public class Extrinsics extends Vector<Extrinsic> {
     public Extrinsics(Object value) {

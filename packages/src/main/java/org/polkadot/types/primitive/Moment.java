@@ -10,7 +10,7 @@ import java.util.Date;
 
 /**
  * @name Moment
- * @description A wrapper around seconds/timestamps. Internally the representation only has
+ * A wrapper around seconds/timestamps. Internally the representation only has
  * second precicion (aligning with Rust), so any numbers passed an/out are always
  * per-second. For any encoding/decoding the 1000 multiplier would be applied to
  * get it in line with JavaScript formats. It extends the base JS `Date` object
@@ -47,7 +47,7 @@ public class Moment extends Date implements Codec {
 
 
     /**
-     * @description The length of the value when encoded as a Uint8Array
+     * The length of the value when encoded as a Uint8Array
      */
     @Override
     public int getEncodedLength() {
@@ -55,7 +55,7 @@ public class Moment extends Date implements Codec {
     }
 
     /**
-     * @description Checks if the value is an empty value
+     * Checks if the value is an empty value
      */
     @Override
     public boolean isEmpty() {
@@ -63,7 +63,7 @@ public class Moment extends Date implements Codec {
     }
 
     /**
-     * @description Compares the value of the input to see if there is a match
+     * Compares the value of the input to see if there is a match
      */
     @Override
     public boolean eq(Object other) {
@@ -72,7 +72,7 @@ public class Moment extends Date implements Codec {
 
 
     /**
-     * @description Returns the number of bits in the value
+     * Returns the number of bits in the value
      */
     public int bitLength() {
         return BITLENGTH;
@@ -80,14 +80,14 @@ public class Moment extends Date implements Codec {
 
 
     /**
-     * @description Returns the BN representation of the timestamp
+     * Returns the BN representation of the timestamp
      */
     public BigInteger toBn() {
         return BigInteger.valueOf(this.toNumber());
     }
 
     /**
-     * @description Returns a hex string representation of the value
+     * Returns a hex string representation of the value
      */
     @Override
     public String toHex() {
@@ -95,7 +95,7 @@ public class Moment extends Date implements Codec {
     }
 
     /**
-     * @description Converts the Object to JSON, typically used for RPC transfers
+     * Converts the Object to JSON, typically used for RPC transfers
      */
     @Override
     public Object toJson() {
@@ -104,7 +104,7 @@ public class Moment extends Date implements Codec {
 
 
     /**
-     * @description Returns the number representation for the timestamp
+     * Returns the number representation for the timestamp
      */
     public long toNumber() {
         return (long) Math.ceil(this.getTime() / 1000);
@@ -112,7 +112,7 @@ public class Moment extends Date implements Codec {
 
 
     /**
-     * @description Returns the string representation of the value
+     * Returns the string representation of the value
      */
     @Override
     public String toString() {
@@ -122,7 +122,7 @@ public class Moment extends Date implements Codec {
 
     /**
      * @param isBare true when the value has none of the type-specific prefixes (internal)
-     * @description Encodes the value as a Uint8Array as per the parity-codec specifications
+     * Encodes the value as a Uint8Array as per the parity-codec specifications
      */
     @Override
     public byte[] toU8a(boolean isBare) {
@@ -131,7 +131,7 @@ public class Moment extends Date implements Codec {
 
     /**
      * @name MomentOf
-     * @description The Substrate MomentOf representation as a [[Moment]].
+     * The Substrate MomentOf representation as a [[Moment]].
      */
     public static class MomentOf extends Moment {
         public MomentOf(Object value) {

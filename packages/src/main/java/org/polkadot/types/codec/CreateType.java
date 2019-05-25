@@ -108,7 +108,7 @@ public class CreateType {
         //assert(!sDepth && !tDepth && !vDepth, `Invalid defintion (missing terminators) found in ${type}`);
 
         // the final leg of the journey
-        result.add(type.substring(start, type.length() - start).trim());
+        result.add(type.substring(start, type.length()).trim());
         return result;
     }
 

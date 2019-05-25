@@ -32,6 +32,9 @@ public class U8a implements Codec {
         return Utils.u8aToU8a(value);
     }
 
+  /**
+   * The length of the value when encoded as a Uint8Array
+   */
     @Override
     public int getEncodedLength() {
         return this.raw.length;
@@ -39,7 +42,7 @@ public class U8a implements Codec {
 
 
     /**
-     * @description Returns true if the type wraps an empty/default all-0 value
+     * Returns true if the type wraps an empty/default all-0 value
      */
     @Override
     public boolean isEmpty() {
@@ -55,10 +58,16 @@ public class U8a implements Codec {
         return true;
     }
 
+  /**
+   * The length of the value
+   */
     public int length() {
         return this.raw.length;
     }
 
+  /**
+   * Compares the value of the input to see if there is a match
+   */
     @Override
     public boolean eq(Object other) {
         if (other instanceof U8a) {
@@ -70,23 +79,32 @@ public class U8a implements Codec {
     /**
      * @param begin The position to start at
      * @param end   The position to end at
-     * @description Create a new subarray from the actual buffer. This is needed for compat reasons since a new Uint8Array gets returned here
+     * Create a new subarray from the actual buffer. This is needed for compat reasons since a new Uint8Array gets returned here
      */
     public U8a subarray(int begin, int end) {
         byte[] subarray = ArrayUtils.subarray(this.raw, begin, end);
         return new U8a(subarray);
     }
 
+  /**
+   * Returns a hex string representation of the value
+   */
     @Override
     public String toHex() {
         return Utils.u8aToHex(this.raw);
     }
 
+  /**
+   * Converts the Object to JSON, typically used for RPC transfers
+   */
     @Override
     public Object toJson() {
         return this.toHex();
     }
 
+  /**
+   * Returns the string representation of the value
+   */
     @Override
     public String toString() {
         return this.toHex();
@@ -94,7 +112,7 @@ public class U8a implements Codec {
 
     /**
      * @param isBare true when the value has none of the type-specific prefixes (internal)
-     * @description Encodes the value as a Uint8Array as per the parity-codec specifications
+     * Encodes the value as a Uint8Array as per the parity-codec specifications
      */
     @Override
     public byte[] toU8a(boolean isBare) {

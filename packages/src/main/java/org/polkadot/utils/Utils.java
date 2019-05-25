@@ -10,6 +10,7 @@ import org.polkadot.types.codec.CodecUtils;
 import org.polkadot.types.codec.Compact;
 import org.polkadot.types.codec.Option;
 import org.polkadot.types.codec.U8a;
+import org.polkadot.types.type.ExtrinsicSignature;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -42,6 +43,9 @@ public class Utils {
     }
 
     public static boolean isHex(Object value, int bitLength, boolean ignoreLength) {
+        if (value == null) {
+            return false;
+        }
         //CharSequence value = _value.toString();
         boolean isValidHex = value.equals("0x") || (value instanceof String && Pattern.matches(HEX_REGEX, (CharSequence) value));
 
@@ -209,7 +213,11 @@ public class Utils {
             rawValue = reverse.toString();
         }
 
-        BigInteger bigInteger = new BigInteger(rawValue, 16);
+        BigInteger bigInteger = BigInteger.ZERO;
+        if (rawValue.length() > 0){
+            bigInteger = new BigInteger(rawValue, 16);
+        }
+        //BigInteger bigInteger = new BigInteger(rawValue, 16);
 
         if (isNegative) {
             //TODO 2019-05-08 23:04
@@ -463,7 +471,12 @@ public class Utils {
   return [offset, u8aToBn(input.subarray(1, offset), true)];
         * */
         byte[] input = u8aToU8a(_input);
-        int flag = UnsignedBytes.toInt(input[0]) & 0b11;
+        int flag;
+        if (input.length == 0) {
+            return Pair.of(1, new BigInteger("0").shiftRight(2));
+        } else {
+            flag = UnsignedBytes.toInt(input[0]) & 0b11;
+        }
 
         if (flag == 0b00) {
             //shift right
@@ -553,7 +566,7 @@ public class Utils {
             String left = u8aToHex(ArrayUtils.subarray(value, 0, halfLength), -1, isPrefixed);
             String right = u8aToHex(ArrayUtils.subarray(value, value.length - halfLength, value.length), -1, false);
 
-            return left + "…" + right;
+            return left + "..." + right;
         }
         // based on comments in https://stackoverflow.com/questions/40031688/javascript-arraybuffer-to-hex and
         // implementation in http://jsben.ch/Vjx2V - optimisation here suggests that a forEach loop is faster
@@ -769,6 +782,11 @@ public class Utils {
     }
 
     public static boolean isContainer(Object object) {
+        if (object instanceof ExtrinsicSignature) {
+            return false;
+        }
+
+
         if (object instanceof Collection
                 || object instanceof Map) {
             return true;
@@ -803,5 +821,99 @@ public class Utils {
 
     public static String stringCamelCase(String input) {
         return CaseUtils.toCamelCase(input, false, '-', '_', ' ');
+    }
+
+
+    /**
+     * @name u8aFixLength
+     * @summary Shifts a Uint8Array to a specific bitLength
+     * @description Returns a uint8Array with the specified number of bits contained in the return value. (If bitLength is -1, length checking is not done). Values with more bits are trimmed to the specified length.
+     * @example <BR>
+     * <p>
+     * ```javascript
+     * import { u8aFixLength } from '@polkadot/util';
+     * <p>
+     * u8aFixLength('0x12') // => 0x12
+     * u8aFixLength('0x12', 16) // => 0x0012
+     * u8aFixLength('0x1234', 8) // => 0x12
+     * ```
+     */
+    //  export default function u8aFixLength (value: Uint8Array, bitLength: number = -1, atStart: boolean = false): Uint8Array {
+    public static byte[] u8aFixLength(byte[] value, int bitLength, boolean atStart) {
+        int byteLength = (int) Math.ceil(bitLength / 8f);
+
+        if (bitLength == -1 || value.length == byteLength) {
+            return value;
+        }
+
+        if (value.length > byteLength) {
+            return ArrayUtils.subarray(value, 0, byteLength);
+        }
+
+        byte[] result = new byte[byteLength];
+
+        if (atStart) {
+            System.arraycopy(value, 0, result, 0, value.length);
+        } else {
+            System.arraycopy(value, 0, result, byteLength - value.length, value.length);
+        }
+        return result;
+    }
+
+    public static boolean u8aStrEq(byte[] u8a1, byte[] u8a2) {
+        return u8a1 != null
+                && u8a2 != null
+                && Arrays.toString(u8a1).equals(Arrays.toString(u8a2));
+    }
+
+
+    /**
+     * @name randomAsU8a
+     * @summary Creates a Uint8Array filled with random bytes.
+     * @description Returns a `Uint8Array` with the specified (optional) length filled with random bytes.
+     * @example <BR>
+     * <p>
+     * ```javascript
+     * import { randomAsU8a } from '@polkadot/util-crypto';
+     * <p>
+     * randomAsU8a(); // => Uint8Array([...])
+     * ```
+     */
+    //export default function randomAsU8a (length: number = 32): Uint8Array {
+    //    return nacl.randomBytes(length);
+    //}
+    public static byte[] randomAsU8a() {
+        return randomAsU8a(32);
+    }
+
+
+    public static byte[] randomAsU8a(int length) {
+//TODO 2019-05-20 08:58 nacl.randomBytes(length);
+        throw new UnsupportedOperationException();
+    }
+
+
+    /**
+     * @name compactStripLength
+     * @description Removes the length prefix, returning both the total length (including the value + compact encoding) and the decoded value with the correct length
+     * @example <BR>
+     * <p>
+     * ```javascript
+     * import { compactStripLength } from '@polkadot/util';
+     * <p>
+     * console.log(compactStripLength(new Uint8Array([2 << 2, 0xde, 0xad]))); // [2, Uint8Array[0xde, 0xad]]
+     * ```
+     */
+    //  export default function compactStripLength (input: Uint8Array, bitLength: BitLength = DEFAULT_BITLENGTH): [number, Uint8Array] {
+    public static Pair<Integer, byte[]> compactStripLength(byte[] input, int bitLength) {
+        Pair<Integer, BigInteger> pair = compactFromU8a(input, bitLength);
+        Integer offset = pair.getLeft();
+        int length = pair.getRight().intValue();
+        int total = offset + length;
+        return Pair.of(total, ArrayUtils.subarray(input, offset, total));
+    }
+
+    public static Pair<Integer, byte[]> compactStripLength(byte[] input) {
+        return compactStripLength(input, 32);
     }
 }

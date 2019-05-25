@@ -8,7 +8,7 @@ import org.polkadot.types.type.Justification;
 
 /**
  * @name SignedBlock
- * @description A [[Block]] that has been signed and contains a [[Justification]]
+ * A [[Block]] that has been signed and contains a [[Justification]]
  */
 public class SignedBlock extends Struct {
     public static class SignedBlockValue {
@@ -26,21 +26,21 @@ public class SignedBlock extends Struct {
 
 
     /**
-     * @description The wrapped [[Block]]
+     * The wrapped [[Block]]
      */
     public Block getBlock() {
         return this.getField("block");
     }
 
     /**
-     * @description Block/header [[Hash]]
+     * Block/header [[Hash]]
      */
     public Hash getHash() {
         return this.getBlock().getHash();
     }
 
     /**
-     * @description The wrapped [[Justification]]
+     * The wrapped [[Justification]]
      */
     public Justification getJustification() {
         return this.getField("justification");

@@ -11,10 +11,10 @@ public class ExecutorsManager {
     public static final ExecutorService battle = Executors.newFixedThreadPool(CORE_COUNT << 1, new NamedThreadFactory("Battle-Executor"));
 
     /**
-     * 提交一个任务给线程池
+     * Submit a task to the thread pool
      *
-     * @param r 任务对象
-     * @return future对象
+     * @param r task object
+     * @return future object
      */
     public static Future<?> execute(Runnable r) {
         return commonExecutor.submit(r);
@@ -25,12 +25,12 @@ public class ExecutorsManager {
     }
 
     /**
-     * 一段时间后执行一个任务
+     * Execute a task after some time
      *
-     * @param r     任务对象
-     * @param delay 延迟时间
-     * @param tu    时间单位
-     * @return future对象
+     * @param r     task object
+     * @param delay delay time
+     * @param tu    time unit
+     * @return future object
      */
     public static ScheduledFuture<?> schedule(Runnable r, long delay, TimeUnit tu) {
         return commonScheduleExecutor.schedule(r, delay, tu);

@@ -18,14 +18,14 @@ public interface Calls {
         }
 
         /**
-         * @description The argument name
+         * The argument name
          */
         public Text getName() {
             return this.getField("name");
         }
 
         /**
-         * @description The [[Type]]
+         * The [[Type]]
          */
         public Type getType() {
             return this.getField("type");
@@ -35,7 +35,7 @@ public interface Calls {
 
     /**
      * @name MetadataCall
-     * @description The definition of a call
+     * The definition of a call
      */
     class MetadataCall extends Struct {
         public MetadataCall(Object value) {
@@ -49,28 +49,28 @@ public interface Calls {
 
 
         /**
-         * @description The [[MetadataCallArg]] for arguments
+         * The [[MetadataCallArg]] for arguments
          */
         public Vector<MetadataCallArg> getArgs() {
             return this.getField("args");
         }
 
         /**
-         * @description The [[Text]] documentation
+         * The [[Text]] documentation
          */
         public Vector<Text> getDocs() {
             return this.getField("docs");
         }
 
         // /**
-        //  * @description The call function id
+        //  * The call function id
         //  */
         // get id () u16 {
         //   return this.getField("id") as u16;
         // }
 
         /**
-         * @description The call name
+         * The call name
          */
         public Text getName() {
             return this.getField("name");

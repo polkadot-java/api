@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 /**
  * @name MetadataV0
- * @description The runtime metadata as a decoded structure
+ * The runtime metadata as a decoded structure
  */
 public class MetadataV0 extends Struct implements MetadataInterface {
 
@@ -68,14 +68,14 @@ public class MetadataV0 extends Struct implements MetadataInterface {
     }
 
     /**
-     * @description Wrapped [[OuterDispatchCall]]
+     * Wrapped [[OuterDispatchCall]]
      */
     public Vector<Calls.OuterDispatchCall> getCalls() {
         return ((Calls.OuterDispatchMetadata) this.getField("outerDispatch")).getField("calls");
     }
 
     /**
-     * @description Wrapped [[OuterEventMetadataEvent]]
+     * Wrapped [[OuterEventMetadataEvent]]
      */
     public Vector<Events.OuterEventMetadataEvent> getEvents() {
         return ((Events.OuterEventMetadata) this.getField("outerEvent")).getField("events");
@@ -83,7 +83,7 @@ public class MetadataV0 extends Struct implements MetadataInterface {
 
 
     /**
-     * @description Wrapped [[RuntimeModuleMetadata]]
+     * Wrapped [[RuntimeModuleMetadata]]
      */
     public Vector<Modules.RuntimeModuleMetadata> getModules() {
         return this.getField("modules");
@@ -133,7 +133,7 @@ public class MetadataV0 extends Struct implements MetadataInterface {
     }
 
     /**
-     * @description Helper to retrieve a list of all type that are found, sorted and de-deuplicated
+     * Helper to retrieve a list of all type that are found, sorted and de-deuplicated
      */
     @Override
     public List<String> getUniqTypes(boolean throwError) {

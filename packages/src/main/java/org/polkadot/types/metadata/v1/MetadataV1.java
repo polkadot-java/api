@@ -20,7 +20,7 @@ public class MetadataV1 extends Struct implements Types.MetadataInterface {
 
     /**
      * @name MetadataModule
-     * @description The definition of a module in the system
+     * The definition of a module in the system
      */
     public static class MetadataModule extends Struct {
         public MetadataModule(Object value) {
@@ -35,35 +35,35 @@ public class MetadataV1 extends Struct implements Types.MetadataInterface {
 
 
         /**
-         * @description the module calls
+         * the module calls
          */
         public Option<Vector<Calls.MetadataCall>> getCalls() {
             return this.getField("calls");
         }
 
         /**
-         * @description the module events
+         * the module events
          */
         public Option<Vector<Events.MetadataEvent>> getEvents() {
             return this.getField("events");
         }
 
         /**
-         * @description the module name
+         * the module name
          */
         public Text getName() {
             return this.getField("name");
         }
 
         /**
-         * @description the module prefix
+         * the module prefix
          */
         public Text getPrefix() {
             return this.getField("prefix");
         }
 
         /**
-         * @description the associated module storage
+         * the associated module storage
          */
         public Option<Vector<MetadataStorageV1>> getStorage() {
             return this.getField("storage");
@@ -78,7 +78,7 @@ public class MetadataV1 extends Struct implements Types.MetadataInterface {
     }
 
     /**
-     * @description The associated modules for this structure
+     * The associated modules for this structure
      */
     Vector<MetadataModule> getModules() {
         return this.getField("modules");

@@ -5,7 +5,7 @@ import java.util.Objects;
 
 /**
  * @name ChainProperties
- * @description Wraps the properties retrieved from the chain via the `system.properties` RPC call.
+ * Wraps the properties retrieved from the chain via the `system.properties` RPC call.
  */
 public class ChainProperties extends Json {
 
@@ -15,7 +15,7 @@ public class ChainProperties extends Json {
     }
 
     /**
-     * @description The token decimals, if defined (de-facto standard only)
+     * The token decimals, if defined (de-facto standard only)
      */
     public Double getTokenDecimals() {
         Object tokenDecimals = this.get("tokenDecimals");
@@ -25,7 +25,7 @@ public class ChainProperties extends Json {
     }
 
     /**
-     * @description The token system, if defined (de-facto standard only)
+     * The token system, if defined (de-facto standard only)
      */
     public String getTokenSymbol() {
         return Objects.toString(this.get("tokenSymbol"), null);

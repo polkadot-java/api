@@ -4,7 +4,6 @@ import org.polkadot.types.type.Extrinsics;
 
 /**
  * @name PendingExtrinsics
- * @description
  * A list of pending [[Extrinsics]]
  */
 public class PendingExtrinsics extends Extrinsics {

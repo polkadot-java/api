@@ -10,18 +10,17 @@ import java.util.List;
 
 /**
  * @name StorageKey
- * @description A representation of a storage key (typically hashed) in the system. It can be
+ * A representation of a storage key (typically hashed) in the system. It can be
  * constructed by passing in a raw key or a StorageFunction with (optional) arguments.
  */
 public class StorageKey extends Bytes {
 
     public static abstract class StorageFunction implements IFunction<byte[]> {
-        @Override
         public abstract byte[] apply(Object... args);
 
-        Modules.StorageFunctionMetadata meta;
-        String method;
-        String section;
+        protected Modules.StorageFunctionMetadata meta;
+        protected String method;
+        protected String section;
 
         public abstract Object toJson();
 
@@ -124,14 +123,14 @@ public class StorageKey extends Bytes {
 
 
     /**
-     * @description The metadata or `null` when not available
+     * The metadata or `null` when not available
      */
     public Modules.StorageFunctionMetadata getMeta() {
         return meta;
     }
 
     /**
-     * @description The output type, `null` when not available
+     * The output type, `null` when not available
      */
     public String getOutputType() {
         return outputType;

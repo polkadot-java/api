@@ -113,7 +113,8 @@ public class CreateFunction {
             metaValues.put("name", meta.getName());
             metaValues.put("modifier", new Modules.StorageFunctionModifier("Required"));
             metaValues.put("type", new Modules.StorageFunctionType(new Storage.PlainType(meta.getType().asMap().getKey()), 0));
-            metaValues.put("default", new Bytes(new byte[0]));
+            //metaValues.put("default", new Bytes(new byte[0]));
+            metaValues.put("default", new Bytes(null));
             metaValues.put("documentation", meta.getDocumentation());
 
             keyFn.setMeta(new Modules.StorageFunctionMetadata(metaValues));

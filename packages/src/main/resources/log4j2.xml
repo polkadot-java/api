@@ -19,7 +19,7 @@
   </Appenders>
 
   <Loggers>
-    <Root level="info"> <!-- 定义Root Logger，其日志级别为error -->
+    <Root level="debug"> <!-- 定义Root Logger，其日志级别为error -->
       <AppenderRef ref="Console"/> <!-- Root Logger的Appender引用上面定义的Console -->
       <AppenderRef ref="RollingFile"/>
     </Root>

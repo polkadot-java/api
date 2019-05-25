@@ -83,7 +83,7 @@ public class RuntimeVersion extends Struct implements Types.RuntimeVersionInterf
 
     /**
      * @name ApiId
-     * @description An identifier for the runtime API
+     * An identifier for the runtime API
      */
     public static class ApiId extends U8aFixed {
         public ApiId(Object value) {
@@ -100,7 +100,7 @@ public class RuntimeVersion extends Struct implements Types.RuntimeVersionInterf
 
     /**
      * @name RuntimeVersionApi
-     * @description A [[Tuple]] that conatins the [[ApiId]] and [[U32]] version
+     * A [[Tuple]] that conatins the [[ApiId]] and [[U32]] version
      */
     public static class RuntimeVersionApi extends Tuple {
         //  constructor (value?: RuntimeVersionApiValue | Uint8Array) {
@@ -113,14 +113,14 @@ public class RuntimeVersion extends Struct implements Types.RuntimeVersionInterf
 
 
         /**
-         * @description The [[ApiId]]
+         * The [[ApiId]]
          */
         public ApiId getId() {
             return this.getFiled(0);
         }
 
         /**
-         * @description The specific version as [[U32]]
+         * The specific version as [[U32]]
          */
         public U32 getVersion() {
             return this.getFiled(1);

@@ -10,7 +10,7 @@ import org.polkadot.types.type.KeyValue;
 
 /**
  * @name StorageChangeSet
- * @description A set of storage changes. It contains the [[Block]] hash and
+ * A set of storage changes. It contains the [[Block]] hash and
  * a list of the actual changes that took place as an array of
  * [[KeyValueOption]]
  */

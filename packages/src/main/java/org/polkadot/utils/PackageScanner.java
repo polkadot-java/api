@@ -33,7 +33,7 @@ public class PackageScanner {
             while (dirs.hasMoreElements()) {
                 URL url = dirs.nextElement();
                 String protocol = url.getProtocol();
-                // 如果是以文件形式保存在服务器上
+                // If it's file, storage on the server
                 if ("file".equals(protocol)) {
                     String filePath = URLDecoder.decode(url.getFile(), "UTF-8");
 
@@ -93,7 +93,7 @@ public class PackageScanner {
                 }
                 if (name.startsWith(packageDirName)) {
                     int idx = name.lastIndexOf('/');
-                    // 如果是以“/”结尾，是一个包
+                    // It's package if it's ended with /
                     if (idx != -1) {
                         packageName = name.substring(0, idx).replace('/', '.');
                     }

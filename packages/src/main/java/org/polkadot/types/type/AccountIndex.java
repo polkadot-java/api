@@ -2,7 +2,7 @@ package org.polkadot.types.type;
 
 import com.google.common.primitives.UnsignedBytes;
 import org.apache.commons.lang3.ArrayUtils;
-import org.polkadot.common.keyring.address.AddressUtils;
+import org.polkadot.common.keyring.address.AddressCodec;
 import org.polkadot.types.primitive.U32;
 import org.polkadot.utils.Utils;
 
@@ -10,7 +10,7 @@ import java.math.BigInteger;
 
 /**
  * @name AccountIndex
- * @description A wrapper around an AccountIndex, which is a shortened, variable-length encoding
+ * A wrapper around an AccountIndex, which is a shortened, variable-length encoding
  * for an Account. We extends from [[U32]] to provide the number-like properties.
  */
 public class AccountIndex extends U32 {
@@ -22,10 +22,10 @@ public class AccountIndex extends U32 {
     //public static final int PREFIX_8BYTE = 0xfe;
 
 
-    public static final byte PREFIX_1BYTE = UnsignedBytes.parseUnsignedByte("0xef");
-    public static final byte PREFIX_2BYTE = UnsignedBytes.parseUnsignedByte("0xfc");
-    public static final byte PREFIX_4BYTE = UnsignedBytes.parseUnsignedByte("0xfd");
-    public static final byte PREFIX_8BYTE = UnsignedBytes.parseUnsignedByte("0xfe");
+    public static final byte PREFIX_1BYTE = UnsignedBytes.checkedCast(0xef);
+    public static final byte PREFIX_2BYTE = UnsignedBytes.checkedCast(0xfc);
+    public static final byte PREFIX_4BYTE = UnsignedBytes.checkedCast(0xfd);
+    public static final byte PREFIX_8BYTE = UnsignedBytes.checkedCast(0xfe);
 
 
     public static final BigInteger MAX_1BYTE = BigInteger.valueOf(PREFIX_1BYTE);
@@ -47,7 +47,7 @@ public class AccountIndex extends U32 {
             return value;
         }
 
-        return decodeAccountIndex(AddressUtils.decodeAddress((byte[]) value));
+        return decodeAccountIndex(AddressCodec.decodeAddress((byte[]) value));
     }
 
     //static calcLength (_value: BN | number): number {
@@ -65,6 +65,9 @@ public class AccountIndex extends U32 {
     }
 
     static int[] readLength(byte[] input) {
+        if (input.length == 0) {
+            return new int[]{0, 1};
+        }
         int first = UnsignedBytes.toInt(input[0]);
         if (first == UnsignedBytes.toInt(PREFIX_2BYTE)) {
             return new int[]{1, 2};
@@ -90,6 +93,9 @@ public class AccountIndex extends U32 {
         }
     }
 
+    /**
+     * Compares the value of the input to see if there is a match
+     */
     @Override
     public boolean eq(Object other) {
         // shortcut for BN or Number, don't create an object
@@ -102,7 +108,7 @@ public class AccountIndex extends U32 {
     }
 
     /**
-     * @description Converts the Object to JSON, typically used for RPC transfers
+     * Converts the Object to JSON, typically used for RPC transfers
      */
     @Override
     public Object toJson() {
@@ -110,11 +116,11 @@ public class AccountIndex extends U32 {
     }
 
     /**
-     * @description Returns the string representation of the value
+     * Returns the string representation of the value
      */
     @Override
     public String toString() {
         int length = calcLength(this);
-        return AddressUtils.encodeAddress(ArrayUtils.subarray(this.toU8a(), 0, length));
+        return AddressCodec.encodeAddress(ArrayUtils.subarray(this.toU8a(), 0, length));
     }
 }

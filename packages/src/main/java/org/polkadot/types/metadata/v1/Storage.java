@@ -30,7 +30,7 @@ public interface Storage {
         }
 
         /**
-         * @description `true` if the storage entry is optional
+         * `true` if the storage entry is optional
          */
         public boolean isOptional() {
             return this.toNumber() == 0;
@@ -63,21 +63,21 @@ public interface Storage {
 
 
         /**
-         * @description The mapped key as [[Type]]
+         * The mapped key as [[Type]]
          */
         public Type getKey() {
             return this.getField("key");
         }
 
         /**
-         * @description The mapped value as [[Type]]
+         * The mapped value as [[Type]]
          */
         public Type getValue() {
             return this.getField("value");
         }
 
         /**
-         * @description Is this an enumerable linked map
+         * Is this an enumerable linked map
          */
         public Boolean isLinked() {
             return this.isLinked;
@@ -106,28 +106,28 @@ public interface Storage {
         }
 
         /**
-         * @description `true` if the storage entry is a map
+         * `true` if the storage entry is a map
          */
         public boolean isMap() {
             return this.toNumber() == 1;
         }
 
         /**
-         * @description The value as a mapped value
+         * The value as a mapped value
          */
         public MapType asMap() {
             return (MapType) this.value();
         }
 
         /**
-         * @description The value as a [[Type]] value
+         * The value as a [[Type]] value
          */
         public PlainType asType() {
             return (PlainType) this.value();
         }
 
         /**
-         * @description Returns the string representation of the value
+         * Returns the string representation of the value
          */
 
 
@@ -142,7 +142,7 @@ public interface Storage {
 
     /**
      * @name MetadataModule
-     * @description The definition of a storage function
+     * The definition of a storage function
      */
     class MetadataStorageV1 extends Struct {
         public MetadataStorageV1(Object value) {
@@ -156,35 +156,35 @@ public interface Storage {
         }
 
         /**
-         * @description The [[Text]] documentation
+         * The [[Text]] documentation
          */
         public Vector<Text> getDocs() {
             return this.getField("docs");
         }
 
         /**
-         * @description The [[Bytes]] fallback default
+         * The [[Bytes]] fallback default
          */
         public Bytes getFallback() {
             return this.getField("fallback");
         }
 
         /**
-         * @description The [[MetadataArgument]] for arguments
+         * The [[MetadataArgument]] for arguments
          */
         public MetadataStorageModifier getModifier() {
             return this.getField("modifier");
         }
 
         /**
-         * @description The call name
+         * The call name
          */
         public Text getName() {
             return this.getField("name");
         }
 
         /**
-         * @description The [[MetadataStorageType]]
+         * The [[MetadataStorageType]]
          */
         public MetadataStorageType getType() {
             return this.getField("type");

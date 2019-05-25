@@ -9,7 +9,7 @@ import org.polkadot.utils.CryptoUtils;
 
 /**
  * @name SignaturePayload
- * @description A signing payload for an [[Extrinsic]]. For the final encoding, it is variable length based
+ * A signing payload for an [[Extrinsic]]. For the final encoding, it is variable length based
  * on the conetnts included
  * <p>
  * 8 bytes The Transaction Index/Nonce as provided in the transaction itself.
@@ -45,7 +45,7 @@ public class SignaturePayload extends Struct {
     }
 
     /**
-     * @description `true` if the payload refers to a valid signature
+     * `true` if the payload refers to a valid signature
      */
     public boolean isSigned() {
         return this._signature != null && this._signature.length == 64;
@@ -53,35 +53,35 @@ public class SignaturePayload extends Struct {
 
 
     /**
-     * @description The block [[Hash]] the signature applies to (mortal/immortal)
+     * The block [[Hash]] the signature applies to (mortal/immortal)
      */
     public Hash getBlockHash() {
         return this.getField("blockHash");
     }
 
     /**
-     * @description The [[Method]] contained in the payload
+     * The [[Method]] contained in the payload
      */
     public Method getMethod() {
         return this.getField("method");
     }
 
     /**
-     * @description The [[ExtrinsicEra]]
+     * The [[ExtrinsicEra]]
      */
     public ExtrinsicEra getEra() {
         return this.getField("era");
     }
 
     /**
-     * @description The [[Nonce]]
+     * The [[Nonce]]
      */
     public Nonce getNonce() {
         return this.getField("nonce");
     }
 
     /**
-     * @description The raw signature as a `Uint8Array`
+     * The raw signature as a `Uint8Array`
      */
     public byte[] getSignature() {
         if (!this.isSigned()) {
@@ -93,7 +93,7 @@ public class SignaturePayload extends Struct {
 
 
     /**
-     * @description Sign the payload with the keypair
+     * Sign the payload with the keypair
      */
     public byte[] sign(KeyringPair signerPair, RuntimeVersion version) {
 

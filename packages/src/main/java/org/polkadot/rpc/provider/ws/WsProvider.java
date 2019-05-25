@@ -29,16 +29,13 @@ import java.util.regex.Pattern;
 /**
  * # @polkadot/rpc-provider/ws
  *
- * @name WsProviderDir
- * @description The WebSocket Provider allows sending requests using WebSocket to a WebSocket RPC server TCP port. Unlike the [[HttpProvider]], it does support subscriptions and allows listening to events such as new blocks or balance changes.
- * @example <BR>
- * <p>
- * ```javascript
- * import Api from '@polkadot/api/promise';
- * import WsProviderDir from '@polkadot/rpc-provider/ws';
- * <p>
- * const provider = new WsProviderDir('ws://127.0.0.1:9944');
- * const api = new Api(provider);
+ * WsProviderDir
+ *
+ * The WebSocket Provider allows sending requests using WebSocket to a WebSocket RPC server TCP port. Unlike the [[HttpProvider]], it does support subscriptions and allows listening to events such as new blocks or balance changes.
+ * **Example**
+ * ```java
+ * import org.polkadot.rpc.provider.ws.WsProviderDir;
+ * WsProviderDir provider = new WsProviderDir('ws://127.0.0.1:9944');
  * ```
  * @see [[HttpProvider]]
  */
@@ -106,10 +103,17 @@ public class WsProvider implements IWsProvider {
         this(Constants.WS_URL, true);
     }
 
+	/**
+	* @param endpoint    The endpoint url. Usually `ws://ip:9944` or `wss://ip:9944`
+	*/
     public WsProvider(String endpoint) {
         this(endpoint, true);
     }
 
+	/**
+	* @param endpoint    The endpoint url. Usually `ws://ip:9944` or `wss://ip:9944`
+	* @param autoConnect Whether to connect automatically or not.
+	*/
     public WsProvider(String endpoint, boolean autoConnect) {
 
         //assert(/^(wss|ws):\/\//.test(endpoint), `Endpoint should start with 'ws://', received '${endpoint}'`);
@@ -128,7 +132,7 @@ public class WsProvider implements IWsProvider {
 
     /**
      * @summary Manually connect
-     * @description The [[WsProviderDir]] connects automatically by default, however if you decided otherwise, you may
+     * The [[WsProviderDir]] connects automatically by default, however if you decided otherwise, you may
      * connect manually using this method.
      */
     @Override
@@ -273,7 +277,7 @@ public class WsProvider implements IWsProvider {
      * @param method       The RPC methods to execute
      * @param params       Encoded paramaters as appliucable for the method
      * @param subscription Subscription details (internally used)
-     * @summary Send JSON data using WebSockets to configured HTTP Endpoint or queue.
+     * Send JSON data using WebSockets to configured HTTP Endpoint or queue.
      */
     @Override
     public Promise<String> send(String method, List<Object> params, SubscriptionHandler subscription) {
@@ -337,7 +341,7 @@ public class WsProvider implements IWsProvider {
 
 
     /**
-     * @summary `true` when this provider supports subscriptions
+     * `true` when this provider supports subscriptions
      */
     @Override
     public boolean isHasSubscriptions() {
@@ -353,7 +357,7 @@ public class WsProvider implements IWsProvider {
     }
 
     /**
-     * @description Manually disconnect from the connection, clearing autoconnect logic
+     * Manually disconnect from the connection, clearing autoconnect logic
      */
     @Override
     public void disconnect() {
@@ -369,8 +373,8 @@ public class WsProvider implements IWsProvider {
 
 
     /**
-     * @return {boolean} true if connected
-     * @summary Whether the node is connected or not.
+     * @return true if connected
+     * Whether the node is connected or not.
      */
     @Override
     public boolean isConnected() {
@@ -380,7 +384,7 @@ public class WsProvider implements IWsProvider {
     /**
      * @param {ProviderInterface$Emitted} type Event
      * @param {ProviderInterface$EmitCb}  sub  Callback
-     * @summary Listens on events after having subscribed using the [[subscribe]] function.
+     * Listens on events after having subscribed using the [[subscribe]] function.
      */
     @Override
     public void on(ProviderInterfaceEmitted emitted, EventEmitter.EventListener cb) {
@@ -393,18 +397,16 @@ public class WsProvider implements IWsProvider {
      * @param {Array<any>}                 params   Parameters
      * @param {ProviderInterface$Callback} callback Callback
      * @return {Promise<number>}                     Promise resolving to the dd of the subscription you can use with [[unsubscribe]].
-     * @name subscribe
-     * @summary Allows subscribing to a specific event.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * const provider = new WsProviderDir('ws://127.0.0.1:9944');
-     * const rpc = new Rpc(provider);
-     * <p>
+     * subscribe
+     * Allows subscribing to a specific event.
+     * **Example**
+     * ```java
+     * WsProviderDir provider = new WsProviderDir('ws://127.0.0.1:9944');
+     * Rpc rpc = new Rpc(provider);
      * rpc.state.subscribeStorage([[storage.balances.freeBalance, <Address>]], (_, values) => {
-     * console.log(values)
+     * System.out.println(values)
      * }).then((subscriptionId) => {
-     * console.log('balance changes subscription id: ', subscriptionId)
+     * System.out.println('balance changes subscription id: ', subscriptionId)
      * })
      * ```
      */
@@ -414,7 +416,7 @@ public class WsProvider implements IWsProvider {
     }
 
     /**
-     * @summary Allows unsubscribing to subscriptions made with [[subscribe]].
+     * Allows unsubscribing to subscriptions made with [[subscribe]].
      */
     @Override
     public Promise<String> unsubscribe(String type, String method, int id) {

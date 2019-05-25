@@ -9,8 +9,8 @@ import org.polkadot.utils.Utils;
 import java.math.BigInteger;
 
 /**
- * @name Compact
- * @description A compact length-encoding codec wrapper. It performs the same function as Length, however
+ * Compact
+ * A compact length-encoding codec wrapper. It performs the same function as Length, however
  * differs in that it uses a variable number of bytes to do the actual encoding. This is mostly
  * used by other types to add length-prefixed encoding, or in the case of wrapped types, taking
  * a number and making the compact representation thereof
@@ -64,39 +64,87 @@ public class Compact extends Base<UInt> implements Codec {
     }
 
     /**
-     * @description Returns the BN representation of the number
+     * Returns the BN representation of the number
      */
     public BigInteger toBn() {
         return this.raw.toBn();
     }
 
+    /**
+     * The length of the value when encoded as a Uint8Array
+     */
     @Override
     public int getEncodedLength() {
-        return 0;
+        return this.toU8a().length;
     }
 
+    /**
+     * Checks if the value is an empty value
+     */
     @Override
     public boolean isEmpty() {
-        return false;
+        return this.raw.isEmpty();
     }
 
+
+    /**
+     * @description Returns the number of bits in the value
+     */
+    public int bitLength() {
+        return this.raw.bitLength();
+    }
+
+    /**
+     * Compares the value of the input to see if there is a match
+     */
     @Override
     public boolean eq(Object other) {
-        return false;
+
+        return this.raw.eq(
+                other instanceof Compact
+                        ? ((Compact) other).raw
+                        : other
+        );
     }
 
+    /**
+     * Returns a hex string representation of the value
+     */
     @Override
     public String toHex() {
-        return null;
+        return this.raw.toHex();
     }
 
+    /**
+     * Converts the Object to JSON, typically used for RPC transfers
+     */
     @Override
     public Object toJson() {
-        return null;
+        return this.raw.toJson();
     }
 
+    /**
+     * @description Returns the number representation for the value
+     */
+    public int toNumber() {
+        return this.raw.toNumber();
+    }
+
+    /**
+     * @description Returns the string representation of the value
+     */
+    @Override
+    public String toString() {
+        return this.raw.toString();
+    }
+
+    /**
+     * Encodes the value as a Uint8Array as per the parity-codec specifications
+     *
+     * @param isBare true when the value has none of the type-specific prefixes (internal)
+     */
     @Override
     public byte[] toU8a(boolean isBare) {
-        return new byte[0];
+        return Utils.compactToU8a(this.raw.toBn());
     }
 }

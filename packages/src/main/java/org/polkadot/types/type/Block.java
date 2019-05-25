@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @name Block
- * @description A block encoded with header and extrinsics
+ * A block encoded with header and extrinsics
  */
 public class Block extends Struct {
     public static class BlockValue {
@@ -42,14 +42,14 @@ public class Block extends Struct {
 
 
     /**
-     * @description Encodes a content [[Hash]] for the block
+     * Encodes a content [[Hash]] for the block
      */
     public Hash getcontentHash() {
         return new Hash(CryptoUtils.blake2AsU8a(this.toU8a(), 256));
     }
 
     /**
-     * @description The [[Extrinsics]] contained in the block
+     * The [[Extrinsics]] contained in the block
      */
     public Extrinsics getExtrinsics() {
         return this.getField("extrinsics");
@@ -57,14 +57,14 @@ public class Block extends Struct {
 
 
     /**
-     * @description Block/header [[Hash]]
+     * Block/header [[Hash]]
      */
     public Hash getHash() {
         return this.getHeader().getHash();
     }
 
     /**
-     * @description The [[Header]] of the block
+     * The [[Header]] of the block
      */
     public Header getHeader() {
         return this.getField("header");

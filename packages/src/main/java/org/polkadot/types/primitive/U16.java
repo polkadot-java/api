@@ -5,7 +5,7 @@ import org.polkadot.types.codec.UInt;
 
 /**
  * @name U16
- * @description An 16-bit unsigned integer
+ * An 16-bit unsigned integer
  */
 public class U16 extends UInt {
     public U16(Object value) {

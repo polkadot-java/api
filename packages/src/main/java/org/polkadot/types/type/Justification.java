@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  * @name Justification
- * @description A generic justification as a stream of [[Bytes]], this is specific per consensus implementation
+ * A generic justification as a stream of [[Bytes]], this is specific per consensus implementation
  */
 public class Justification extends Bytes {
     public Justification(Object value) {
@@ -34,7 +34,7 @@ public class Justification extends Bytes {
 
     /**
      * @name RhdJustification
-     * @description [[Justification]] for the Rhododendron consensus algorithm
+     * [[Justification]] for the Rhododendron consensus algorithm
      */
     public static class RhdJustification extends Struct {
 
@@ -56,21 +56,21 @@ public class Justification extends Bytes {
 
 
         /**
-         * @description The justification [[Hash]]
+         * The justification [[Hash]]
          */
         public Hash getHash() {
             return this.getField("hash");
         }
 
         /**
-         * @description The round this justification wraps as a [[U32]]
+         * The round this justification wraps as a [[U32]]
          */
         public U32 getRoundNumber() {
             return this.getField("roundNumber");
         }
 
         /**
-         * @description The [[BftAuthoritySignature]] array
+         * The [[BftAuthoritySignature]] array
          */
         public Vector<BftAuthoritySignature> getSignatures() {
             return this.getField("signatures");

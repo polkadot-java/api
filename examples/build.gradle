@@ -63,6 +63,7 @@ dependencies {
 // https://mvnrepository.com/artifact/org.jooq/joor-java-8
     compile group: 'org.jooq', name: 'joor-java-8', version: '0.9.11'
 
+    compile 'net.i2p.crypto:eddsa:0.3.0'
 
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
     compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.1'

@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * @name Json
- * @description Wraps the a JSON structure retrieve via RPC. It extends the standard JS Map with. While it
+ * Wraps the a JSON structure retrieve via RPC. It extends the standard JS Map with. While it
  * implements a Codec, it is limited in that it can only be used with input objects via RPC,
  * i.e. no hex decoding. Unlike a struct, this waps a JSON object with unknown keys
  * @noInheritDoc
@@ -31,7 +31,7 @@ public class Json extends JSONObject implements Codec {
     }
 
     /**
-     * @description Always 0, never encodes as a Uint8Array
+     * Always 0, never encodes as a Uint8Array
      */
     @Override
     public int getEncodedLength() {
@@ -39,7 +39,7 @@ public class Json extends JSONObject implements Codec {
     }
 
     /**
-     * @description Checks if the value is an empty value
+     * Checks if the value is an empty value
      */
     @Override
     public boolean isEmpty() {
@@ -48,7 +48,7 @@ public class Json extends JSONObject implements Codec {
     }
 
     /**
-     * @description Compares the value of the input to see if there is a match
+     * Compares the value of the input to see if there is a match
      */
     @Override
     public boolean eq(Object other) {
@@ -56,7 +56,7 @@ public class Json extends JSONObject implements Codec {
     }
 
     /**
-     * @description Unimplemented, will throw
+     * Unimplemented, will throw
      */
     @Override
     public String toHex() {
@@ -64,7 +64,7 @@ public class Json extends JSONObject implements Codec {
     }
 
     /**
-     * @description Converts the Object to JSON, typically used for RPC transfers
+     * Converts the Object to JSON, typically used for RPC transfers
      */
     @Override
     public Object toJson() {
@@ -72,7 +72,7 @@ public class Json extends JSONObject implements Codec {
     }
 
     /**
-     * @description Unimplemented, will throw
+     * Unimplemented, will throw
      */
     @Override
     public byte[] toU8a(boolean isBare) {

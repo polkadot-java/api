@@ -60,24 +60,39 @@ public class Option<T extends Codec> extends Base<T> implements Codec {
         return new Builder(type);
     }
 
+  /**
+   * The length of the value when encoded as a Uint8Array
+   */
     @Override
     public int getEncodedLength() {
         return 1 + this.raw.getEncodedLength();
     }
 
+  /**
+   * Checks if the Option has no value
+   */
     public boolean isNone() {
         return this.raw instanceof Null;
     }
 
+  /**
+   * Checks if the Option has a value
+   */
     public boolean isSome() {
         return !this.isNone();
     }
 
+  /**
+   * Checks if the Option has no value
+   */
     @Override
     public boolean isEmpty() {
         return this.isNone();
     }
 
+  /**
+   * Compares the value of the input to see if there is a match
+   */
     @Override
     public boolean eq(Object other) {
         if (other instanceof Option) {
@@ -86,22 +101,35 @@ public class Option<T extends Codec> extends Base<T> implements Codec {
         return this.getValue().eq(other);
     }
 
+  /**
+   * Returns a hex string representation of the value
+   */
     @Override
     public String toHex() {
         return Utils.u8aToHex(this.toU8a(false));
     }
 
+  /**
+   * Converts the Object to JSON, typically used for RPC transfers
+   */
     @Override
     public Object toJson() {
         return this.raw.toJson();
     }
 
 
+  /**
+   * Returns the string representation of the value
+   */
     @Override
     public String toString() {
         return this.raw.toString();
     }
 
+  /**
+   * Encodes the value as a Uint8Array as per the parity-codec specifications
+   * @param isBare true when the value has none of the type-specific prefixes (internal)
+   */
     @Override
     public byte[] toU8a(boolean isBare) {
         if (isBare) {
@@ -120,7 +148,7 @@ public class Option<T extends Codec> extends Base<T> implements Codec {
     }
 
     /**
-     * @description Returns the value that the Option represents (if available), throws if null
+     * Returns the value that the Option represents (if available), throws if null
      */
     public T unwrap() {
         if (this.isNone()) {
@@ -131,7 +159,7 @@ public class Option<T extends Codec> extends Base<T> implements Codec {
 
     /**
      * @param defaultValue The value to return if the option isNone
-     * @description Returns the value that the Option represents (if available) or defaultValue if none
+     * Returns the value that the Option represents (if available) or defaultValue if none
      */
     public <O> Object unwrapOr(O defaultValue) {
         return this.isSome()
@@ -140,7 +168,7 @@ public class Option<T extends Codec> extends Base<T> implements Codec {
     }
 
     /**
-     * @description The actual value for the Option
+     * The actual value for the Option
      */
     public Codec getValue() {
         return this.raw;

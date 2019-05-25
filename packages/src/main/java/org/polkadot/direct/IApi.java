@@ -1,6 +1,7 @@
 package org.polkadot.direct;
 
 import org.polkadot.api.ApiBase;
+import org.polkadot.api.Types;
 import org.polkadot.common.EventEmitter;
 import org.polkadot.rpc.provider.IProvider;
 
@@ -20,13 +21,13 @@ public interface IApi<C, S extends IModule> {
     //on: (type: ApiInterface$Events, handler: (...args: Array<any>) => any) => this;
     //once: (type: ApiInterface$Events, handler: (...args: Array<any>) => any) => this;
 
-    IModule derive();
+    Types.Derive derive();
 
     S query();
 
     IModule rpc();
 
-    IModule tx();
+    Types.SubmittableExtrinsics tx();
 
     ApiBase.ApiType getType();
 
