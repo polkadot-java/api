@@ -25,16 +25,4 @@ public interface AttestedCandidate {
 
     }
 
-    class EgressQueueRoot extends Tuple.with(
-
-    {
-        ParaId, Hash
-    })
-
-    {
-    }
-
-    class HeadData extends Bytes {
-    }
-
 }
