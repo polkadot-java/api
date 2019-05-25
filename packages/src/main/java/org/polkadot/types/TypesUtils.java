@@ -7,8 +7,10 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class TypesUtils {
 
@@ -65,8 +67,9 @@ public class TypesUtils {
 
                 if (constructor == null) {
                     if (!Null.class.isAssignableFrom(clazz)) {
-                        logger.error("can not find match constructor {}, {}, {}"
-                                , clazz, constructors, values.length);
+                        logger.error("can not find match constructor {}, {}, {}, {}"
+                                , clazz, constructors, values.length,
+                                Arrays.stream(values).map(v -> v.getClass().getSimpleName()).collect(Collectors.toList()));
                     }
                     constructor = constructors[0];
                 }
@@ -80,7 +83,15 @@ public class TypesUtils {
                 int parameterCount = constructor.getParameterCount();
                 Class<?>[] parameterTypes = constructor.getParameterTypes();
 
-                Object[] params = new Object[parameterCount];
+                Object[] params;
+                if (values != null && parameterCount > values.length) {
+                    params = new Object[parameterCount];
+                    for (int i = 0; i < values.length; i++) {
+                        params[i] = values[i];
+                    }
+                } else {
+                    params = values;
+                }
 //TODO 2019-05-10 17:27  append null
                 for (int i = 0; i < parameterTypes.length; i++) {
                     Class<?> parameterType = parameterTypes[i];
@@ -90,7 +101,7 @@ public class TypesUtils {
                 try {
                     Object o;
                     if (parameterCount > 0) {
-                        o = constructor.newInstance(values);
+                        o = constructor.newInstance(params);
                     } else {
                         o = constructor.newInstance();
                     }

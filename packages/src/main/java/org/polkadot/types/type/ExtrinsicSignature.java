@@ -7,6 +7,7 @@ import org.polkadot.types.codec.Struct;
 import org.polkadot.types.primitive.Method;
 import org.polkadot.types.primitive.U8;
 import org.polkadot.types.rpc.RuntimeVersion;
+import org.polkadot.utils.Utils;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 /**
  * @name ExtrinsicSignature
- * @description A container for the [[Signature]] associated with a specific [[Extrinsic]]
+ * A container for the [[Signature]] associated with a specific [[Extrinsic]]
  */
 public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignature {
 
@@ -29,7 +30,7 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
     //   64 bytes The Ed25519 signature of the Signing Payload
     //   8 bytes The Transaction Index of the signing account
     //   1/2 bytes The Transaction Era
-    public ExtrinsicSignature(byte[] value) {
+    public ExtrinsicSignature(Object value) {
         super(new Types.ConstructorDef()
                         .add("version", U8.class)
                         .add("signer", Address.class)
@@ -42,14 +43,21 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
     }
 
     //  static decodeExtrinsicSignature (value? Uint8Array) object | Uint8Array {
-    static Object decodeExtrinsicSignature(byte[] value) {
+    static Object decodeExtrinsicSignature(Object _value) {
         Map<String, Byte> ret = new HashMap<>();
-        if (value == null) {
+
+        if (_value == null) {
             ret.put("version", (byte) (BIT_VERSION | BIT_UNSIGNED));
             // we always explicitly set the unsigned version
             return ret;
         }
 
+        byte[] value = Utils.u8aToU8a(_value);
+        if (value == null) {
+            ret.put("version", (byte) (BIT_VERSION | BIT_UNSIGNED));
+            // we always explicitly set the unsigned version
+            return ret;
+        }
 
         byte version = value[0];
         ret.put("version", version);
@@ -79,28 +87,28 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
 
 
     /**
-     * @description The [[Nonce]] for the signature
+     * The [[Nonce]] for the signature
      */
     public Nonce getNonce() {
         return this.getField("nonce");
     }
 
     /**
-     * @description The actuall [[Signature]] hash
+     * The actuall [[Signature]] hash
      */
     public Signature getSignature() {
         return this.getField("signature");
     }
 
     /**
-     * @description The [[Address]] that signed
+     * The [[Address]] that signed
      */
     public Address getSigner() {
         return this.getField("signer");
     }
 
     /**
-     * @description The encoded version for the signature
+     * The encoded version for the signature
      */
     public int version() {
         // Version Information.
@@ -121,7 +129,7 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
 
 
     /**
-     * @description Adds a raw signature
+     * Adds a raw signature
      */
     //addSignature (_signer: Address | Uint8Array, _signature: Uint8Array, _nonce: AnyNumber, _era: Uint8Array = IMMORTAL_ERA): ExtrinsicSignature {
     ExtrinsicSignature addSignature(Object _signer, byte[] _signature, Object _nonce, byte[] _era) {
@@ -134,13 +142,13 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
 
 
     /**
-     * @description Generate a payload and pplies the signature from a keypair
+     * Generate a payload and pplies the signature from a keypair
      */
     //sign (method: Method, account: KeyringPair, { blockHash, era, nonce, version }: SignatureOptions): ExtrinsicSignature {
     ExtrinsicSignature sign(Method method, KeyringPair account, Types.SignatureOptions signatureOptions) {
 
 
-        Address signer = new Address(account.getPublicKey());
+        Address signer = new Address(account.publicKey());
 
         Map<String, Object> values = new LinkedHashMap<>();
         values.put("nonce", signatureOptions.getNonce());

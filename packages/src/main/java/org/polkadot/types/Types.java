@@ -1,5 +1,6 @@
 package org.polkadot.types;
 
+import org.polkadot.types.codec.U8a;
 import org.polkadot.types.metadata.v0.Modules;
 import org.polkadot.types.primitive.Method;
 
@@ -174,7 +175,7 @@ export type RegistryTypes = {
     }
 
     interface IExtrinsic extends IMethod {
-        IHash getHash();
+        U8a getHash();
 
         boolean isSigned();
 
@@ -187,7 +188,7 @@ export type RegistryTypes = {
         IExtrinsic addSignature(Object signer, byte[] signature, Object nonce, byte[] era);
 
         //sign(account:KeyringPair, options:SignatureOptions):IExtrinsic;
-        IExtrinsic sign(org.polkadot.common.keyring.Types.KeyringPair account, Types.SignatureOptions options) ;
+        IExtrinsic sign(org.polkadot.common.keyring.Types.KeyringPair account, Types.SignatureOptions options);
     }
 
     class SignatureOptions {

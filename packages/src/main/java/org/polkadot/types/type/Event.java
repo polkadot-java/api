@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 /**
  * @name Event
- * @description A representation of a system event. These are generated via the [[Metadata]] interfaces and
+ * A representation of a system event. These are generated via the [[Metadata]] interfaces and
  * specific to a specific Substrate runtime
  */
 public class Event extends Struct {
@@ -33,7 +33,7 @@ public class Event extends Struct {
 
     /**
      * @name EventData
-     * @description Wrapper for the actual data that forms part of an [[Event]]
+     * Wrapper for the actual data that forms part of an [[Event]]
      */
     public static class EventData extends Tuple {
         private Events.EventMetadata meta;
@@ -105,7 +105,7 @@ public class Event extends Struct {
 
     /**
      * @name EventIndex
-     * @description This follows the same approach as in [[Method]], we have the `[sectionIndex, methodIndex]` pairing
+     * This follows the same approach as in [[Method]], we have the `[sectionIndex, methodIndex]` pairing
      * that indicates the actual event fired
      */
     public static class EventIndex extends U8aFixed {
@@ -176,42 +176,42 @@ public class Event extends Struct {
 
 
     /**
-     * @description The wrapped [[EventData]]
+     * The wrapped [[EventData]]
      */
     public EventData getData() {
         return this.getField("data");
     }
 
     /**
-     * @description The [[EventIndex]], identifying the raw event
+     * The [[EventIndex]], identifying the raw event
      */
     public EventIndex getIndex() {
         return this.getField("index");
     }
 
     /**
-     * @description The [[EventMetadata]] with the documentation
+     * The [[EventMetadata]] with the documentation
      */
     public Events.EventMetadata getMeta() {
         return this.getData().meta;
     }
 
     /**
-     * @description The method string identifying the event
+     * The method string identifying the event
      */
     public String getMethod() {
         return this.getData().method;
     }
 
     /**
-     * @description The section string identifying the event
+     * The section string identifying the event
      */
     public String getSection() {
         return this.getData().section;
     }
 
     /**
-     * @description The [[TypeDef]] for the event
+     * The [[TypeDef]] for the event
      */
     public List<CreateType.TypeDef> getTypeDef() {
         return this.getData().typeDef;

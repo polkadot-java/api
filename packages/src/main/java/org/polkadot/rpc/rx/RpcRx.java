@@ -3,29 +3,46 @@ package org.polkadot.rpc.rx;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import org.polkadot.common.EventEmitter;
+import org.polkadot.direct.IRpcFunction;
 import org.polkadot.rpc.core.IRpc;
 import org.polkadot.rpc.core.RpcCore;
 import org.polkadot.rpc.provider.IProvider;
-import org.polkadot.rpc.rx.types.IRpcRx;
 
-import java.util.List;
-import java.util.function.Function;
-
-public class RpcRx implements IRpcRx {
+/**
+ * RpcRx
+ * The RxJS API is a wrapper around the API.
+ * It allows wrapping API components with observables using RxJS.
+ * <p>
+ * **Example**
+ * ```java
+ * import org.polkadot.rpc.rx.RpcRx;
+ * import org.polkadot.rpc.provider.wsWsProvider;
+ * <p>
+ * WsProvider provider = new WsProvider('http://127.0.0.1:9944');
+ * RpcRx api = new RpcRx(provider);
+ * ```
+ */
+public class RpcRx extends Types.RpcRxInterface {
 
     private RpcCore api;
     private EventEmitter eventEmitter;
     private BehaviorSubject<Boolean> isConnected;
 
-    protected RpcRxInterfaceSection author;
-    protected RpcRxInterfaceSection chain;
-    protected RpcRxInterfaceSection state;
-    protected RpcRxInterfaceSection system;
+    //protected RpcRxInterfaceSection author;
+    //protected RpcRxInterfaceSection chain;
+    //protected RpcRxInterfaceSection state;
+    //protected RpcRxInterfaceSection system;
 
+    /**
+     * @param provider An API provider using HTTP or WebSocket
+     */
     public RpcRx(IProvider provider) {
         this(new RpcCore(provider));
     }
 
+    /**
+     * @param rpc An API provider using HTTP or WebSocket
+     */
     public RpcRx(RpcCore rpc) {
         this.api = rpc;
         this.eventEmitter = new EventEmitter();
@@ -39,55 +56,59 @@ public class RpcRx implements IRpcRx {
         this.system = this.createInterface(this.api.system());
     }
 
-    private RpcRxInterfaceSection createInterface(IRpc.RpcInterfaceSection section) {
-        //TODO 2019-05-04 17:56
-        throw new UnsupportedOperationException();
-    }
-
     private void initEmitters(IProvider provider) {
         provider.on(IProvider.ProviderInterfaceEmitted.connected, value -> {
             RpcRx.this.isConnected.onNext(true);
-            RpcRx.this.emit(IProvider.ProviderInterfaceEmitted.connected, null);
+            RpcRx.this.emit(IProvider.ProviderInterfaceEmitted.connected);
         });
 
         provider.on(IProvider.ProviderInterfaceEmitted.disconnected, value -> {
             RpcRx.this.isConnected.onNext(false);
-            RpcRx.this.emit(IProvider.ProviderInterfaceEmitted.disconnected, null);
+            RpcRx.this.emit(IProvider.ProviderInterfaceEmitted.disconnected);
         });
 
     }
 
-    @Override
-    public RpcRxInterfaceSection author() {
-        return null;
-    }
-
-    @Override
-    public RpcRxInterfaceSection chain() {
-        return null;
-    }
-
-    @Override
-    public RpcRxInterfaceSection state() {
-        return null;
-    }
-
-    @Override
-    public RpcRxInterfaceSection system() {
-        return null;
-    }
 
     @Override
     public Observable<Boolean> isConnected() {
-        return null;
+        return this.isConnected;
     }
 
     @Override
-    public void on(IProvider.ProviderInterfaceEmitted type, Function function) {
-
+    void on(IProvider.ProviderInterfaceEmitted type, EventEmitter.EventListener handler) {
+        this.eventEmitter.on(type, handler);
     }
 
-    protected void emit(IProvider.ProviderInterfaceEmitted type, List<Object> args) {
+    protected void emit(IProvider.ProviderInterfaceEmitted type, Object... args) {
         this.eventEmitter.emit(type, args);
     }
+
+
+    private Types.RpcRxInterfaceSection createInterface(IRpc.RpcInterfaceSection section) {
+
+        Types.RpcRxInterfaceSection ret = new Types.RpcRxInterfaceSection();
+
+        for (String functionName : section.functionNames()) {
+            if (functionName.equals("subscribe")
+                    || functionName.equals("unsubscribe")) {
+                continue;
+            }
+
+            ret.put(functionName, this.createObservable(functionName, section));
+        }
+
+        return ret;
+    }
+
+    private Types.RpcRxInterfaceMethod createObservable(String name, IRpc.RpcInterfaceSection section) {
+
+        IRpcFunction function = section.function(name);
+
+//TODO 2019-05-24 01:11
+throw new UnsupportedOperationException();
+
+    }
+
+
 }

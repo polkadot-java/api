@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class RpcCore implements IRpcModule {
@@ -231,7 +232,7 @@ public class RpcCore implements IRpcModule {
                 if (option == null) {
                     // if we don't have a value, do not fill in the entry, it will be up to the
                     // caller to sort this out, either ignoring or having a cache for older values
-                    //result.push(undefined);TODO
+                    ret.add(null);
                 } else {
                     if (key.getMeta() != null
                             && key.getMeta().getType().isMap()
@@ -317,6 +318,33 @@ public class RpcCore implements IRpcModule {
                             return Promise.value(err);
                         });
                     } else {
+                        AtomicReference<Promise<String>> subscribe = new AtomicReference<>();
+                        return new Promise((handler) -> {
+                            try {
+
+                                IProvider.CallbackHandler<Exception, Object> callback = (err, result) -> {
+                                    if (err != null) {
+                                        handler.reject(err);
+                                    } else {
+                                        Object output = RpcCore.this.formatOutput(jsonRpcMethod, params, result);
+                                        handler.resolve(output);
+                                    }
+                                };
+
+                                subscribe.set(RpcCore.this.provider.subscribe(subType, subName, paramsJson, callback));
+                            } catch (Exception e1) {
+                                handler.reject(e1);
+                            }
+
+                        }).then((result) -> {
+                            subscribe.get().then((subscribeId) -> {
+                                logger.info(" auto unsubscribe {}, {},{}", subType, unsubName, subscribeId);
+                                return RpcCore.this.provider.unsubscribe(subType, unsubName, Integer.parseInt(subscribeId));
+                            });
+                            return Promise.value(result);
+                        });
+
+
                         //SubscribeCallback finalCb = cb;
                         //IProvider.CallbackHandler update = (error, result) -> {
                         //
@@ -328,19 +356,21 @@ public class RpcCore implements IRpcModule {
                         //    finalCb.callback(RpcCore.this.formatOutput(jsonRpcMethod, params, result));
                         //};
 
-                        Promise<String> subscribe = RpcCore.this.provider.subscribe(subType, subName, paramsJson, null);
-                        return subscribe.then(
-                                (String subscriptionId) ->
-                                {
-                                    logger.debug(" subscriptionId = {}", subscriptionId);
-                                    return Promise.value(
-                                            (Unsubscribe<Promise>) () -> RpcCore.this.provider.unsubscribe(subType, unsubName, Integer.parseInt(subscriptionId))
-                                    );
-                                }
-                        )._catch((err) -> {
-                            logger.error(" promise error ", err);
-                            return Promise.value(err);
-                        });
+                        /**
+                         Promise<String> subscribe = RpcCore.this.provider.subscribe(subType, subName, paramsJson, null);
+                         return subscribe.then(
+                         (String subscriptionId) ->
+                         {
+                         logger.debug(" subscriptionId = {}", subscriptionId);
+                         return Promise.value(
+                         (Unsubscribe<Promise>) () -> RpcCore.this.provider.unsubscribe(subType, unsubName, Integer.parseInt(subscriptionId))
+                         );
+                         }
+                         )._catch((err) -> {
+                         logger.error(" promise error ", err);
+                         return Promise.value(err);
+                         });
+                         **/
                     }
 
                 } catch (Exception e) {

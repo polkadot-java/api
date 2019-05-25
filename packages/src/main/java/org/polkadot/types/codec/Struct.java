@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Struct
         //<
@@ -69,7 +70,7 @@ public class Struct
         if (Utils.isHex(value)) {
             return decodeStruct(types, Utils.hexToU8a((String) value), jsonMap);
         } else if (Utils.isU8a(value)) {
-            List<Codec> values = CodecUtils.decodeU8a((byte[]) value, types);
+            List<Codec> values = CodecUtils.decodeU8a(Utils.u8aToU8a(value), types);
 
             LinkedHashMap<String, Codec> ret = Maps.newLinkedHashMap();
             List<String> names = types.getNames();
@@ -161,7 +162,12 @@ public class Struct
 
         @Override
         public Struct newInstance(Object... values) {
-            Struct instance = new Struct(types, values[0], (Map<String, String>) values[1]);
+            Struct instance = null;
+            if (values.length == 1) {
+                instance = new Struct(types, values[0]);
+            } else {
+                instance = new Struct(types, values[0], (Map<String, String>) values[1]);
+            }
             return instance;
         }
 
@@ -175,6 +181,9 @@ public class Struct
         return new Builder(types);
     }
 
+    /**
+     * The length of the value when encoded as a Uint8Array
+     */
     @Override
     public int getEncodedLength() {
         int allLength = 0;
@@ -185,33 +194,62 @@ public class Struct
     }
 
     /**
-     * @description Converts the Object to an standard JavaScript Array
+     * Converts the Object to an standard JavaScript Array
      */
     public List<Codec> toArray() {
         return Lists.newArrayList(this.values());
     }
 
 
+    /**
+     * Compares the value of the input to see if there is a match
+     */
     @Override
     public boolean eq(Object other) {
         return CodecUtils.compareMap(this, other);
     }
 
+    /**
+     * Returns a hex string representation of the value
+     */
     @Override
     public String toHex() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Converts the Object to JSON, typically used for RPC transfers
+     */
     @Override
     public Object toJson() {
         JSONObject jsonObject = new JSONObject();
-        this.forEach((k,v) -> jsonObject.put(k,v));
+        this.forEach((k, v) -> jsonObject.put(k, v.toJson()));
         return jsonObject;
     }
 
     @Override
+    public String toString() {
+        return toJson().toString();
+    }
+
+    /**
+     * Encodes the value as a Uint8Array as per the parity-codec specifications
+     *
+     * @param isBare true when the value has none of the type-specific prefixes (internal)
+     */
+    @Override
     public byte[] toU8a(boolean isBare) {
-        throw new UnsupportedOperationException();
+
+        List<byte[]> collect = this.toArray().stream().map(entry -> entry.toU8a(isBare)).collect(Collectors.toList());
+        byte[] bytes = Utils.u8aConcat(collect);
+        return bytes;
+
+        //    return u8aConcat(
+    //  ...this.toArray().map((entry) =>
+    //            entry.toU8a(isBare)
+    //  )
+    //);
+
     }
 
     public static Types.ConstructorCodec<Struct> builder() {
@@ -242,6 +280,9 @@ public class Struct
         return (T) codec;
     }
 
+    /**
+     * Checks if the value is an empty value
+     */
     @Override
     public boolean isEmpty() {
         for (Codec value : this.values()) {

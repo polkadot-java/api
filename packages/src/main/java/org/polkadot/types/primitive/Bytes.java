@@ -10,7 +10,7 @@ import java.math.BigInteger;
 
 /**
  * @name Bytes
- * @description A Bytes wrapper for Vec<u8>. The significant difference between this and a normal Uint8Array
+ * A Bytes wrapper for Vec<u8>. The significant difference between this and a normal Uint8Array
  * is that this version allows for length-encoding. (i.e. it is a variable-item codec, the same
  * as what is found in [[Text]] and [[Vector]])
  */
@@ -64,7 +64,7 @@ public class Bytes extends U8a {
 
 
     /**
-     * @description The length of the value when encoded as a Uint8Array
+     * The length of the value when encoded as a Uint8Array
      */
     @Override
     public int getEncodedLength() {
@@ -74,7 +74,7 @@ public class Bytes extends U8a {
 
     /**
      * @param isBare true when the value has none of the type-specific prefixes (internal)
-     * @description Encodes the value as a Uint8Array as per the parity-codec specifications
+     * Encodes the value as a Uint8Array as per the parity-codec specifications
      */
     @Override
     public byte[] toU8a(boolean isBare) {

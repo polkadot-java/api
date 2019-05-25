@@ -1,6 +1,8 @@
 package org.polkadot.api;
 
 import com.onehilltech.promises.Promise;
+import org.polkadot.api.Types.QueryableModuleStorage;
+import org.polkadot.api.Types.QueryableStorageFunction;
 import org.polkadot.common.keyring.Types.KeyringPair;
 import org.polkadot.direct.IRpcFunction;
 import org.polkadot.rpc.core.IRpc;
@@ -9,16 +11,19 @@ import org.polkadot.types.Types;
 import org.polkadot.types.TypesUtils;
 import org.polkadot.types.codec.Struct;
 import org.polkadot.types.codec.TypeRegistry;
+import org.polkadot.types.codec.U8a;
 import org.polkadot.types.codec.Vector;
 import org.polkadot.types.metadata.v0.Modules;
 import org.polkadot.types.primitive.Method;
 import org.polkadot.types.rpc.ExtrinsicStatus;
+import org.polkadot.types.rpc.SignedBlock;
 import org.polkadot.types.type.EventRecord;
 import org.polkadot.types.type.Hash;
+import org.polkadot.utils.MapUtils;
 
 import java.util.List;
 
-interface SubmittableExtrinsic extends Types.IExtrinsic {
+public interface SubmittableExtrinsic extends Types.IExtrinsic {
 
     //interface SubmittableExtrinsic<CodecResult, SubscriptionResult> extends IExtrinsic {
     //    send ()SumbitableResultResult<CodecResult, SubscriptionResult>;
@@ -38,9 +43,9 @@ interface SubmittableExtrinsic extends Types.IExtrinsic {
 
     //sign (account: KeyringPair, _options: Partial<SignatureOptions>): this;
     @Override
-    SubmittableExtrinsic sign(KeyringPair account, Types.SignatureOptions options);
+    Types.IExtrinsic sign(KeyringPair account, Types.SignatureOptions options);
 
-    Promise<Hash> signAndSend(Object account, Types.SignatureOptions options);
+    Promise signAndSend(Object account, Types.SignatureOptions options);
 
     Promise<Runnable> signAndSend(Object account, StatusCb callback);
     ///**
@@ -71,21 +76,21 @@ interface SubmittableExtrinsic extends Types.IExtrinsic {
 
 
         /**
-         * @description the contained events
+         * the contained events
          */
         List<EventRecord> getEvents() {
             return this.getField("events");
         }
 
         /**
-         * @description the status
+         * the status
          */
         public ExtrinsicStatus getStatus() {
             return this.getField("status");
         }
 
         /**
-         * @description Finds an EventRecord for the specified method & section
+         * Finds an EventRecord for the specified method & section
          */
         public EventRecord findRecord(String section, String method) {
             return this.getEvents()
@@ -140,7 +145,7 @@ interface SubmittableExtrinsic extends Types.IExtrinsic {
         }
 
         @Override
-        public Types.IHash getHash() {
+        public U8a getHash() {
             return _extrinsic.getHash();
         }
 
@@ -200,6 +205,78 @@ interface SubmittableExtrinsic extends Types.IExtrinsic {
         }
     }
 
+    //  function updateSigner (updateId: number, status: Hash | SubmittableResult): void {
+    static void updateSigner(ApiBase apiBase, int updateId, Object status) {
+        if (updateId != -1
+                && apiBase.signer != null) {
+            apiBase.signer.update(updateId, status);
+        }
+    }
+
+    static Promise sendObservable(ApiBase apiBase, int updateId, Types.IExtrinsic _extrinsic) {
+
+        IRpc.RpcInterfaceSection author = apiBase.rpc().author();
+        IRpcFunction submitExtrinsic = author.function("submitExtrinsic");
+        Promise invoke = submitExtrinsic.invoke(_extrinsic);
+
+        return invoke.then((hash) -> {
+            updateSigner(apiBase, updateId, hash);
+            return Promise.value(hash);
+        });
+    }
+
+    static Promise subscribeObservable(ApiBase apiBase, int updateId, Types.IExtrinsic _extrinsic, StatusCb trackingCb) {
+
+        IRpc.RpcInterfaceSection author = apiBase.rpc().author();
+        IRpcFunction submitAndWatchExtrinsic = author.function("submitAndWatchExtrinsic");
+        Promise invoke = submitAndWatchExtrinsic.invoke(_extrinsic);
+
+        return invoke
+                .then((status) -> statusObservable(apiBase, _extrinsic, (ExtrinsicStatus) status, trackingCb))
+                .then((status) -> {
+                    updateSigner(apiBase, updateId, status);
+                    return Promise.value(status);
+                });
+    }
+
+    static Promise statusObservable(ApiBase apiBase, Types.IExtrinsic _extrinsic, ExtrinsicStatus status, StatusCb trackingCb) {
+        if (!status.isFinalized()) {
+            SubmittableResult result = new SubmittableResult(MapUtils.ofMap("status", status));
+
+            if (trackingCb != null) {
+                trackingCb.callback(result);
+            }
+
+            return Promise.value(result);
+        }
+
+        ExtrinsicStatus.Finalized blockHash = status.asFinalized();
+
+        IRpcFunction getBlock = apiBase.rpc().chain().function("getBlock");
+        QueryableStorageFunction events = apiBase.query().section("system").function("events");
+
+        return Promise.all(
+                getBlock.invoke(blockHash),
+                events.at(blockHash, null)
+        ).then((results) -> {
+            SignedBlock signedBlock = (SignedBlock) results.get(0);
+            Vector<EventRecord> allEvents = (Vector<EventRecord>) results.get(1);
+
+            SubmittableResult result = new SubmittableResult(MapUtils.ofMap(
+                    //          events: filterEvents(_extrinsic.hash, signedBlock, allEvents),
+                    "events", ApiUtils.filterEvents(_extrinsic.getHash().toU8a(), signedBlock, allEvents),
+                    "status", status
+            ));
+
+            if (trackingCb != null) {
+                trackingCb.callback(result);
+            }
+
+
+            return Promise.value(result);
+        });
+    }
+
     static SubmittableExtrinsic createSubmittableExtrinsic(ApiBase apiBase, Method extrinsic, StatusCb trackingCb) {
         Types.ConstructorCodec type = TypeRegistry.getDefaultRegistry().getOrThrow("Extrinsic", "erro");
         Types.IExtrinsic _extrinsic = (Types.IExtrinsic) type.newInstance(extrinsic);
@@ -210,30 +287,95 @@ interface SubmittableExtrinsic extends Types.IExtrinsic {
 
             @Override
             public Promise<Hash> send() {
-                IRpc.RpcInterfaceSection author = apiBase.rpc().author();
-                IRpcFunction submitExtrinsic = author.function("submitExtrinsic");
-                Promise invoke = submitExtrinsic.invoke(_extrinsic);
-                return null;
+                return sendObservable(apiBase, -1, _extrinsic);
             }
 
             @Override
             public Promise<Runnable> send(StatusCb callback) {
-                return null;
+                return subscribeObservable(apiBase, -1, _extrinsic, trackingCb);
             }
 
             @Override
-            public SubmittableExtrinsic sign(KeyringPair account, Types.SignatureOptions options) {
-                return null;
+            public Types.IExtrinsic sign(KeyringPair account, Types.SignatureOptions options) {
+                /*
+                 // HACK here we actually override nonce if it was specified (backwards compat for
+                  // the previous signature - don't let userspace break, but allow then time to upgrade)
+                  const options: Partial<SignatureOptions> = isBn(_options) || isNumber(_options)
+                    ? { nonce: _options as any as number }
+                    : _options;
+                 */
+                Types.IExtrinsic sign = _extrinsic.sign(account, options);
+                return sign;
             }
 
             @Override
-            public Promise<Hash> signAndSend(Object account, Types.SignatureOptions options) {
-                return null;
+            public Promise<Hash> signAndSend(Object account, Types.SignatureOptions _options) {
+                Types.SignatureOptions options;
+                if (_options == null) {
+                    options = new Types.SignatureOptions();
+                } else {
+                    options = _options;
+                }
+
+                boolean isKeyringPair = account instanceof KeyringPair;
+                String address = isKeyringPair ? ((KeyringPair) account).address() : account.toString();
+                //AtomicInteger updateId = new AtomicInteger();
+
+                QueryableModuleStorage system = apiBase.query().section("system");
+                QueryableStorageFunction accountNonce = system.function("accountNonce");
+                Promise call = accountNonce.call(address);
+
+                return call.then((nonce) -> {
+                    if (isKeyringPair) {
+                        options.setNonce(nonce);
+                        this.sign((KeyringPair) account, options);
+                        return Promise.value(-1);
+                    } else {
+                        assert apiBase.signer != null : "no signer exists";
+
+                        options.setBlockHash(apiBase.genesisHash);
+                        options.setVersion(apiBase.runtimeVersion);
+                        options.setNonce(nonce);
+                        Promise<Integer> sign = apiBase.signer.sign(_extrinsic, address, options);
+                        return sign;
+                    }
+
+                }).then((updateId) -> {
+                    return sendObservable(apiBase, (Integer) updateId, _extrinsic);
+                });
             }
 
             @Override
             public Promise<Runnable> signAndSend(Object account, StatusCb callback) {
-                return null;
+                Types.SignatureOptions options;
+                options = new Types.SignatureOptions();
+
+                boolean isKeyringPair = account instanceof KeyringPair;
+                String address = isKeyringPair ? ((KeyringPair) account).address() : account.toString();
+                //AtomicInteger updateId = new AtomicInteger();
+
+                QueryableModuleStorage system = apiBase.query().section("system");
+                QueryableStorageFunction accountNonce = system.function("accountNonce");
+                Promise call = accountNonce.call(address);
+
+                return call.then((nonce) -> {
+                    if (isKeyringPair) {
+                        options.setNonce(nonce);
+                        this.sign((KeyringPair) account, options);
+                        return Promise.value(-1);
+                    } else {
+                        assert apiBase.signer != null : "no signer exists";
+
+                        options.setBlockHash(apiBase.genesisHash);
+                        options.setVersion(apiBase.runtimeVersion);
+                        options.setNonce(nonce);
+                        Promise<Integer> sign = apiBase.signer.sign(_extrinsic, address, options);
+                        return sign;
+                    }
+
+                }).then((updateId) -> {
+                    return subscribeObservable(apiBase, (Integer) updateId, _extrinsic, callback);
+                });
             }
         };
         return submittableExtrinsic;

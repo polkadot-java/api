@@ -7,6 +7,7 @@ import org.polkadot.common.keyring.Types.KeyringPair;
 import org.polkadot.types.Codec;
 import org.polkadot.types.Types;
 import org.polkadot.types.codec.Struct;
+import org.polkadot.types.codec.U8a;
 import org.polkadot.types.metadata.v0.Modules;
 import org.polkadot.types.primitive.Method;
 import org.polkadot.utils.CryptoUtils;
@@ -19,7 +20,7 @@ import java.util.List;
 
 /**
  * @name Extrinsic
- * @description Representation of an Extrinsic in the system. It contains the actual call,
+ * Representation of an Extrinsic in the system. It contains the actual call,
  * (optional) signature and encodes with an actual length prefix
  * <p>
  * {@link https://github.com/paritytech/wiki/blob/master/Extrinsic.md#the-extrinsic-format-for-node}.
@@ -69,7 +70,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
         } else if (value instanceof Method) {
             LinkedHashMap<Object, Object> values = Maps.newLinkedHashMap();
             values.put("method", value);
-            return value;
+            return values;
         }
 
         return value;
@@ -77,7 +78,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
 
 
     /**
-     * @description The arguments passed to for the call, exposes args so it is compatible with [[Method]]
+     * The arguments passed to for the call, exposes args so it is compatible with [[Method]]
      */
     @Override
     public List<Codec> getArgs() {
@@ -85,7 +86,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * @description Thge argument defintions, compatible with [[Method]]
+     * Thge argument defintions, compatible with [[Method]]
      */
     @Override
     public Types.ConstructorDef getArgsDef() {
@@ -93,7 +94,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * @description The actual `[sectionIndex, methodIndex]` as used in the Method
+     * The actual `[sectionIndex, methodIndex]` as used in the Method
      */
     @Override
     public byte[] getCallIndex() {
@@ -101,7 +102,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * @description The actual data for the Method
+     * The actual data for the Method
      */
     @Override
     public byte[] getData() {
@@ -109,7 +110,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * @description The length of the value when encoded as a Uint8Array
+     * The length of the value when encoded as a Uint8Array
      */
     @Override
     public int getEncodedLength() {
@@ -118,17 +119,17 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * @description Convernience function, encodes the extrinsic and returns the actual hash
+     * Convernience function, encodes the extrinsic and returns the actual hash
      */
     @Override
-    public Types.IHash getHash() {
+    public U8a getHash() {
         return new Hash(
                 CryptoUtils.blake2AsU8a(this.toU8a(), 256)
         );
     }
 
     /**
-     * @description `true` is method has `Origin` argument (compatibility with [[Method]])
+     * `true` is method has `Origin` argument (compatibility with [[Method]])
      */
     @Override
     public boolean hasOrigin() {
@@ -136,7 +137,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * @description `true` id the extrinsic is signed
+     * `true` id the extrinsic is signed
      */
     @Override
     public boolean isSigned() {
@@ -144,14 +145,14 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * @description The length of the encoded value
+     * The length of the encoded value
      */
     public int length() {
         return this.toU8a(true).length;
     }
 
     /**
-     * @description The [[FunctionMetadata]] that describes the extrinsic
+     * The [[FunctionMetadata]] that describes the extrinsic
      */
     @Override
     public Modules.FunctionMetadata getMeta() {
@@ -159,7 +160,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * @description The [[Method]] this extrinsic wraps
+     * The [[Method]] this extrinsic wraps
      */
     @Override
     public Method getMethod() {
@@ -167,7 +168,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * @description The [[ExtrinsicSignature]]
+     * The [[ExtrinsicSignature]]
      */
     @Override
     public ExtrinsicSignature getSignature() {
@@ -175,7 +176,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * @description Add an [[ExtrinsicSignature]] to the extrinsic (already generated)
+     * Add an [[ExtrinsicSignature]] to the extrinsic (already generated)
      */
     //addSignature(signer:Address|Uint8Array, signature:Uint8Array, nonce:AnyNumber, era?:Uint8Array):Extrinsic
     @Override
@@ -185,7 +186,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * @description Sign the extrinsic with a specific keypair
+     * Sign the extrinsic with a specific keypair
      */
     //sign(account:KeyringPair, options:SignatureOptions):Extrinsic
     @Override
@@ -195,7 +196,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * @description Returns a hex string representation of the value
+     * Returns a hex string representation of the value
      */
     @Override
     public String toHex() {
@@ -203,7 +204,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * @description Converts the Object to JSON, typically used for RPC transfers
+     * Converts the Object to JSON, typically used for RPC transfers
      */
     public Object toJSON() {
         return this.toHex();
@@ -211,7 +212,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
 
     /**
      * @param isBare true when the value has none of the type-specific prefixes (internal)
-     * @description Encodes the value as a Uint8Array as per the parity-codec specifications
+     * Encodes the value as a Uint8Array as per the parity-codec specifications
      */
 
     @Override

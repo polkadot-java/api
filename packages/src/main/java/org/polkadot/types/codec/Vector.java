@@ -15,8 +15,8 @@ import java.util.List;
 
 
 /**
- * @name Vector
- * @description This manages codec arrays. Internally it keeps track of the length (as decoded) and allows
+ * Vector
+ * This manages codec arrays. Internally it keeps track of the length (as decoded) and allows
  * construction with the passed `Type` in the constructor. It is an extension to Array, providing
  * specific encoding/decoding on top of the base type.
  */
@@ -38,7 +38,7 @@ public class Vector<T extends Codec> extends AbstractArray<T> {
                 genInstance(ret, type, obj);
             }
             return ret;
-        } else if (value.getClass().isArray() && !(value instanceof byte[])){
+        } else if (value != null && value.getClass().isArray() && !(value instanceof byte[])){
             List<Object> objects = CodecUtils.arrayLikeToList(value);
             for (Object obj : objects) {
                 genInstance(ret, type, obj);
@@ -120,7 +120,7 @@ public class Vector<T extends Codec> extends AbstractArray<T> {
     }
 
     /**
-     * @description The type for the items
+     * The type for the items
      */
     public String getType() {
         //TODO 2019-05-07 20:17

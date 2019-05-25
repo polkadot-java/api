@@ -1,8 +1,6 @@
 package org.polkadot.direct;
 
 import com.onehilltech.promises.Promise;
-import com.onehilltech.promises.PromiseExecutor;
-import org.polkadot.types.Codec;
 
 public interface IRpcFunction<T> extends IFunction {
     //
@@ -15,24 +13,24 @@ public interface IRpcFunction<T> extends IFunction {
         void callback(T t);
     }
 
-    class RpcResult<T> extends Promise<T> {
-        public RpcResult(PromiseExecutor<T> impl) {
-            super(impl);
-        }
-    }
-
-
-    abstract class SubscriptionResult extends RpcResult<Unsubscribe> {
-        public SubscriptionResult(PromiseExecutor<Unsubscribe> impl) {
-            super(impl);
-        }
-    }
-
-    abstract class CodecResult extends RpcResult<Codec> {
-        public CodecResult(PromiseExecutor<Codec> impl) {
-            super(impl);
-        }
-    }
+    //class RpcResult<T> extends Promise<T> {
+    //    public RpcResult(PromiseExecutor<T> impl) {
+    //        super(impl);
+    //    }
+    //}
+    //
+    //
+    //abstract class SubscriptionResult extends RpcResult<Unsubscribe> {
+    //    public SubscriptionResult(PromiseExecutor<Unsubscribe> impl) {
+    //        super(impl);
+    //    }
+    //}
+    //
+    //abstract class CodecResult extends RpcResult<Codec> {
+    //    public CodecResult(PromiseExecutor<Codec> impl) {
+    //        super(impl);
+    //    }
+    //}
 
     Promise<T> invoke(Object... params);
 

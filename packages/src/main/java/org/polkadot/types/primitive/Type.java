@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @name Type
- * @description This is a extended version of String, specifically to handle types. Here we rely fully
+ * This is a extended version of String, specifically to handle types. Here we rely fully
  * on what string provides us, however we also adjust the types received from the runtime,
  * i.e. we remove the `T::` prefixes found in some types for consistency accross implementation.
  */

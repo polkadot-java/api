@@ -11,7 +11,7 @@ import org.polkadot.types.primitive.StorageKey;
 
 /**
  * @name KeyValue
- * @description KeyValue structure. Since most of the keys and resultant values in Subtrate is
+ * KeyValue structure. Since most of the keys and resultant values in Subtrate is
  * hashed and/or encoded, this does not wrap [[Text]], but rather a [[Bytes]]
  * for the keys and values. (Not to be confused with the KeyValue in [[Metadata]], that
  * is actually for Maps, whereas this is a representation of actaul storage values)
@@ -34,7 +34,7 @@ public class KeyValue extends Struct {
 
     /**
      * @name KeyValueOption
-     * @description A key/value change. This is similar to the [[KeyValue]] structure,
+     * A key/value change. This is similar to the [[KeyValue]] structure,
      * however in this case the value could be optional. Here it extends
      * from a [[Tuple]], indicating the use inside areas such as [[StorageChangeSet]]
      */
@@ -48,7 +48,7 @@ public class KeyValue extends Struct {
         }
 
         /**
-         * @description The [[StorageKey]]
+         * The [[StorageKey]]
          */
         public StorageKey getKey() {
             return this.getFiled(0);
@@ -56,7 +56,7 @@ public class KeyValue extends Struct {
 
 
         /**
-         * @description The [[Option]] [[StorageData]]
+         * The [[Option]] [[StorageData]]
          */
         public Option<StorageData> getValue() {
             return this.getFiled(1);

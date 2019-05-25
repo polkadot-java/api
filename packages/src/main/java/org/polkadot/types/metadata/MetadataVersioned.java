@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * @name MetadataVersioned
- * @description The versioned runtime metadata as a decoded structure
+ * The versioned runtime metadata as a decoded structure
  */
 public class MetadataVersioned extends Struct implements Types.MetadataInterface {
 
@@ -34,21 +34,21 @@ public class MetadataVersioned extends Struct implements Types.MetadataInterface
 
 
         /**
-         * @description Returns the wrapped values as a V0 object
+         * Returns the wrapped values as a V0 object
          */
         public MetadataV0 asV0() {
             return ((MetadataV0) this.value());
         }
 
         /**
-         * @description Returns the wrapped values as a V1 object
+         * Returns the wrapped values as a V1 object
          */
         public MetadataV1 asV1() {
             return ((MetadataV1) this.value());
         }
 
         /**
-         * @description Returns the wrapped values as a V2 object
+         * Returns the wrapped values as a V2 object
          */
         public MetadataV2 asV2() {
             return ((MetadataV2) this.value());
@@ -56,7 +56,7 @@ public class MetadataVersioned extends Struct implements Types.MetadataInterface
 
 
         /**
-         * @description Returns the wrapped values as a V3 object
+         * Returns the wrapped values as a V3 object
          */
         public MetadataV3 asV3() {
             return ((MetadataV3) this.value());
@@ -64,7 +64,7 @@ public class MetadataVersioned extends Struct implements Types.MetadataInterface
 
 
         /**
-         * @description The version this metadata represents
+         * The version this metadata represents
          */
         public int getVersion() {
             return this.index();
@@ -86,21 +86,21 @@ public class MetadataVersioned extends Struct implements Types.MetadataInterface
     }
 
     /**
-     * @description the metadata version this structure represents
+     * the metadata version this structure represents
      */
     public int getVersion() {
         return ((MetadataEnum) this.getField("metadata")).getVersion();
     }
 
     /**
-     * @description the metadata wrapped
+     * the metadata wrapped
      */
     private MetadataEnum getMetadata() {
         return this.getField("metadata");
     }
 
     /**
-     * @description Returns the wrapped values as a V0 object
+     * Returns the wrapped values as a V0 object
      */
     public MetadataV0 asV0() {
         if (this.getVersion() == 0) {
@@ -116,7 +116,7 @@ public class MetadataVersioned extends Struct implements Types.MetadataInterface
 
 
     /**
-     * @description Returns the wrapped values as a V1 object
+     * Returns the wrapped values as a V1 object
      */
     public MetadataV1 asV1() {
 
@@ -140,7 +140,7 @@ public class MetadataVersioned extends Struct implements Types.MetadataInterface
     }
 
     /**
-     * @description Returns the wrapped values as a V2 object
+     * Returns the wrapped values as a V2 object
      */
     public MetadataV2 asV2() {
 
@@ -159,7 +159,7 @@ public class MetadataVersioned extends Struct implements Types.MetadataInterface
 
 
     /**
-     * @description Returns the wrapped values as a V3 object
+     * Returns the wrapped values as a V3 object
      */
     public MetadataV3 asV3() {
         assert this.getVersion() == 3 : "Cannot convert metadata from v" + this.getVersion() + " to v3";

@@ -5,10 +5,13 @@ import org.polkadot.types.Types;
 import org.polkadot.types.TypesUtils;
 import org.polkadot.types.codec.Enum;
 import org.polkadot.types.codec.*;
+import org.polkadot.types.metadata.v1.Storage;
 import org.polkadot.types.primitive.Bytes;
 import org.polkadot.types.primitive.Text;
 import org.polkadot.types.primitive.Type;
 import org.polkadot.types.primitive.U16;
+
+import java.util.Map;
 
 public interface Modules {
 
@@ -20,14 +23,14 @@ public interface Modules {
         }
 
         /**
-         * @description The argument name
+         * The argument name
          */
         public Text getName() {
             return (Text) this.get("name");
         }
 
         /**
-         * @description The [[Type]]
+         * The [[Type]]
          */
         public Type getType() {
             return (Type) this.get("type");
@@ -46,28 +49,28 @@ public interface Modules {
 
 
         /**
-         * @description The [[FunctionArgumentMetadata]] for arguments
+         * The [[FunctionArgumentMetadata]] for arguments
          */
         public Vector<FunctionArgumentMetadata> getArguments() {
             return this.getField("arguments");
         }
 
         /**
-         * @description The [[Text]] documentation
+         * The [[Text]] documentation
          */
         public Vector<Text> getDocumentation() {
             return this.getField("documentation");
         }
 
         /**
-         * @description The `[sectionIndex, methodIndex]` call id
+         * The `[sectionIndex, methodIndex]` call id
          */
         public U16 getId() {
             return this.getField("id");
         }
 
         /**
-         * @description The call name
+         * The call name
          */
         public Text getName() {
             return this.getField("name");
@@ -84,14 +87,14 @@ public interface Modules {
 
 
         /**
-         * @description The functions available as [[FunctionMetadata]]
+         * The functions available as [[FunctionMetadata]]
          */
         public Vector<FunctionMetadata> getFunctions() {
             return this.getField("functions");
         }
 
         /**
-         * @description The section name
+         * The section name
          */
         public Text getName() {
             return this.getField("name");
@@ -108,14 +111,14 @@ public interface Modules {
 
 
         /**
-         * @description The calls as [[CallMetadata]]
+         * The calls as [[CallMetadata]]
          */
         public CallMetadata getCall() {
             return this.getField("call");
         }
 
         /**
-         * @description The name
+         * The name
          */
         public Text getName() {
             return this.getField("name");
@@ -129,7 +132,7 @@ public interface Modules {
         }
 
         /**
-         * @description `true` if the storage entry is optional
+         * `true` if the storage entry is optional
          */
         public boolean isOptional() {
             return this.toNumber() == 0;
@@ -146,8 +149,19 @@ public interface Modules {
                             .add("value", Type.class)
                     , value);
 
-            if (value != null && value instanceof MapType && ((MapType) value).isLinked) {
-                this.isLinked = true;
+
+
+            if (value instanceof Storage.MapType) {
+                Boolean linked = ((Storage.MapType) value).isLinked();
+                if (linked){
+                    this.isLinked = true;
+                }
+            }
+
+            if (value != null && value instanceof MapType) {
+                if (((MapType) value).isLinked) {
+                    this.isLinked = true;
+                }
             }
         }
 
@@ -185,21 +199,21 @@ public interface Modules {
         }
 
         /**
-         * @description `true` if the storage entry is a map
+         * `true` if the storage entry is a map
          */
         public boolean isMap() {
             return this.toNumber() == 1;
         }
 
         /**
-         * @description The value as a mapped value
+         * The value as a mapped value
          */
         public MapType asMap() {
             return (MapType) this.value();
         }
 
         /**
-         * @description The value as a [[Type]] value
+         * The value as a [[Type]] value
          */
         //TODO 2019-05-08 1819 cast error
         public PlainType asType() {
@@ -207,7 +221,7 @@ public interface Modules {
         }
 
         /**
-         * @description Returns the string representation of the value
+         * Returns the string representation of the value
          */
         @Override
         public String toString() {

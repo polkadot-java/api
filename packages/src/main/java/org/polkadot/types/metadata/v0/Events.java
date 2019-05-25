@@ -22,21 +22,21 @@ public interface Events {
 
 
         /**
-         * @description The arguments of [[Type]]
+         * The arguments of [[Type]]
          */
         public Vector<Type> getArguments() {
             return this.getField("arguments");
         }
 
         /**
-         * @description The [[Text]] documentation
+         * The [[Text]] documentation
          */
         Vector<Text> getDocumentation() {
             return this.getField("documentation");
         }
 
         /**
-         * @description The name for the event
+         * The name for the event
          */
         public Text getName() {
             return this.getField("name");
@@ -52,14 +52,14 @@ public interface Events {
         }
 
         /**
-         * @description The [[EventMetadata]]
+         * The [[EventMetadata]]
          */
         public Vector<EventMetadata> getEvents() {
             return this.getFiled(1);
         }
 
         /**
-         * @description The name of the section
+         * The name of the section
          */
         public Text getName() {
             return getFiled(0);

@@ -6,7 +6,7 @@ import org.polkadot.utils.Utils;
 
 /**
  * @name ExtrinsicEra
- * @description The era for an extrinsic, indicating either a mortal or immortal extrinsic
+ * The era for an extrinsic, indicating either a mortal or immortal extrinsic
  */
 public class ExtrinsicEra extends U8a {
     //constructor (value?: AnyU8a) {
@@ -18,6 +18,9 @@ public class ExtrinsicEra extends U8a {
         if (value != null) {
             byte[] u8a = Utils.u8aToU8a(value);
 
+            if (u8a.length == 0) {
+                return u8a;
+            }
             // If we have a zero byte, it is immortal (1 byte in length), otherwise we have
             // the era details following as another byte
             return ArrayUtils.subarray(u8a, 0, (u8a[0] == 0) ? 1 : 2);

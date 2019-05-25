@@ -5,7 +5,7 @@ import org.polkadot.types.codec.UInt;
 
 /**
  * @name U128
- * @description An 128-bit unsigned integer
+ * An 128-bit unsigned integer
  */
 public class U128 extends UInt {
     public U128(Object value) {

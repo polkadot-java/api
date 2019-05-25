@@ -20,21 +20,21 @@ public interface Calls {
 
 
         /**
-         * @description The [[U16]] index for the call
+         * The [[U16]] index for the call
          */
         public U16 getIndex() {
             return this.getField("index");
         }
 
         /**
-         * @description The name for the call
+         * The name for the call
          */
         public Text getName() {
             return this.getField("name");
         }
 
         /**
-         * @description The call prefix (or section)
+         * The call prefix (or section)
          */
         public Text getPrefix() {
             return this.getField("prefix");
@@ -53,14 +53,14 @@ public interface Calls {
 
 
         /**
-         * @description The [[OuterDispathCall]] wrapped
+         * The [[OuterDispathCall]] wrapped
          */
         public Vector<OuterDispatchCall> getCalls() {
             return this.getField("calls");
         }
 
         /**
-         * @description The name for the dispatch
+         * The name for the dispatch
          */
         public Text getName() {
             return this.getField("name");

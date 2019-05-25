@@ -12,7 +12,7 @@ public interface Events {
 
     /**
      * @name MetadataEvent
-     * @description The definition of an event
+     * The definition of an event
      */
     class MetadataEvent extends Struct {
 
@@ -26,21 +26,21 @@ public interface Events {
 
 
         /**
-         * @description The [[Type]] for args
+         * The [[Type]] for args
          */
         public Vector<Type> getArgs() {
             return this.getField("args");
         }
 
         /**
-         * @description The [[Text]] documentation
+         * The [[Text]] documentation
          */
         public Vector<Text> getDocs() {
             return this.getField("docs");
         }
 
         /**
-         * @description The call name
+         * The call name
          */
         public Text getName() {
             return this.getField("name");

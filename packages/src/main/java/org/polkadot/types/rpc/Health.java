@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * @name Health
- * @description A system health indicator, reported back over RPC
+ * A system health indicator, reported back over RPC
  */
 public class Health extends Struct {
     public static Map<String, String> JSON_MAP = MapUtils.ofMap(
@@ -28,21 +28,21 @@ public class Health extends Struct {
 
 
     /**
-     * @description The sync status
+     * The sync status
      */
     public Bool isSyncing() {
         return this.getField("isSyncing");
     }
 
     /**
-     * @description The numbers of peers as [[U32]]
+     * The numbers of peers as [[U32]]
      */
     public USize getPeers() {
         return this.getField("peers");
     }
 
     /**
-     * @description Should this node have peers (not active on --dev)
+     * Should this node have peers (not active on --dev)
      */
     public Bool shouldHavePeers() {
         return this.getField("shouldHavePeers");

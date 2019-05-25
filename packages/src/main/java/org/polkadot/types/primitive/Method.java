@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 /**
  * @name Method
- * @description Extrinsic function descriptor, as defined in
+ * Extrinsic function descriptor, as defined in
  * {@link https://github.com/paritytech/wiki/blob/master/Extrinsic.md#the-extrinsic-format-for-node}.
  */
 public class Method extends Struct implements Types.IMethod {
@@ -42,15 +42,15 @@ public class Method extends Struct implements Types.IMethod {
 
     /**
      * @name MethodIndex
-     * @description A wrapper around the `[sectionIndex, methodIndex]` value that uniquely identifies a method
+     * A wrapper around the `[sectionIndex, methodIndex]` value that uniquely identifies a method
      */
-    static class MethodIndex extends U8aFixed {
+    public static class MethodIndex extends U8aFixed {
         public MethodIndex(Object value) {
             super(value, 16);
         }
     }
 
-    static class DecodeMethodInput {
+    public static class DecodeMethodInput {
 
         public DecodeMethodInput(Object args, MethodIndex callIndex) {
             this.args = args;
@@ -59,11 +59,19 @@ public class Method extends Struct implements Types.IMethod {
 
         //args: any;
         //callIndex: MethodIndex | Uint8Array;
-        Object args;
-        MethodIndex callIndex;
+        public Object args;
+        public MethodIndex callIndex;
+
+        public Object getArgs() {
+            return args;
+        }
+
+        public MethodIndex getCallIndex() {
+            return callIndex;
+        }
     }
 
-    static class DecodedMethod extends DecodeMethodInput {
+    public static class DecodedMethod extends DecodeMethodInput {
 
 
         public DecodedMethod(Object args, MethodIndex callIndex, Types.ConstructorDef argsDef, Modules.FunctionMetadata meta) {
@@ -72,8 +80,16 @@ public class Method extends Struct implements Types.IMethod {
             this.meta = meta;
         }
 
-        Types.ConstructorDef argsDef;
-        Modules.FunctionMetadata meta;
+        public Types.ConstructorDef argsDef;
+        public Modules.FunctionMetadata meta;
+
+        public Types.ConstructorDef getArgsDef() {
+            return argsDef;
+        }
+
+        public Modules.FunctionMetadata getMeta() {
+            return meta;
+        }
     }
 
     //  interface MethodFunction {
@@ -186,11 +202,12 @@ public class Method extends Struct implements Types.IMethod {
                     meta
             );
             //} else if (isObject(value) && value.callIndex && value.args) {
-        } else if (value instanceof Struct) {
-            Struct struct = (Struct) value;
+            //} else if (value instanceof Struct) {
+        } else if (value instanceof Map) {
+            Map struct = (Map) value;
             // destructure value, we only pass args/methodsIndex out
-            Object args = struct.getField("args");
-            MethodIndex callIndex = struct.getField("callIndex");
+            Object args = struct.get("args");
+            MethodIndex callIndex = new MethodIndex(struct.get("callIndex"));
 
             // Get the correct lookupIndex
             U8a lookupIndex = callIndex;
@@ -274,7 +291,7 @@ public class Method extends Struct implements Types.IMethod {
 
 
     /**
-     * @description The arguments for the function call
+     * The arguments for the function call
      */
     @Override
     public List<Codec> getArgs() {
@@ -289,7 +306,7 @@ public class Method extends Struct implements Types.IMethod {
     }
 
     /**
-     * @description The encoded `[sectionIndex, methodIndex]` identifier
+     * The encoded `[sectionIndex, methodIndex]` identifier
      */
     @Override
     public byte[] getCallIndex() {
@@ -298,7 +315,7 @@ public class Method extends Struct implements Types.IMethod {
     }
 
     /**
-     * @description The encoded data
+     * The encoded data
      */
     @Override
     public byte[] getData() {
@@ -308,7 +325,7 @@ public class Method extends Struct implements Types.IMethod {
 
 
     /**
-     * @description `true` if the `Origin` type is on the method (extrinsic method)
+     * `true` if the `Origin` type is on the method (extrinsic method)
      */
     @Override
     public boolean hasOrigin() {
@@ -319,7 +336,7 @@ public class Method extends Struct implements Types.IMethod {
     }
 
     /**
-     * @description The [[FunctionMetadata]]
+     * The [[FunctionMetadata]]
      */
     @Override
     public Modules.FunctionMetadata getMeta() {

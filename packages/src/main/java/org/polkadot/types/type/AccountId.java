@@ -1,13 +1,13 @@
 package org.polkadot.types.type;
 
-import org.polkadot.common.keyring.address.AddressUtils;
+import org.polkadot.common.keyring.address.AddressCodec;
 import org.polkadot.types.codec.U8a;
 import org.polkadot.types.codec.U8aFixed;
 import org.polkadot.utils.Utils;
 
 /**
  * @name AccountId
- * @description A wrapper around an AccountId/PublicKey representation. Since we are dealing with
+ * A wrapper around an AccountId/PublicKey representation. Since we are dealing with
  * underlying PublicKeys (32 bytes in length), we extend from U8aFixed which is
  * just a Uint8Array wrapper with a fixed length.
  */
@@ -20,7 +20,7 @@ public class AccountId extends U8aFixed {
 
     static String encode(U8a value) {
         //TODO 2019-05-10 03:30 decodeAddress, encodeAddress } from '@polkadot/keyring';
-        return AddressUtils.encodeAddress(value.toU8a());
+        return AddressCodec.encodeAddress(value.toU8a());
         //return new String(value.toU8a());
     }
 
@@ -32,22 +32,31 @@ public class AccountId extends U8aFixed {
             return Utils.hexToU8a(value.toString());
         } else if (value instanceof String) {
             //TODO 2019-05-10 03:30 decodeAddress, encodeAddress } from '@polkadot/keyring';
-            return AddressUtils.decodeAddress((String) value);
+            return AddressCodec.decodeAddress((String) value);
         }
         return (byte[]) value;
     }
 
 
+  /**
+   * Compares the value of the input to see if there is a match
+   */
     @Override
     public boolean eq(Object other) {
         return super.eq(AccountId.decodeAccountId(other));
     }
 
+  /**
+   * Converts the Object to JSON, typically used for RPC transfers
+   */
     @Override
     public Object toJson() {
         return this.toString();
     }
 
+  /**
+   * Returns the string representation of the value
+   */
     @Override
     public String toString() {
         return AccountId.encode(this);
@@ -55,7 +64,7 @@ public class AccountId extends U8aFixed {
 
     /**
      * @name AccountIdOf
-     * @description The Substrate AccountIdOf representation as a [[AccountId]].
+     * The Substrate AccountIdOf representation as a [[AccountId]].
      */
     public static class AccountIdOf extends AccountId {
         public AccountIdOf(Object value) {

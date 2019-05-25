@@ -6,7 +6,7 @@ import org.polkadot.types.codec.Compact;
 
 /**
  * @name Nonce
- * @description The Compact<Nonce> or number of transactions sent by a specific account. Generally used
+ * The Compact<Nonce> or number of transactions sent by a specific account. Generally used
  * with extrinsics to determine the order of execution.
  */
 //export default class NonceCompact extends Compact.with(Nonce) {

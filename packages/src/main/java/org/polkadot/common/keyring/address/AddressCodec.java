@@ -6,15 +6,19 @@ import org.bitcoinj.core.Base58;
 import org.polkadot.utils.CryptoUtils;
 import org.polkadot.utils.Utils;
 
-public class AddressUtils {
+public class AddressCodec {
 
     //export default function decode (encoded: string | Uint8Array, ignoreChecksum?: boolean, prefix: Prefix = defaults.prefix): Uint8Array {
-    public static byte[] decodeAddress(byte[] encoded) {
+    public static byte[] decodeAddress(Object encoded) {
         return decodeAddress(encoded, false, Defaults.prefix);
     }
 
-    public static byte[] decodeAddress(String encoded) {
-        return decodeAddress(encoded, false, Defaults.prefix);
+    //public static byte[] decodeAddress(String encoded) {
+    //    return decodeAddress(encoded, false, Defaults.prefix);
+    //}
+
+    public static byte[] decodeAddress(Object encoded, boolean ignoreChecksum) {
+        return decodeAddress(encoded, ignoreChecksum, Defaults.prefix);
     }
 
     public static byte[] decodeAddress(Object encoded, boolean ignoreChecksum, int prefix) {

@@ -43,20 +43,32 @@ public class Enum extends Base<Number> implements Codec {
         return (Number) value;
     }
 
+  /**
+   * The length of the value when encoded as a Uint8Array
+   */
     @Override
     public int getEncodedLength() {
         return 1;
     }
 
+  /**
+   * Returns the index for this value (equivalent to toNumber)
+   */
     public int getIndex() {
         return this.raw.intValue();
     }
 
+  /**
+   * Checks if the value is an empty value (always false)
+   */
     @Override
     public boolean isEmpty() {
         return false;
     }
 
+  /**
+   * Compares the value of the input to see if there is a match
+   */
     @Override
     public boolean eq(Object other) {
         if (other instanceof Enum) {
@@ -68,20 +80,32 @@ public class Enum extends Base<Number> implements Codec {
         return this.raw.equals(other);
     }
 
+  /**
+   * Returns a hex string representation of the value
+   */
     @Override
     public String toHex() {
         return Utils.u8aToHex(this.toU8a(false));
     }
 
+  /**
+   * Converts the Object to JSON, typically used for RPC transfers
+   */
     @Override
     public Object toJson() {
         return this.raw;
     }
 
+  /**
+   * Returns the number representation for the value
+   */
     public int toNumber() {
         return this.raw.intValue();
     }
 
+  /**
+   * Returns the string representation of the value
+   */
     @Override
     public String toString() {
         if (this.enumList.size() > this.raw.intValue()) {
@@ -90,6 +114,10 @@ public class Enum extends Base<Number> implements Codec {
         return this.raw.toString();
     }
 
+  /**
+   * Encodes the value as a Uint8Array as per the parity-codec specifications
+   * @param isBare true when the value has none of the type-specific prefixes (internal)
+   */
     @Override
     public byte[] toU8a(boolean isBare) {
         //return new Uint8Array([this.raw]);

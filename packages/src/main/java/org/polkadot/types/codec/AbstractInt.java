@@ -45,7 +45,7 @@ public abstract class AbstractInt extends BigInteger implements Codec {
     }
 
     /**
-     * @description The length of the value when encoded as a Uint8Array
+     * The length of the value when encoded as a Uint8Array
      */
     @Override
     public int getEncodedLength() {
@@ -53,7 +53,7 @@ public abstract class AbstractInt extends BigInteger implements Codec {
     }
 
     /**
-     * @description Checks if the value is a zero value (align elsewhere)
+     * Checks if the value is a zero value (align elsewhere)
      */
     @Override
     public boolean isEmpty() {
@@ -61,14 +61,15 @@ public abstract class AbstractInt extends BigInteger implements Codec {
     }
 
     /**
-     * @description Returns the number of bits in the value
+     * Returns the number of bits in the value
      */
-    //bitLength (): UIntBitLength {
-    //    return this._bitLength;
-    //}
+    @Override
+    public int bitLength() {
+        return this.bitLength;
+    }
 
     /**
-     * @description Compares the value of the input to see if there is a match
+     * Compares the value of the input to see if there is a match
      */
     @Override
     public boolean eq(Object other) {
@@ -88,20 +89,20 @@ public abstract class AbstractInt extends BigInteger implements Codec {
 
 
     /**
-     * @description Returns the BN representation of the number. (Compatibility)
+     * Returns the BN representation of the number. (Compatibility)
      */
     public BigInteger toBn() {
         return this;
     }
 
     /**
-     * @description Returns a hex string representation of the value
+     * Returns a hex string representation of the value
      */
     @Override
     public abstract String toHex();
 
     /**
-     * @description Converts the Object to JSON, typically used for RPC transfers
+     * Converts the Object to JSON, typically used for RPC transfers
      */
     @Override
     public Object toJson() {
@@ -115,7 +116,7 @@ public abstract class AbstractInt extends BigInteger implements Codec {
 
 
     /**
-     * @description Returns the string representation of the value
+     * Returns the string representation of the value
      * @param base The base to use for the conversion
      */
     //toString (base?: number): string {
@@ -125,7 +126,7 @@ public abstract class AbstractInt extends BigInteger implements Codec {
 
     /**
      * @param isBare true when the value has none of the type-specific prefixes (internal)
-     * @description Encodes the value as a Uint8Array as per the parity-codec specifications
+     *               Encodes the value as a Uint8Array as per the parity-codec specifications
      */
     @Override
     public abstract byte[] toU8a(boolean isBare);

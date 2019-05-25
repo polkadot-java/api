@@ -2,10 +2,10 @@ package org.polkadot.direct;
 
 
 public interface IFunction<R> {
-    default R apply(Object... args) {
-        //TODO 2019-05-09 18:54
-        throw new UnsupportedOperationException();
-    }
+    //default R apply(Object... args) {
+    //    //TODO 2019-05-09 18:54
+    //    throw new UnsupportedOperationException();
+    //}
 
 
     //default Object apply(Object... args) {

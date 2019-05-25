@@ -11,22 +11,31 @@ import java.util.stream.Collectors;
 import static org.polkadot.utils.Utils.compactToU8a;
 
 /**
- * @name AbstractArray
- * @description This manages codec arrays. It is an extension to Array, providing
+ * AbstractArray
+ * This manages codec arrays. It is an extension to Array, providing
  * specific encoding/decoding on top of the base type.
  * @noInheritDoc
  */
 public class AbstractArray<T extends Codec> extends ArrayList<T> implements Codec {
 
+	/**
+	* Checks if the value is an empty value
+	*/
     @Override
     public boolean isEmpty() {
         return this.size() == 0;
     }
 
+	/**
+	* The length of the value
+	*/
     public int length() {
         return this.size();
     }
 
+	/**
+	* The length of the value when encoded as a Uint8Array
+	*/
     @Override
     public int getEncodedLength() {
         int total = 0;
@@ -37,17 +46,26 @@ public class AbstractArray<T extends Codec> extends ArrayList<T> implements Code
         return total;
     }
 
+	/**
+	* Compares the value of the input to see if there is a match
+	*/
     @Override
     public boolean eq(Object other) {
         //TODO 2019-05-07 19:13     return compareArray(this, other);
         return CodecUtils.compareArray(this, other);
     }
 
+	/**
+	* Returns a hex string representation of the value
+	*/
     @Override
     public String toHex() {
         return Utils.u8aToHex(this.toU8a());
     }
 
+	/**
+	* Converts the Object to JSON, typically used for RPC transfers
+	*/
     @Override
     public Object toJson() {
         List<Object> collect = this.stream().map(e ->
@@ -56,6 +74,10 @@ public class AbstractArray<T extends Codec> extends ArrayList<T> implements Code
         return JSONArray.toJSON(collect);
     }
 
+	/**
+	* Encodes the value as a Uint8Array as per the parity-codec specifications
+	* @param isBare true when the value has none of the type-specific prefixes (internal)
+	*/
     @Override
     public byte[] toU8a(boolean isBare) {
         List<byte[]> encoded = this.stream().map(e -> e.toU8a(isBare)).collect(Collectors.toList());

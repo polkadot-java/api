@@ -14,7 +14,7 @@ import org.polkadot.types.primitive.U64;
 
 /**
  * @name Digest
- * @description A [[Header]] Digest
+ * A [[Header]] Digest
  */
 public class Digest extends Struct {
     public Digest(Object value) {
@@ -24,7 +24,7 @@ public class Digest extends Struct {
     }
 
     /**
-     * @description The [[DigestItem]] logs
+     * The [[DigestItem]] logs
      */
     public Vector<DigestItem> getLogs() {
         return this.getField("logs");
@@ -33,7 +33,7 @@ public class Digest extends Struct {
 
     /**
      * @name Other
-     * @description Log item that is just a stream of [[Bytes]]
+     * Log item that is just a stream of [[Bytes]]
      */
     public static class Other extends Bytes {
 
@@ -44,7 +44,7 @@ public class Digest extends Struct {
 
     /**
      * @name AuthoritiesChange
-     * @description Log for Authories changed
+     * Log for Authories changed
      */
     public static class AuthoritiesChange extends Vector<AuthorityId> {
         public AuthoritiesChange(Object value) {
@@ -54,7 +54,7 @@ public class Digest extends Struct {
 
     /**
      * @name ChangesTrieRoot
-     * @description Log for changes to the Trie root
+     * Log for changes to the Trie root
      */
     public static class ChangesTrieRoot extends Hash {
 
@@ -65,7 +65,7 @@ public class Digest extends Struct {
 
     /**
      * @name Seal
-     * @description Log item indicating a sealing event
+     * Log item indicating a sealing event
      */
     public static class Seal extends Tuple {
         public Seal(Object value) {
@@ -78,14 +78,14 @@ public class Digest extends Struct {
         }
 
         /**
-         * @description The wrapped [[Signature]]
+         * The wrapped [[Signature]]
          */
         public Signature getSignature() {
             return this.getFiled(1);
         }
 
         /**
-         * @description The wrapped [[U64]] slot
+         * The wrapped [[U64]] slot
          */
         public U64 slot() {
             return this.getFiled(0);
@@ -94,7 +94,7 @@ public class Digest extends Struct {
 
     /**
      * @name Consensus
-     * @description Log item indicating consensus
+     * Log item indicating consensus
      */
     public static class Consensus extends Tuple {
         public Consensus(Object value) {
@@ -107,28 +107,28 @@ public class Digest extends Struct {
         }
 
         /**
-         * @description `true` if the engine matches aura
+         * `true` if the engine matches aura
          */
         public boolean isAura() {
             return this.getEngine().eq(0x61727561);// ['a', 'u', 'r', 'a']
         }
 
         /**
-         * @description The wrapped engine [[U32]]
+         * The wrapped engine [[U32]]
          */
         public U32 getEngine() {
             return this.getFiled(0);
         }
 
         /**
-         * @description The wrapped [[Bytes]]
+         * The wrapped [[Bytes]]
          */
         public Bytes getData() {
             return getFiled(1);
         }
 
         /**
-         * @description The slot and signature extracted from the raw data (assuming Aura)
+         * The slot and signature extracted from the raw data (assuming Aura)
          */
         public Pair<U64, Signature> asAura() {
             byte[] raw = this.getData().toU8a(true);
@@ -140,7 +140,7 @@ public class Digest extends Struct {
 
     /**
      * @name DigestItem
-     * @description A [[EnumType]] the specifies the specific item in the logs of a [[Digest]]
+     * A [[EnumType]] the specifies the specific item in the logs of a [[Digest]]
      */
     //export class DigestItem extends EnumType<AuthoritiesChange | ChangesTrieRoot | Other| Seal> {
     public static class DigestItem extends EnumType {
@@ -158,14 +158,14 @@ public class Digest extends Struct {
 
 
         /**
-         * @description Returns the item as a [[AuthoritiesChange]]
+         * Returns the item as a [[AuthoritiesChange]]
          */
         public Vector<AuthorityId> getAsAuthoritiesChange() {
             return (Vector<AuthorityId>) this.value();
         }
 
         /**
-         * @description Returns the item as a [[ChangesTrieRoot]]
+         * Returns the item as a [[ChangesTrieRoot]]
          */
         public ChangesTrieRoot getAsChangesTrieRoot() {
             return (ChangesTrieRoot) this.value();
@@ -179,28 +179,28 @@ public class Digest extends Struct {
         }
 
         /**
-         * @description Returns the item as a [[Other]]
+         * Returns the item as a [[Other]]
          */
         public Other getAsOther() {
             return (Other) this.value();
         }
 
         /**
-         * @description Returns the item as a [[Seal]]
+         * Returns the item as a [[Seal]]
          */
         public Seal getAsSeal() {
             return (Seal) this.value();
         }
 
         /**
-         * @description Returns true on [[Consensus]]
+         * Returns true on [[Consensus]]
          */
         public boolean isConsensus() {
             return this.getType().equals("Consensus");
         }
 
         /**
-         * @description Returns true on [[Seal]]
+         * Returns true on [[Seal]]
          */
         public boolean isSeal() {
             return this.getType().equals("Seal");

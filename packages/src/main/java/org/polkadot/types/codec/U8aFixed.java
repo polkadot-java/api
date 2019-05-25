@@ -6,7 +6,7 @@ import org.polkadot.utils.Utils;
 
 /**
  * @name U8aFixed
- * @description A U8a that manages a a sequence of bytes up to the specified bitLength. Not meant
+ * A U8a that manages a a sequence of bytes up to the specified bitLength. Not meant
  * to be used directly, rather is should be subclassed with the specific lengths.
  */
 public class U8aFixed extends U8a {
@@ -17,11 +17,16 @@ public class U8aFixed extends U8a {
     }
 
     private static Object decodeU8aFixed(Object value, int bitLength) {
+        if (value == null) {
+            value = new byte[0];
+        }
         if (bitLength <= 0) {
             bitLength = 256;
         }
         if (Utils.isU8a(value)) {
-            byte[] ba = (byte[]) value;
+
+            byte[] ba = Utils.u8aToU8a(value);
+
             // ensure that we have an actual u8a with the full length as specified by
             // the bitLength input (padded with zeros as required)
             int byteLength = bitLength / 8;
@@ -44,7 +49,7 @@ public class U8aFixed extends U8a {
     }
 
     /**
-     * @description Returns the number of bits in the value
+     * Returns the number of bits in the value
      */
     int bitLength() {
         return this.length() * 8;

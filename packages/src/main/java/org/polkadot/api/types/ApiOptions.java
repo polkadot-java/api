@@ -1,13 +1,15 @@
 package org.polkadot.api.types;
 
+import org.polkadot.api.derive.Index;
+
 public class ApiOptions {
 
 
     //
-    ///**
-    // * @description Add custom derives to be injected
-    // */
-    //derives?: DeriveCustom;
+    /**
+     * @description Add custom derives to be injected
+     */
+    public Index.DeriveCustom derives = new Index.DeriveCustom();
     ///**
     // * @description Transport Provider from rpc-provider. If not specified, it will default to
     // * connecting to a WsProviderDir connecting localhost with the default port, i.e. `ws://127.0.0.1:9944`

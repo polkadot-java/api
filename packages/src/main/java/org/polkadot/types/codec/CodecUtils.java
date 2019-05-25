@@ -69,6 +69,10 @@ public class CodecUtils {
     public static List<Object> arrayLikeToList(Object value) {
         List<Object> ret = new ArrayList<>();
 
+        if (value == null) {
+            return ret;
+        }
+
         if (value instanceof List) {
             for (Object obj : ((List) value)) {
                 ret.add(obj);

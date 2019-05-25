@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * @name PeerInfo
- * @description A system peer info indicator, reported back over RPC
+ * A system peer info indicator, reported back over RPC
  */
 public class PeerInfo extends Struct {
 
@@ -36,35 +36,35 @@ public class PeerInfo extends Struct {
     }
 
     /**
-     * @description The best block hash for the peer
+     * The best block hash for the peer
      */
     public Hash getBestHash() {
         return this.getField("bestHash");
     }
 
     /**
-     * @description The best block hash for the peer
+     * The best block hash for the peer
      */
     public BlockNumber getBestNumber() {
         return this.getField("bestNumber");
     }
 
     /**
-     * @description The p2p network id for the peer
+     * The p2p network id for the peer
      */
     public Text getPeerId() {
         return this.getField("peerId");
     }
 
     /**
-     * @description The index of the peer in our list
+     * The index of the peer in our list
      */
     public U32 getProtocolVersion() {
         return this.getField("protocolVersion");
     }
 
     /**
-     * @description The roles of the peer on the network
+     * The roles of the peer on the network
      */
     public Text getRoles() {
         return this.getField("roles");

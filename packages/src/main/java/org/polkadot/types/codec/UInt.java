@@ -4,8 +4,8 @@ package org.polkadot.types.codec;
 import org.polkadot.utils.Utils;
 
 /**
- * @name UInt
- * @description A generic unsigned integer codec. For Substrate all numbers are LE encoded,
+ * UInt
+ * A generic unsigned integer codec. For Substrate all numbers are LE encoded,
  * this handles the encoding and decoding of those numbers. Upon construction
  * the bitLength is provided and any additional use keeps the number to this
  * length. This extends `BN`, so all methods available on a normal `BN` object
@@ -22,7 +22,7 @@ public class UInt extends AbstractInt {
     }
 
     /**
-     * @description Returns a hex string representation of the value
+     * Returns a hex string representation of the value
      */
     @Override
     public String toHex() {
@@ -31,7 +31,7 @@ public class UInt extends AbstractInt {
 
     /**
      * @param isBare true when the value has none of the type-specific prefixes (internal)
-     * @description Encodes the value as a Uint8Array as per the parity-codec specifications
+     * Encodes the value as a Uint8Array as per the parity-codec specifications
      */
     @Override
     public byte[] toU8a(boolean isBare) {
