@@ -40,6 +40,7 @@ import org.polkadot.types.primitive.Null;
 import org.polkadot.types.primitive.StorageKey;
 import org.polkadot.types.primitive.U64;
 import org.polkadot.types.rpc.RuntimeVersion;
+import org.polkadot.types.type.Event;
 import org.polkadot.types.type.Hash;
 import org.polkadot.utils.Utils;
 
@@ -221,6 +222,13 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
             ApiBase.this.derive = decorateDerive();
 
             //ApiBase.this.runtimeVersion = (RuntimeVersion) results.get(0);
+
+            // only inject if we are not a clone (global init)
+            //if (!this._options.source) {
+            Event.injectMetadata(this.runtimeMetadata.asV0());
+            Method.injectMethods(modulesWithMethods);
+            //}
+
 
             this.emit(IProvider.ProviderInterfaceEmitted.ready, this);
 

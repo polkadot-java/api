@@ -67,7 +67,7 @@ public class TypesUtils {
 
                 if (constructor == null) {
                     if (!Null.class.isAssignableFrom(clazz)) {
-                        logger.error("can not find match constructor {}, {}, {}, {}"
+                        logger.debug("can not find match constructor {}, {}, {}, {}"
                                 , clazz, constructors, values.length,
                                 Arrays.stream(values).map(v -> v.getClass().getSimpleName()).collect(Collectors.toList()));
                     }

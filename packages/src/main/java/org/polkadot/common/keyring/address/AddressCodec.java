@@ -3,7 +3,7 @@ package org.polkadot.common.keyring.address;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bitcoinj.core.Base58;
-import org.polkadot.utils.CryptoUtils;
+import org.polkadot.utils.UtilsCrypto;
 import org.polkadot.utils.Utils;
 
 public class AddressCodec {
@@ -58,7 +58,7 @@ public class AddressCodec {
     final static byte[] SS58_PREFIX = Utils.stringToU8a("SS58PRE");
 
     public static byte[] sshash(byte[] key) {
-        return CryptoUtils.blake2AsU8a(Utils.u8aConcat(Lists.newArrayList(SS58_PREFIX, key)), 512);
+        return UtilsCrypto.blake2AsU8a(Utils.u8aConcat(Lists.newArrayList(SS58_PREFIX, key)), 512);
     }
 
 

@@ -95,11 +95,14 @@ public class EnumType<T> extends Base<Codec> implements Codec {
                     : EnumType.createViaJSON(def, aliasses, str, null);
         }
         //    } else if (isObject(value)) {
-        else if (value instanceof Object) {
+        else if (value instanceof Map) {
+            Map value1 = (Map) value;
+            Object key = value1.keySet().stream().findFirst().orElse(null);
+            return createViaJSON(def, aliasses, (String) key, value1.get(key));
             //const key = Object.keys(value)[0];
             //      return EnumType.createViaJSON(def, aliasses, key, value[key]);
             //TODO 2019-05-07 17:36
-            throw new UnsupportedOperationException(" decodeViaValue " + value);
+            //throw new UnsupportedOperationException(" decodeViaValue " + value);
         }
         // Worst-case scenario, return the first with default
         return EnumType.createValue(def, 0, null);

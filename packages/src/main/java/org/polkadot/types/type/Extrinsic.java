@@ -10,7 +10,7 @@ import org.polkadot.types.codec.Struct;
 import org.polkadot.types.codec.U8a;
 import org.polkadot.types.metadata.v0.Modules;
 import org.polkadot.types.primitive.Method;
-import org.polkadot.utils.CryptoUtils;
+import org.polkadot.utils.UtilsCrypto;
 import org.polkadot.utils.Utils;
 
 import java.math.BigInteger;
@@ -124,7 +124,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     @Override
     public U8a getHash() {
         return new Hash(
-                CryptoUtils.blake2AsU8a(this.toU8a(), 256)
+                UtilsCrypto.blake2AsU8a(this.toU8a(), 256)
         );
     }
 
@@ -206,18 +206,19 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     /**
      * Converts the Object to JSON, typically used for RPC transfers
      */
-    public Object toJSON() {
+    @Override
+    public Object toJson() {
         return this.toHex();
     }
 
     /**
      * @param isBare true when the value has none of the type-specific prefixes (internal)
-     * Encodes the value as a Uint8Array as per the parity-codec specifications
+     *               Encodes the value as a Uint8Array as per the parity-codec specifications
      */
 
     @Override
     public byte[] toU8a(boolean isBare) {
-        byte[] encoded = super.toU8a();
+        byte[] encoded = super.toU8a(false);
         return isBare
                 ? encoded
                 : Utils.compactAddLength(encoded);

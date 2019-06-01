@@ -19,13 +19,13 @@ public class ExtrinsicEra extends U8a {
             byte[] u8a = Utils.u8aToU8a(value);
 
             if (u8a.length == 0) {
-                return u8a;
+                return new byte[]{0};
             }
             // If we have a zero byte, it is immortal (1 byte in length), otherwise we have
             // the era details following as another byte
             return ArrayUtils.subarray(u8a, 0, (u8a[0] == 0) ? 1 : 2);
         }
 
-        return new byte[0];
+        return new byte[]{0};
     }
 }

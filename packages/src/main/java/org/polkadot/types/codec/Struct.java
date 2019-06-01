@@ -12,11 +12,7 @@ import org.polkadot.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class Struct
         //<
@@ -240,15 +236,36 @@ public class Struct
     @Override
     public byte[] toU8a(boolean isBare) {
 
-        List<byte[]> collect = this.toArray().stream().map(entry -> entry.toU8a(isBare)).collect(Collectors.toList());
+
+        ///////////
+        List<byte[]> collect = Lists.newArrayList();
+        for (Codec entry : this.toArray()) {
+            byte[] bytes = entry.toU8a(isBare);
+            //logger.info(" entry {}, {}", entry.getClass().getSimpleName(), Utils.toU8aString(bytes));
+            collect.add(bytes);
+        }
+
+        ///////
+        //List<byte[]> collect = this.toArray().stream()
+        //        .map(entry -> {
+        //            byte[] bytes = entry.toU8a(isBare);
+        //            if (entry.getClass().getSimpleName().equals("Struct") && bytes.length == 0) {
+        //                System.out.println();
+        //            }
+        //            logger.info(" entry {}, {}", entry.getClass().getSimpleName(), Utils.toU8aString(bytes));
+        //            return bytes;
+        //        })
+        //        .collect(Collectors.toList());
+        ///////
+
         byte[] bytes = Utils.u8aConcat(collect);
         return bytes;
 
         //    return u8aConcat(
-    //  ...this.toArray().map((entry) =>
-    //            entry.toU8a(isBare)
-    //  )
-    //);
+        //  ...this.toArray().map((entry) =>
+        //            entry.toU8a(isBare)
+        //  )
+        //);
 
     }
 

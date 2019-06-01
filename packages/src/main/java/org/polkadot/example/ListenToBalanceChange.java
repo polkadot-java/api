@@ -12,10 +12,10 @@ import org.polkadot.rpc.provider.ws.WsProvider;
 public class ListenToBalanceChange {
     static String Alice = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY";
 
-    static String endPoint = "wss://poc3-rpc.polkadot.io/";
+    //static String endPoint = "wss://poc3-rpc.polkadot.io/";
     //static String endPoint = "wss://substrate-rpc.parity.io/";
     //static String endPoint = "ws://45.76.157.229:9944/";
-    //static String endPoint = "ws://127.0.0.1:9944";
+    static String endPoint = "ws://127.0.0.1:9944";
 
     static void initEndPoint(String[] args) {
         if (args != null && args.length >= 1) {

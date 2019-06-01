@@ -16,14 +16,14 @@ import java.math.BigInteger;
  * a number and making the compact representation thereof
  */
 //TODO export default class Compact extends Base<UInt | Moment> implements Codec {
-public class Compact extends Base<UInt> implements Codec {
+public class Compact extends Base<Compactable> implements Codec {
 
-    public Compact(Types.ConstructorCodec<? extends UInt> type, Object value) {
+    public Compact(Types.ConstructorCodec<? extends Compactable> type, Object value) {
         super(Compact.decodeCompact(type, value));
     }
 
     static class Builder implements Types.ConstructorCodec<Compact> {
-        Types.ConstructorCodec<UInt> type;
+        Types.ConstructorCodec<Compactable> type;
 
         Builder(Types.ConstructorCodec type) {
             this.type = type;
@@ -40,11 +40,11 @@ public class Compact extends Base<UInt> implements Codec {
         }
     }
 
-    public static Types.ConstructorCodec<Compact> with(Types.ConstructorCodec<? extends UInt> type) {
+    public static Types.ConstructorCodec<Compact> with(Types.ConstructorCodec<? extends Compactable> type) {
         return new Builder(type);
     }
 
-    static UInt decodeCompact(Types.ConstructorCodec<? extends UInt> type, Object value) {
+    static Compactable decodeCompact(Types.ConstructorCodec<? extends Compactable> type, Object value) {
         if (value instanceof Compact) {
             return type.newInstance(((Compact) value).raw);
         } else if (value instanceof String) {
@@ -58,7 +58,7 @@ public class Compact extends Base<UInt> implements Codec {
 
         //const [, _value] = Compact.decodeU8a(value, new Type(0).bitLength());
         //    return new Type(_value);
-
+        //Utils.compactFromU8a(value, type.newInstance(0).bitLength());
         Pair<Integer, BigInteger> pair = Utils.compactFromU8a(value, type.newInstance(0).bitLength());
         return type.newInstance(pair.getRight());
     }
@@ -126,7 +126,7 @@ public class Compact extends Base<UInt> implements Codec {
     /**
      * @description Returns the number representation for the value
      */
-    public int toNumber() {
+    public long toNumber() {
         return this.raw.toNumber();
     }
 

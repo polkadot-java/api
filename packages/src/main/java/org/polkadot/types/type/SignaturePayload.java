@@ -5,7 +5,7 @@ import org.polkadot.types.Types;
 import org.polkadot.types.codec.Struct;
 import org.polkadot.types.primitive.Method;
 import org.polkadot.types.rpc.RuntimeVersion;
-import org.polkadot.utils.CryptoUtils;
+import org.polkadot.utils.UtilsCrypto;
 
 /**
  * @name SignaturePayload
@@ -37,7 +37,7 @@ public class SignaturePayload extends Struct {
     //constructor (value? SignaturePayloadValue | Uint8Array) {
     public SignaturePayload(Object value) {
         super(new Types.ConstructorDef()
-                        .add("nonce", Nonce.class)
+                        .add("nonce", NonceCompact.class)
                         .add("method", Method.class)
                         .add("era", ExtrinsicEra.class)
                         .add("blockHash", Hash.class),
@@ -76,7 +76,7 @@ public class SignaturePayload extends Struct {
     /**
      * The [[Nonce]]
      */
-    public Nonce getNonce() {
+    public NonceCompact getNonce() {
         return this.getField("nonce");
     }
 
@@ -99,7 +99,7 @@ public class SignaturePayload extends Struct {
 
         byte[] u8a = this.toU8a();
         byte[] encoded = u8a.length > 256
-                ? CryptoUtils.blake2AsU8a(u8a)
+                ? UtilsCrypto.blake2AsU8a(u8a)
                 : u8a;
         this._signature = signerPair.sign(encoded);
         return this._signature;

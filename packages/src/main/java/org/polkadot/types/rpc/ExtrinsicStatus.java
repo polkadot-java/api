@@ -17,7 +17,9 @@ import java.util.LinkedHashMap;
  */
 //export default class ExtrinsicStatus extends EnumType<Future | Ready | Finalized | Usurped | Broadcast | Dropped | Invalid> {
 public class ExtrinsicStatus extends EnumType {
-
+    public ExtrinsicStatus(Object value) {
+        this(value, -1);
+    }
 
     public ExtrinsicStatus(Object value, int index) {
         super(new Types.ConstructorDef()

@@ -3,6 +3,7 @@ package org.polkadot.types.primitive;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.polkadot.types.Codec;
+import org.polkadot.types.codec.Compactable;
 import org.polkadot.utils.Utils;
 
 import java.math.BigInteger;
@@ -18,7 +19,7 @@ import java.util.Date;
  * @noInheritDoc
  */
 //export default class Moment extends Date implements Codec {
-public class Moment extends Date implements Codec {
+public class Moment extends Date implements Compactable {
 
     protected Date raw;// FIXME Remove this once we convert all types out of Base
 
@@ -74,6 +75,7 @@ public class Moment extends Date implements Codec {
     /**
      * Returns the number of bits in the value
      */
+    @Override
     public int bitLength() {
         return BITLENGTH;
     }
@@ -82,6 +84,7 @@ public class Moment extends Date implements Codec {
     /**
      * Returns the BN representation of the timestamp
      */
+    @Override
     public BigInteger toBn() {
         return BigInteger.valueOf(this.toNumber());
     }
@@ -106,6 +109,7 @@ public class Moment extends Date implements Codec {
     /**
      * Returns the number representation for the timestamp
      */
+    @Override
     public long toNumber() {
         return (long) Math.ceil(this.getTime() / 1000);
     }

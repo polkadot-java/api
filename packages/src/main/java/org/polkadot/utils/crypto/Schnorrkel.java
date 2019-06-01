@@ -7,9 +7,9 @@ public class Schnorrkel {
     private static ISR25591 createSR25591()
     {
         // use this if there is no JNI
-        return new EmptySR25591();
+        //return new EmptySR25591();
         // use this line to integrate JNI
-        //return new JniSR25591();
+        return new JniSR25591();
     }
 
     private static byte[] extractPublicKey(byte[] keyPair)

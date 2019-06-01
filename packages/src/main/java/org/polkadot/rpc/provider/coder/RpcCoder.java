@@ -49,7 +49,7 @@ public class RpcCoder {
     private void checkError(JsonRpcError error) {
         if (error != null) {
             String data = error.getData() == null ?
-                    "" : "(" + error.getData().substring(0, 10) + ")";
+                    "" : "(" + error.getData().substring(0, Math.min(10,error.getData().length())) + ")";
             String msg = String.format("%d : %s%s", error.getCode(), error.getMessage(), data);
             logger.error("{}", msg);
             throw new RuntimeException(msg);

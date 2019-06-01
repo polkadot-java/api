@@ -26,6 +26,10 @@ public class MakeTransfer {
         }
     }
 
+    static {
+        System.loadLibrary("jni");
+        System.out.println("load ");
+    }
 
     public static void main(String[] args) throws InterruptedException {
         // Create an await for the API
@@ -46,33 +50,21 @@ public class MakeTransfer {
         ready.then(api -> {
 
             Types.KeyringOptions options = new Types.KeyringOptions(org.polkadot.utils.crypto.Types.KeypairType_SR);
-
-            //System.out.println(" =====1111 ");
-
             Keyring keyring = new Keyring(options);
-            //System.out.println(" =====2222 ");
-
             Types.KeyringPair alice = keyring.addFromUri("//Alice", null, options.getType());
-            //System.out.println(" =====33333 ");
-
             org.polkadot.api.Types.SubmittableExtrinsicFunction function = api.tx().section("balances").function("transfer");
-            SubmittableExtrinsic transfer = function.call(BOB, 12345);
+            SubmittableExtrinsic transfer = function.call(BOB, 111);
             // Add alice to our keyring with a hard-deived path (empty phrase, so uses dev)
             //const alice = keyring.addFromUri('//Alice');
-            //System.out.println(" =====44444 ");
-
             return transfer.signAndSend(alice, new org.polkadot.types.Types.SignatureOptions());
             // Create a extrinsic, transferring 12345 units to Bob
             //const transfer = api.tx.balances.transfer(BOB, 12345);
 
         }).then(result -> {
-            //System.out.println(" =====55555 ");
-
             // Sign and send the transaction using our account
             //const hash = await transfer.signAndSend(alice);
             Hash hash = (Hash) result;
             System.out.println("Transfer sent with hash" + hash.toHex());
-
             return null;
         })._catch(err -> {
             err.printStackTrace();

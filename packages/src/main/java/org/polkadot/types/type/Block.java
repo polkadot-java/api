@@ -2,7 +2,7 @@ package org.polkadot.types.type;
 
 import org.polkadot.types.Types;
 import org.polkadot.types.codec.Struct;
-import org.polkadot.utils.CryptoUtils;
+import org.polkadot.utils.UtilsCrypto;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class Block extends Struct {
      * Encodes a content [[Hash]] for the block
      */
     public Hash getcontentHash() {
-        return new Hash(CryptoUtils.blake2AsU8a(this.toU8a(), 256));
+        return new Hash(UtilsCrypto.blake2AsU8a(this.toU8a(), 256));
     }
 
     /**

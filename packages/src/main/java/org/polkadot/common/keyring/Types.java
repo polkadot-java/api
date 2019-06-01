@@ -10,7 +10,7 @@ import java.util.Set;
 public interface Types {
 
     class KeyringOptions {
-        int addressPrefix;
+        int addressPrefix = -1;
         String type;
 
         public KeyringOptions(String type) {
