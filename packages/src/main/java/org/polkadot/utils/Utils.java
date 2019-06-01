@@ -10,6 +10,7 @@ import org.polkadot.types.codec.CodecUtils;
 import org.polkadot.types.codec.Compact;
 import org.polkadot.types.codec.Option;
 import org.polkadot.types.codec.U8a;
+import org.polkadot.types.type.Event;
 import org.polkadot.types.type.ExtrinsicSignature;
 
 import java.math.BigInteger;
@@ -786,6 +787,9 @@ public class Utils {
             return false;
         }
 
+        if (object instanceof Event) {
+            return false;
+        }
 
         if (object instanceof Collection
                 || object instanceof Map) {
@@ -915,5 +919,13 @@ public class Utils {
 
     public static Pair<Integer, byte[]> compactStripLength(byte[] input) {
         return compactStripLength(input, 32);
+    }
+
+    public static String toU8aString(byte[] bytes) {
+        int[] ints = new int[bytes.length];
+        for (int i = 0; i < bytes.length; i++) {
+            ints[i] = UnsignedBytes.toInt(bytes[i]);
+        }
+        return Arrays.toString(ints);
     }
 }

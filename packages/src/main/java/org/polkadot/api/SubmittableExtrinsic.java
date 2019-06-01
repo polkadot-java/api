@@ -18,6 +18,8 @@ import org.polkadot.types.primitive.Method;
 import org.polkadot.types.rpc.ExtrinsicStatus;
 import org.polkadot.types.rpc.SignedBlock;
 import org.polkadot.types.type.EventRecord;
+import org.polkadot.types.type.Extrinsic;
+import org.polkadot.types.type.ExtrinsicSignature;
 import org.polkadot.types.type.Hash;
 import org.polkadot.utils.MapUtils;
 
@@ -78,7 +80,7 @@ public interface SubmittableExtrinsic extends Types.IExtrinsic {
         /**
          * the contained events
          */
-        List<EventRecord> getEvents() {
+        public List<EventRecord> getEvents() {
             return this.getField("events");
         }
 
@@ -107,8 +109,10 @@ public interface SubmittableExtrinsic extends Types.IExtrinsic {
     }
 
 
-    abstract class SubmittableExtrinsicImpl implements SubmittableExtrinsic {
+    abstract class SubmittableExtrinsicImpl extends Extrinsic implements SubmittableExtrinsic {
+
         public SubmittableExtrinsicImpl(Types.IExtrinsic _extrinsic) {
+            super(_extrinsic);
             this._extrinsic = _extrinsic;
         }
 
@@ -160,13 +164,13 @@ public interface SubmittableExtrinsic extends Types.IExtrinsic {
         }
 
         @Override
-        public Types.IExtrinsicSignature getSignature() {
-            return _extrinsic.getSignature();
+        public ExtrinsicSignature getSignature() {
+            return (ExtrinsicSignature) _extrinsic.getSignature();
         }
 
         @Override
-        public Types.IExtrinsic addSignature(Object signer, byte[] signature, Object nonce, byte[] era) {
-            return _extrinsic.addSignature(signer, signature, nonce, era);
+        public Extrinsic addSignature(Object signer, byte[] signature, Object nonce, byte[] era) {
+            return (Extrinsic) _extrinsic.addSignature(signer, signature, nonce, era);
         }
 
         @Override
@@ -229,14 +233,35 @@ public interface SubmittableExtrinsic extends Types.IExtrinsic {
 
         IRpc.RpcInterfaceSection author = apiBase.rpc().author();
         IRpcFunction submitAndWatchExtrinsic = author.function("submitAndWatchExtrinsic");
-        Promise invoke = submitAndWatchExtrinsic.invoke(_extrinsic);
 
-        return invoke
-                .then((status) -> statusObservable(apiBase, _extrinsic, (ExtrinsicStatus) status, trackingCb))
-                .then((status) -> {
-                    updateSigner(apiBase, updateId, status);
-                    return Promise.value(status);
-                });
+        IRpcFunction.SubscribeCallback cb = null;
+
+        //todo
+        Promise invoke;// = submitAndWatchExtrinsic.invoke(_extrinsic);
+        if (trackingCb != null) {
+            invoke = submitAndWatchExtrinsic.invoke(_extrinsic, (IRpcFunction.SubscribeCallback) (status) ->
+                    statusObservable(apiBase, _extrinsic, (ExtrinsicStatus) status, trackingCb)
+                            .then((result) -> {
+                                updateSigner(apiBase, updateId, result);
+                                return Promise.value(result);
+                            }));
+            return invoke;
+        } else {
+            invoke = submitAndWatchExtrinsic.invoke(_extrinsic);
+            //Promise invoke = submitAndWatchExtrinsic.invoke(_extrinsic);
+
+            return invoke
+                    .then((status) ->
+                            {
+                                Promise promise = statusObservable(apiBase, _extrinsic, (ExtrinsicStatus) status, trackingCb);
+                                return promise;
+                            }
+                    )
+                    .then((status) -> {
+                        updateSigner(apiBase, updateId, status);
+                        return Promise.value(status);
+                    });
+        }
     }
 
     static Promise statusObservable(ApiBase apiBase, Types.IExtrinsic _extrinsic, ExtrinsicStatus status, StatusCb trackingCb) {
@@ -274,6 +299,9 @@ public interface SubmittableExtrinsic extends Types.IExtrinsic {
 
 
             return Promise.value(result);
+        })._catch(err -> {
+            err.printStackTrace();
+            return null;
         });
     }
 
@@ -284,6 +312,25 @@ public interface SubmittableExtrinsic extends Types.IExtrinsic {
 
         SubmittableExtrinsic submittableExtrinsic = new SubmittableExtrinsicImpl(_extrinsic) {
 
+            private Types.SignatureOptions expandOptions(Types.SignatureOptions options) {
+                Types.SignatureOptions signatureOptions = new Types.SignatureOptions();
+                signatureOptions.setBlockHash(apiBase.genesisHash);
+                signatureOptions.setVersion(apiBase.runtimeVersion);
+
+                if (options.getNonce() != null) {
+                    signatureOptions.setNonce(options.getNonce());
+                }
+                if (options.getVersion() != null) {
+                    signatureOptions.setVersion(options.getVersion());
+                }
+                if (options.getBlockHash() != null) {
+                    signatureOptions.setBlockHash(options.getBlockHash());
+                }
+                if (options.getEra() != null) {
+                    signatureOptions.setEra(options.getEra());
+                }
+                return signatureOptions;
+            }
 
             @Override
             public Promise<Hash> send() {
@@ -292,11 +339,12 @@ public interface SubmittableExtrinsic extends Types.IExtrinsic {
 
             @Override
             public Promise<Runnable> send(StatusCb callback) {
-                return subscribeObservable(apiBase, -1, _extrinsic, trackingCb);
+                return subscribeObservable(apiBase, -1, _extrinsic, callback);
+                //return subscribeObservable(apiBase, -1, _extrinsic, trackingCb);
             }
 
             @Override
-            public Types.IExtrinsic sign(KeyringPair account, Types.SignatureOptions options) {
+            public Extrinsic sign(KeyringPair account, Types.SignatureOptions options) {
                 /*
                  // HACK here we actually override nonce if it was specified (backwards compat for
                   // the previous signature - don't let userspace break, but allow then time to upgrade)
@@ -304,8 +352,8 @@ public interface SubmittableExtrinsic extends Types.IExtrinsic {
                     ? { nonce: _options as any as number }
                     : _options;
                  */
-                Types.IExtrinsic sign = _extrinsic.sign(account, options);
-                return sign;
+                Types.IExtrinsic sign = _extrinsic.sign(account, expandOptions(options));
+                return this;
             }
 
             @Override
@@ -366,10 +414,8 @@ public interface SubmittableExtrinsic extends Types.IExtrinsic {
                     } else {
                         assert apiBase.signer != null : "no signer exists";
 
-                        options.setBlockHash(apiBase.genesisHash);
-                        options.setVersion(apiBase.runtimeVersion);
-                        options.setNonce(nonce);
-                        Promise<Integer> sign = apiBase.signer.sign(_extrinsic, address, options);
+                        Types.SignatureOptions expandOptions = expandOptions(options);
+                        Promise<Integer> sign = apiBase.signer.sign(_extrinsic, address, expandOptions);
                         return sign;
                     }
 

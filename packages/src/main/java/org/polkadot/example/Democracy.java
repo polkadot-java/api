@@ -1,13 +1,18 @@
 package org.polkadot.example;
 
 import com.onehilltech.promises.Promise;
+import org.polkadot.api.SubmittableExtrinsic;
 import org.polkadot.api.Types;
 import org.polkadot.api.promise.ApiPromise;
 import org.polkadot.direct.IRpcFunction;
 import org.polkadot.rpc.provider.ws.WsProvider;
+import org.polkadot.types.rpc.ExtrinsicStatus;
 import org.polkadot.types.type.BlockNumber;
+import org.polkadot.types.type.Event;
+import org.polkadot.types.type.EventRecord;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Democracy {
@@ -32,6 +37,9 @@ public class Democracy {
         //Promise<ApiPromise> ready = ApiPromise.create();
         initEndPoint(args);
 
+        //testVote();
+        //waitLock();
+        
         testReferendumInfoOf();
 
         waitLock();
@@ -58,6 +66,73 @@ public class Democracy {
         synchronized (lock) {
             lock.notify();
         }
+    }
+
+    public static void testVote() {
+        System.out.println("=========start testVote=========");
+
+        Promise<ApiPromise> promise = newApi();
+        promise.then(api -> {
+
+            Types.SubmittableExtrinsicFunction vote = api.tx().section("democracy").function("vote");
+            SubmittableExtrinsic call = vote.call(13, true);
+            call.signAndSend(Alice, new SubmittableExtrinsic.StatusCb() {
+                @Override
+                public Object callback(SubmittableExtrinsic.SubmittableResult result) {
+                    ExtrinsicStatus status = result.getStatus();
+                    List<EventRecord> events = result.getEvents();
+                    if (status.isFinalized()) {
+                        System.out.println("Successful transfer  with hash " + status.asFinalized().toHex());
+                    } else {
+                        System.out.println("Status of transfer: " + status.getType());
+                    }
+
+                    System.out.println("Events");
+                    for (EventRecord event : events) {
+                        EventRecord.Phase phase = event.getPhase();
+                        Event eventEvent = event.getEvent();
+
+                        System.out.println("\t" + phase.toString()
+                                + ": " + eventEvent.getSection() + "." + eventEvent.getMethod()
+                                + " " + eventEvent.getData().toString());
+                    }
+
+                    return null;
+                }
+            });
+            return null;
+        })._catch(err -> {
+            err.printStackTrace();
+            return null;
+        });
+        /*
+
+const ALICE = '5GoKvZWG5ZPYL1WUovuHW3zJBWBP5eT8CbqjdRY4Q6iMaDtZ';
+
+const transfer = api.tx.democracy.vote(13,true)
+
+transfer.signAndSend(ALICE, ({ events = [], status }) => {
+  if (status.isFinalized) {
+    console.log('Successful transfer'  with hash ' + status.asFinalized.toHex());
+  } else {
+    console.log('Status of transfer: ' + status.type);
+  }
+
+  events.forEach(({ phase, event: { data, method, section } }) => {
+    console.log(phase.toString() + ' : ' + section + '.' + method + ' ' + data.toString());
+  });
+});
+
+         */
+    }
+
+    static Promise<ApiPromise> newApi() {
+
+        WsProvider wsProvider = new WsProvider(endPoint);
+
+        Promise<ApiPromise> ready = ApiPromise.create(wsProvider);
+
+        return ready;
     }
 
 

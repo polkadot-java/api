@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignature {
 
-    public static final byte[] IMMORTAL_ERA = new byte[0];
+    public static final byte[] IMMORTAL_ERA = new byte[]{0};
     public static final int BIT_SIGNED = 0b10000000;
     public static final int BIT_UNSIGNED = 0;
     public static final int BIT_VERSION = 0b0000001;
@@ -35,7 +35,7 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
                         .add("version", U8.class)
                         .add("signer", Address.class)
                         .add("signature", Signature.class)
-                        .add("nonce", Nonce.class)
+                        .add("nonce", NonceCompact.class)
                         .add("era", ExtrinsicEra.class)
                 , decodeExtrinsicSignature(value));
 
@@ -81,6 +81,9 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
         return (this.version() & BIT_SIGNED) == BIT_SIGNED;
     }
 
+    /**
+     * The [[ExtrinsicEra]] (mortal or immortal) this signature applies to
+     */
     public ExtrinsicEra getEra() {
         return this.getField("era");
     }
@@ -89,7 +92,7 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
     /**
      * The [[Nonce]] for the signature
      */
-    public Nonce getNonce() {
+    public NonceCompact getNonce() {
         return this.getField("nonce");
     }
 
@@ -118,7 +121,7 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
         return ((U8) this.getField("version")).intValue();
     }
 
-    private ExtrinsicSignature injectSignature(Signature signature, Address signer, Nonce nonce, ExtrinsicEra era) {
+    private ExtrinsicSignature injectSignature(Signature signature, Address signer, NonceCompact nonce, ExtrinsicEra era) {
         this.put("era", era);
         this.put("nonce", nonce);
         this.put("signer", signer);
@@ -134,7 +137,7 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
     //addSignature (_signer: Address | Uint8Array, _signature: Uint8Array, _nonce: AnyNumber, _era: Uint8Array = IMMORTAL_ERA): ExtrinsicSignature {
     ExtrinsicSignature addSignature(Object _signer, byte[] _signature, Object _nonce, byte[] _era) {
         Address signer = new Address(_signer);
-        Nonce nonce = new Nonce(_nonce);
+        NonceCompact nonce = new NonceCompact(_nonce);
         ExtrinsicEra era = new ExtrinsicEra(_era);
         Signature signature = new Signature(_signature);
         return this.injectSignature(signature, signer, nonce, era);
@@ -163,4 +166,16 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
         return this.injectSignature(signature, signer, signingPayload.getNonce(), signingPayload.getEra());
     }
 
+    /**
+     * @param isBare true when the value has none of the type-specific prefixes (internal)
+     * @description Encodes the value as a Uint8Array as per the parity-codec specifications
+     */
+    @Override
+    public byte[] toU8a(boolean isBare) {
+        if (this.isSigned()) {
+            return super.toU8a(isBare);
+        } else {
+            return new byte[]{(byte) this.version()};
+        }
+    }
 }

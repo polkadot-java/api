@@ -31,7 +31,7 @@ public interface Events {
         /**
          * The [[Text]] documentation
          */
-        Vector<Text> getDocumentation() {
+        public Vector<Text> getDocumentation() {
             return this.getField("documentation");
         }
 

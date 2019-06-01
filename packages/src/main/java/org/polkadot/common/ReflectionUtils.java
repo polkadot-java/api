@@ -3,17 +3,6 @@ package org.polkadot.common;
 import java.lang.reflect.Field;
 
 public class ReflectionUtils {
-    //public static <T> T getField(Object obj, String fieldName) {
-    //    try {
-    //        Field field = obj.getClass().getDeclaredField(fieldName);
-    //        field.setAccessible(true);
-    //        return (T) field.get(obj);
-    //    } catch (Exception t) {
-    //        t.printStackTrace();
-    //        return null; // NotReached
-    //    }
-    //}
-
     /**
      * 循环向上转型, 获取对象的 DeclaredField
      *
@@ -33,7 +22,6 @@ public class ReflectionUtils {
             } catch (Exception e) {
                 //这里甚么都不要做！并且这里的异常必须这样写，不能抛出去。
                 //如果这里的异常打印或者往外抛，则就不会执行clazz = clazz.getSuperclass(),最后就不会进入到父类中了
-
             }
         }
 
@@ -42,25 +30,24 @@ public class ReflectionUtils {
 
     /**
      * 直接读取对象的属性值, 忽略 private/protected 修饰符, 也不经过 getter
-     * @param object : 子类对象
+     *
+     * @param object    : 子类对象
      * @param fieldName : 父类中的属性名
      * @return : 父类中的属性值
      */
 
-    public static <T> T  getField(Object object, String fieldName){
+    public static <T> T getField(Object object, String fieldName) {
 
         //根据 对象和属性名通过反射 调用上面的方法获取 Field对象
-        Field field = getDeclaredField(object, fieldName) ;
-
+        Field field = getDeclaredField(object, fieldName);
         //抑制Java对其的检查
-        field.setAccessible(true) ;
+        field.setAccessible(true);
 
         try {
             //获取 object 中 field 所代表的属性值
             return (T) field.get(object);
-
-        } catch(Exception e) {
-            e.printStackTrace() ;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return null;

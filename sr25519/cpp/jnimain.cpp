@@ -1,4 +1,4 @@
-#include "org_polkadot_sr25519_SR25519.h"
+#include "org_polkadot_utils_crypto_SR25519.h"
 
 extern "C" {
 #include "sr25519.h"
@@ -29,7 +29,7 @@ int getJByteArrayLength(JNIEnv * env, const jbyteArray & input)
 
 extern "C" {
 
-JNIEXPORT void JNICALL Java_org_polkadot_sr25519_SR25519_test1
+JNIEXPORT void JNICALL Java_org_polkadot_utils_crypto_SR25519_test1
   (JNIEnv * env, jobject, jbyteArray i_input, jbyteArray i_output)
 {
 	ByteArray input = jByteArrayToVector(env, i_input);
@@ -40,7 +40,7 @@ JNIEXPORT void JNICALL Java_org_polkadot_sr25519_SR25519_test1
 	setJByteArray(env, i_output, &input[0], input.size());
 }
 
-JNIEXPORT void JNICALL Java_org_polkadot_sr25519_SR25519_sr25519_1derive_1keypair_1hard
+JNIEXPORT void JNICALL Java_org_polkadot_utils_crypto_SR25519_sr25519_1derive_1keypair_1hard
   (JNIEnv * env, jobject, jbyteArray i_keypair_out, jbyteArray i_pair_ptr, jbyteArray i_cc_ptr)
 {
 	ByteArray keypair_out(getJByteArrayLength(env, i_keypair_out));
@@ -53,7 +53,7 @@ JNIEXPORT void JNICALL Java_org_polkadot_sr25519_SR25519_sr25519_1derive_1keypai
 	setJByteArray(env, i_keypair_out, &keypair_out[0], keypair_out.size());
 }
 
-JNIEXPORT void JNICALL Java_org_polkadot_sr25519_SR25519_sr25519_1derive_1keypair_1soft
+JNIEXPORT void JNICALL Java_org_polkadot_utils_crypto_SR25519_sr25519_1derive_1keypair_1soft
   (JNIEnv * env, jobject, jbyteArray i_keypair_out, jbyteArray i_pair_ptr, jbyteArray i_cc_ptr)
 {
 	ByteArray keypair_out(getJByteArrayLength(env, i_keypair_out));
@@ -66,7 +66,7 @@ JNIEXPORT void JNICALL Java_org_polkadot_sr25519_SR25519_sr25519_1derive_1keypai
 	setJByteArray(env, i_keypair_out, &keypair_out[0], keypair_out.size());
 }
 
-JNIEXPORT void JNICALL Java_org_polkadot_sr25519_SR25519_sr25519_1derive_1public_1soft
+JNIEXPORT void JNICALL Java_org_polkadot_utils_crypto_SR25519_sr25519_1derive_1public_1soft
   (JNIEnv * env, jobject, jbyteArray i_keypair_out, jbyteArray i_pair_ptr, jbyteArray i_cc_ptr)
 {
 	ByteArray keypair_out(getJByteArrayLength(env, i_keypair_out));
@@ -79,7 +79,7 @@ JNIEXPORT void JNICALL Java_org_polkadot_sr25519_SR25519_sr25519_1derive_1public
 	setJByteArray(env, i_keypair_out, &keypair_out[0], keypair_out.size());
 }
 
-JNIEXPORT void JNICALL Java_org_polkadot_sr25519_SR25519_sr25519_1keypair_1from_1seed
+JNIEXPORT void JNICALL Java_org_polkadot_utils_crypto_SR25519_sr25519_1keypair_1from_1seed
   (JNIEnv * env, jobject, jbyteArray i_keypair_out, jbyteArray i_seed_ptr)
 {
 	ByteArray keypair_out(getJByteArrayLength(env, i_keypair_out));
@@ -89,7 +89,7 @@ JNIEXPORT void JNICALL Java_org_polkadot_sr25519_SR25519_sr25519_1keypair_1from_
 	setJByteArray(env, i_keypair_out, &keypair_out[0], keypair_out.size());
 }
 
-JNIEXPORT void JNICALL Java_org_polkadot_sr25519_SR25519_sr25519_1sign
+JNIEXPORT void JNICALL Java_org_polkadot_utils_crypto_SR25519_sr25519_1sign
   (JNIEnv * env, jobject, jbyteArray i_signature_out, jbyteArray i_public_ptr, jbyteArray i_secret_ptr, jbyteArray i_message_ptr, jint i_message_length)
 {
 	ByteArray signature_out(getJByteArrayLength(env, i_signature_out));
@@ -103,7 +103,7 @@ JNIEXPORT void JNICALL Java_org_polkadot_sr25519_SR25519_sr25519_1sign
 	setJByteArray(env, i_signature_out, &signature_out[0], signature_out.size());
 }
 
-JNIEXPORT jboolean JNICALL Java_org_polkadot_sr25519_SR25519_sr25519_1verify
+JNIEXPORT jboolean JNICALL Java_org_polkadot_utils_crypto_SR25519_sr25519_1verify
   (JNIEnv * env, jobject, jbyteArray i_signature_ptr, jbyteArray i_message_ptr, jint i_message_length, jbyteArray i_public_ptr)
 {
 	ByteArray signature_ptr = jByteArrayToVector(env, i_signature_ptr);

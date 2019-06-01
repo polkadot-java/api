@@ -1,6 +1,7 @@
 package org.polkadot.types.primitive;
 
 import com.google.common.primitives.UnsignedBytes;
+import org.apache.commons.lang3.ArrayUtils;
 import org.polkadot.direct.IFunction;
 import org.polkadot.types.Codec;
 import org.polkadot.types.Types;
@@ -185,9 +186,11 @@ public class Method extends Struct implements Types.IMethod {
         if (Utils.isHex(value)) {
             return decodeMethod(Utils.hexToU8a((String) value), meta);
         } else if (Utils.isU8a(value)) {
-            U8a u8a = (U8a) value;
+            byte[] u8a = Utils.u8aToU8a(value);
+            //U8a u8a = (U8a) value;
             // The first 2 bytes are the callIndex
-            U8a callIndex = u8a.subarray(0, 2);
+            byte[] callIndex = ArrayUtils.subarray(u8a, 0, 2);
+            //U8a callIndex = u8a.subarray(0, 2);
 
             // Find metadata with callIndex
             Modules.FunctionMetadata fMeta = meta;
@@ -196,36 +199,46 @@ public class Method extends Struct implements Types.IMethod {
             }
 
             return new DecodedMethod(
-                    callIndex,
+                    ArrayUtils.subarray(u8a, 2, u8a.length),
                     new MethodIndex(callIndex),
-                    getArgsDef(meta),
-                    meta
+                    getArgsDef(fMeta),
+                    fMeta
             );
             //} else if (isObject(value) && value.callIndex && value.args) {
             //} else if (value instanceof Struct) {
-        } else if (value instanceof Map) {
-            Map struct = (Map) value;
-            // destructure value, we only pass args/methodsIndex out
-            Object args = struct.get("args");
-            MethodIndex callIndex = new MethodIndex(struct.get("callIndex"));
+        } else if (value instanceof Map || value instanceof Types.IMethod) {
+            Object args = null;
+            MethodIndex callIndex = null;
+            if (value instanceof Types.IMethod) {
+                //value instanceof Types.IMethod
+                args = ((Types.IMethod) value).getArgs();
+                callIndex = new MethodIndex(((Types.IMethod) value).getCallIndex());
+            } else {
+                Map struct = (Map) value;
+                // destructure value, we only pass args/methodsIndex out
+                args = struct.get("args");
+                callIndex = new MethodIndex(struct.get("callIndex"));
+            }
 
             // Get the correct lookupIndex
-            U8a lookupIndex = callIndex;
+            byte[] lookupIndex = null;
             if (callIndex instanceof MethodIndex) {
-                lookupIndex = new U8a(callIndex.toU8a(false));
+                lookupIndex = callIndex.toU8a();
+            } else {
+                lookupIndex = Utils.u8aToU8a(callIndex);
             }
 
             // Find metadata with callIndex
             Modules.FunctionMetadata fMeta = meta;
             if (fMeta == null) {
-                fMeta = findFunction(callIndex).meta;
+                fMeta = findFunction(lookupIndex).meta;
             }
 
             return new DecodedMethod(
                     args,
                     callIndex,
-                    getArgsDef(meta),
-                    meta
+                    getArgsDef(fMeta),
+                    fMeta
             );
         }
 
@@ -247,9 +260,9 @@ public class Method extends Struct implements Types.IMethod {
     //
     // As a convenience helper though, we return the full constructor function,
     // which includes the meta, name, section & actual interface for calling
-    static MethodFunction findFunction(U8a callIndex) {
+    static MethodFunction findFunction(byte[] callIndex) {
         //assert(Object.keys(injected).length > 0, 'Calling Method.findFunction before extrinsics have been injected.');
-        return INJECTED.getOrDefault(callIndex.toString(), FN_UNKNOWN);
+        return INJECTED.getOrDefault(Arrays.toString(callIndex), FN_UNKNOWN);
     }
 
     /**
@@ -283,9 +296,9 @@ public class Method extends Struct implements Types.IMethod {
 
     // This is called/injected by the API on init, allowing a snapshot of
     // the available system extrinsics to be used in lookups
-    public static void injectMethods(Map<String, Map<String, MethodFunction>> moduleMethods) {
+    public static void injectMethods(ModulesWithMethods moduleMethods) {
         moduleMethods.forEach((k, v) -> {
-            v.forEach((ik, iv) -> INJECTED.put(iv.callIndex.toString(), iv));
+            v.forEach((ik, iv) -> INJECTED.put(Arrays.toString(iv.callIndex), iv));
         });
     }
 

@@ -31,7 +31,7 @@ public class ApiUtils {
 
         return allEvents.stream().filter(eventRecord -> {
             // only ApplyExtrinsic has the extrinsic index
-            return eventRecord.getPahase().isApplyExtrinsic() && eventRecord.getPahase().asApplyExtrinsic().intValue() == index;
+            return eventRecord.getPhase().isApplyExtrinsic() && eventRecord.getPhase().asApplyExtrinsic().intValue() == index;
         }).collect(Collectors.toList());
     }
 }

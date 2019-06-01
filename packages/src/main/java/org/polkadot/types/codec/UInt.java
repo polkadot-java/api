@@ -12,7 +12,7 @@ import org.polkadot.utils.Utils;
  * is available here.
  * @noInheritDoc
  */
-public class UInt extends AbstractInt {
+public class UInt extends AbstractInt implements Compactable{
     public UInt(Object value, int bitLength, boolean isHexJson) {
         super(false, value, bitLength, isHexJson);
     }
@@ -38,8 +38,8 @@ public class UInt extends AbstractInt {
         return Utils.bnToU8a(this, true, false, this.bitLength());
     }
 
-
-    public int toNumber() {
-        return this.intValue();
+    @Override
+    public long toNumber() {
+        return this.longValue();
     }
 }

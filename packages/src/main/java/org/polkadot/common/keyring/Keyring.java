@@ -1,10 +1,13 @@
 package org.polkadot.common.keyring;
 
 import com.google.common.primitives.UnsignedBytes;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.polkadot.common.keyring.address.AddressCodec;
 import org.polkadot.common.keyring.address.Defaults;
 import org.polkadot.common.keyring.pair.Index;
 import org.polkadot.common.keyring.pair.Types.PairInfo;
+import org.polkadot.example.TestingPairs;
 import org.polkadot.utils.Utils;
 import org.polkadot.utils.crypto.Nacl;
 import org.polkadot.utils.crypto.Schnorrkel;
@@ -162,6 +165,9 @@ public class Keyring implements Types.KeyringInstance {
      */
     @Override
     public Types.KeyringPair addFromSeed(byte[] seed, Types.KeyringPairMeta meta, String type) {
+        meta = meta != null ? meta : new Types.KeyringPairMeta();
+        type = StringUtils.isBlank(type) ? this.type : type;
+
         org.polkadot.utils.crypto.Types.Keypair keypair = type.equals(org.polkadot.utils.crypto.Types.KeypairType_SR)
                 ? Schnorrkel.schnorrkelKeypairFromSeed(seed)
                 : Nacl.naclKeypairFromSeed(seed);
@@ -195,31 +201,39 @@ public class Keyring implements Types.KeyringInstance {
         //String suri = _suri.startsWith("//")
         //        ? DEV_PHRASE + _suri
         //        : _suri;
-
-        int[] basePublicKey = new int[]{212, 53, 147, 199, 21, 253, 211, 28, 97, 20, 26, 189, 4, 169, 159, 214, 130, 44, 133, 88, 133, 76, 205, 227, 154, 86, 132, 231, 165, 109, 162, 125};
-        int[] baseSecretKey = new int[]{152, 49, 157, 79, 248, 169, 80, 140, 75, 176, 207, 11, 90, 120, 215, 96, 160, 178, 8, 44, 2, 119, 94, 110, 130, 55, 8, 22, 254, 223, 255, 72, 146, 90, 34, 93, 151, 170, 0, 104, 45, 106, 89, 185, 91, 24, 120, 12, 16, 215, 3, 35, 54, 232, 143, 52, 66, 180, 35, 97, 244, 166, 96, 17};
-
-        byte[] publicKey = new byte[basePublicKey.length];
-        byte[] secretKey = new byte[baseSecretKey.length];
-
-        for (int i = 0; i < basePublicKey.length; i++) {
-            publicKey[i] = UnsignedBytes.checkedCast(basePublicKey[i]);
-        }
-
-        for (int i = 0; i < baseSecretKey.length; i++) {
-            secretKey[i] = UnsignedBytes.checkedCast(baseSecretKey[i]);
-        }
-        if (_suri.equals("//Alice")) {
-
-        }
-        //TODO 2019-05-25 03:15
-
+        Pair<byte[], byte[]> keys = TestingPairs.getKeys(_suri.replace("//", ""));
 
         PairInfo pairInfo = new PairInfo();
-        pairInfo.setPublicKey(publicKey);
-        pairInfo.setSecretKey(secretKey);
+        pairInfo.setPublicKey(keys.getLeft());
+        pairInfo.setSecretKey(keys.getRight());
         Types.KeyringPair pair = Index.createPair(type, pairInfo, meta, null);
         return pair;
+
+
+        //int[] basePublicKey = new int[]{212, 53, 147, 199, 21, 253, 211, 28, 97, 20, 26, 189, 4, 169, 159, 214, 130, 44, 133, 88, 133, 76, 205, 227, 154, 86, 132, 231, 165, 109, 162, 125};
+        //int[] baseSecretKey = new int[]{152, 49, 157, 79, 248, 169, 80, 140, 75, 176, 207, 11, 90, 120, 215, 96, 160, 178, 8, 44, 2, 119, 94, 110, 130, 55, 8, 22, 254, 223, 255, 72, 146, 90, 34, 93, 151, 170, 0, 104, 45, 106, 89, 185, 91, 24, 120, 12, 16, 215, 3, 35, 54, 232, 143, 52, 66, 180, 35, 97, 244, 166, 96, 17};
+        //
+        //byte[] publicKey = new byte[basePublicKey.length];
+        //byte[] secretKey = new byte[baseSecretKey.length];
+        //
+        //for (int i = 0; i < basePublicKey.length; i++) {
+        //    publicKey[i] = UnsignedBytes.checkedCast(basePublicKey[i]);
+        //}
+        //
+        //for (int i = 0; i < baseSecretKey.length; i++) {
+        //    secretKey[i] = UnsignedBytes.checkedCast(baseSecretKey[i]);
+        //}
+        //if (_suri.equals("//Alice")) {
+        //
+        //}
+        ////TODO 2019-05-25 03:15
+        //
+        //
+        //PairInfo pairInfo = new PairInfo();
+        //pairInfo.setPublicKey(publicKey);
+        //pairInfo.setSecretKey(secretKey);
+        //Types.KeyringPair pair = Index.createPair(type, pairInfo, meta, null);
+        //return pair;
     }
 
 

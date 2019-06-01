@@ -4,13 +4,15 @@ import com.google.common.collect.Lists;
 import org.polkadot.common.keyring.address.AddressCodec;
 import org.polkadot.utils.Utils;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 public class Pairs implements Types.KeyringPairs {
 
-//TODO 2019-05-23 11:26 byte[] to string
-    public static class KeyringPairMap extends LinkedHashMap<byte[], Types.KeyringPair> {
+    //TODO 2019-05-23 11:26 byte[] to string
+//public static class KeyringPairMap extends LinkedHashMap<byte[], Types.KeyringPair> {
+    public static class KeyringPairMap extends LinkedHashMap<String, Types.KeyringPair> {
     }
 
     private KeyringPairMap map;
@@ -22,7 +24,7 @@ public class Pairs implements Types.KeyringPairs {
     @Override
     public Types.KeyringPair add(Types.KeyringPair pair) {
         // @ts-ignore we use coercion :(
-        this.map.put(pair.publicKey(), pair);
+        this.map.put(Arrays.toString(pair.publicKey()), pair);
         return pair;
     }
 
@@ -35,7 +37,7 @@ public class Pairs implements Types.KeyringPairs {
     public Types.KeyringPair get(String address) {
         // @ts-ignore we use coercion :(
         byte[] key = AddressCodec.decodeAddress(address);
-        Types.KeyringPair pair = this.map.get(key);
+        Types.KeyringPair pair = this.map.get(Arrays.toString(key));
 
         if (pair == null) {
             String formatted = Utils.isU8a(address) || Utils.isHex(address)
@@ -49,6 +51,7 @@ public class Pairs implements Types.KeyringPairs {
 
     @Override
     public void remove(String address) {
-        this.map.remove(AddressCodec.decodeAddress(address));
+        byte[] decodeAddress = AddressCodec.decodeAddress(address);
+        this.map.remove(Arrays.toString(decodeAddress));
     }
 }

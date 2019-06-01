@@ -12,7 +12,7 @@ This library provides a Java wrapper around all the methods exposed by a Polkado
 
 ## overview
 
-The API is split up into a number of internal packages -
+The API is split up into a number of internal packages
 
 - [@polkadot/api](packages/src/main/java/org/polkadot/api/) The API library, providing both Promise and RxJS Observable-based interfaces. This is the main user-facing entry point.
 - [@polkadot/rpc](packages/src/main/java/org/polkadot/rpc/) RPC library.
@@ -53,7 +53,11 @@ Here lists all the samples, there purpose is self explained in the shell script 
 03_listen_to_balance_change.sh (added in version 20190518)   
 04_unsubscribe.sh (added in version 20190518)   
 05_read_storage.sh (added in version 20190518)   
-06_make_transfer.sh (added in version 20190525)  
+06_make_transfer.sh (added in version 20190525)
+07 (it was not in JS version)  
+08_system_events.sh (added in version 20190601)
+09_transfer_events.sh (added in version 20190601)
+10_upgrade_chain.sh (added in version 20190601)
 101_democracy.sh (added in version 20190525)  
 102_staking.sh (added in version 20190525)  
 
@@ -73,10 +77,10 @@ B.balances, session, demoracacy, staking, consensus and other functions
 corresponding to Storage Extrinsics Events  
 balances -- 100%  
 session -- 100%  
-democracy -- 60%, all code is converted, but the TX related part is not debugged or tested.  
-staking -- 60%, all code is converted, but the TX related part is not debugged or tested.  
-consensus -- 90%, the code is in all other parts, no concentric folder for it.  
-other functions corresponding to Storage Extrinsics Events -- at least 70%.  
+democracy -- 100%  
+staking -- 100%  
+consensus -- 100%  
+other functions corresponding to Storage Extrinsics Events -- 100%  
 
 C.timestamp function corresponding to Storage, Extrinsics. -- 100%  
 
@@ -87,9 +91,9 @@ There are some other high level interface to be finished.
 
 E. Integrated third party libraries
 
-sr25591, Rush and C++ via JNI -- 90%, C++ JNI is ready, the interface and implementation is ready, unit tested, not integration tested.  
-ed25591, pure Java -- 90%, the interface and implementation is ready, unit tested, not integration tested.  
-tweetnacl, pure Java -- 90%, the interface and implementation is ready, unit tested, not integration tested.  
+sr25591, Rush and C++ via JNI -- 100%  
+ed25591, pure Java -- 100%  
+tweetnacl, pure Java -- 100%  
 
 
 ## How to build and use sr25591 JNI

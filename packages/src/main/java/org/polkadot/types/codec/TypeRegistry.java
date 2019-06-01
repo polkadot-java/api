@@ -1,11 +1,14 @@
 package org.polkadot.types.codec;
 
+import com.google.common.collect.Sets;
 import org.polkadot.types.Codec;
 import org.polkadot.types.Types;
 import org.polkadot.types.TypesUtils;
+import org.polkadot.types.primitive.*;
 import org.polkadot.utils.PackageScanner;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,11 +53,27 @@ public class TypeRegistry {
                     registerPackage("org.polkadot.types.primitive", registry);
                     registerPackage("org.polkadot.types.rpc", registry);
                     registerPackage("org.polkadot.types.type", registry);
+                    registerAlias(registry);
                     defaultRegistry = registry;
                 }
             }
         }
         return defaultRegistry;
+    }
+
+
+    private static void registerAlias(TypeRegistry typeRegistry) {
+        HashSet<Class<? extends Codec>> aliasClass =
+                Sets.newHashSet(U8.class, U16.class, U32.class,
+                        U64.class, U128.class, U256.class,
+                        USize.class, Bool.class,
+                        I8.class, I16.class, I32.class,
+                        I64.class, I128.class, I256.class);
+
+        for (Class<? extends Codec> aClass : aliasClass) {
+            Types.ConstructorCodec builder = TypesUtils.getConstructorCodec(aClass);
+            registry.put(aClass.getSimpleName().toLowerCase(), builder);
+        }
     }
 
     public static void main(String[] args) {

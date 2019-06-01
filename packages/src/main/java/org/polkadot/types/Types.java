@@ -4,8 +4,6 @@ import org.polkadot.types.codec.U8a;
 import org.polkadot.types.metadata.v0.Modules;
 import org.polkadot.types.primitive.Method;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,10 +73,12 @@ public interface Types {
 
         public ConstructorDef(List<ConstructorCodec> list) {
             for (ConstructorCodec type : list) {
+                String simpleName = type.getTClass().getSimpleName();
+                this.add(simpleName, type);
 
-                Type gType = ((ParameterizedType) type.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-                String name = gType instanceof Class ? ((Class) gType).getSimpleName() : gType.getTypeName();
-                this.add(name, type);
+                //Type gType = ((ParameterizedType) type.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+                //String name = gType instanceof Class ? ((Class) gType).getSimpleName() : gType.getTypeName();
+                //this.add(name, type);
             }
         }
 
@@ -192,41 +192,45 @@ export type RegistryTypes = {
     }
 
     class SignatureOptions {
-        Object blockHash;
-        byte[] era;
-        Object nonce;
-        RuntimeVersionInterface version;
+        Object blockHash = null;
+        byte[] era = null;
+        Object nonce = null;
+        RuntimeVersionInterface version = null;
 
         public Object getBlockHash() {
             return blockHash;
         }
 
-        public void setBlockHash(Object blockHash) {
+        public SignatureOptions setBlockHash(Object blockHash) {
             this.blockHash = blockHash;
+            return this;
         }
 
         public byte[] getEra() {
             return era;
         }
 
-        public void setEra(byte[] era) {
+        public SignatureOptions setEra(byte[] era) {
             this.era = era;
+            return this;
         }
 
         public Object getNonce() {
             return nonce;
         }
 
-        public void setNonce(Object nonce) {
+        public SignatureOptions setNonce(Object nonce) {
             this.nonce = nonce;
+            return this;
         }
 
         public RuntimeVersionInterface getVersion() {
             return version;
         }
 
-        public void setVersion(RuntimeVersionInterface version) {
+        public SignatureOptions setVersion(RuntimeVersionInterface version) {
             this.version = version;
+            return this;
         }
 
     }

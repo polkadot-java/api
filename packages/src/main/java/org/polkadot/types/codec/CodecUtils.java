@@ -176,8 +176,8 @@ public class CodecUtils {
         for (int i = 0; i < list.size(); i++) {
             Object o = list.get(i);
             if (o instanceof Codec && !((Codec) o).eq(objects.get(i))) {
-                return true;
-            } else if (!o.equals(objects.get(i))){
+                return false;
+            } else if (!o.equals(objects.get(i))) {
                 return false;
             }
         }

@@ -29,7 +29,7 @@ public class EventRecord extends Struct {
     /**
      * The [[Phase]] where the event was generated
      */
-    public Phase getPahase() {
+    public Phase getPhase() {
         return this.getField("phase");
     }
 
@@ -57,6 +57,11 @@ public class EventRecord extends Struct {
      */
     //export class Phase extends EnumType<ApplyExtrinsic | Finalization> {
     public static class Phase extends EnumType {
+
+        public Phase(Object value) {
+            this(value, -1);
+        }
+
         public Phase(Object value, int index) {
             super(new Types.ConstructorDef()
                             .add("ApplyExtrinsic", ApplyExtrinsic.class)

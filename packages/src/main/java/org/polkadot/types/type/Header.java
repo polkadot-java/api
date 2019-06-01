@@ -7,7 +7,7 @@ import org.polkadot.types.TypesUtils;
 import org.polkadot.types.codec.Compact;
 import org.polkadot.types.codec.Struct;
 import org.polkadot.types.primitive.U64;
-import org.polkadot.utils.CryptoUtils;
+import org.polkadot.utils.UtilsCrypto;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,7 +35,8 @@ public class Header extends Struct {
      * The wrapped [[BlockNumber]]
      */
     public BlockNumber getBlockNumber() {
-        return (BlockNumber) ((Compact) this.getField("number")).toBn();
+        Compact number = this.getField("number");
+        return new BlockNumber(number.toBn());
     }
 
 
@@ -57,7 +58,7 @@ public class Header extends Struct {
      * Convenience method, encodes the header and calculates the [[Hash]]
      */
     public Hash getHash() {
-        byte[] bytes = CryptoUtils.blake2AsU8a(this.toU8a(), 256);
+        byte[] bytes = UtilsCrypto.blake2AsU8a(this.toU8a(), 256);
         return new Hash(bytes);
     }
 
