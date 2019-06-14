@@ -10,6 +10,15 @@ This library provides a Java wrapper around all the methods exposed by a Polkado
 
 1.8
 
+## Based JS code version
+
+The Java version is based on JS commit [ff25a85ac20687de241a84e0f3ebab4c2920df7e](https://github.com/polkadot-js/api/commit/ff25a85ac20687de241a84e0f3ebab4c2920df7e).
+
+## Substrate version
+
+The working substrate version is 1.0.0-41ccb19c-x86_64-macos.
+Newer substrate may be not supported.
+
 ## overview
 
 The API is split up into a number of internal packages
