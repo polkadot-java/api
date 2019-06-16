@@ -1,37 +1,23 @@
 package org.polkadot.direct;
 
-import org.polkadot.api.ApiBase;
 import org.polkadot.api.Types;
-import org.polkadot.common.EventEmitter;
-import org.polkadot.rpc.provider.IProvider;
+import org.polkadot.types.rpc.RuntimeVersion;
+import org.polkadot.types.type.Hash;
 
-public interface IApi<C, S extends IModule> {
+public interface IApi<ApplyResult> {
 
-    //genesisHash: Hash;
-    //hasSubscriptions: boolean;
-    //runtimeMetadata: Metadata;
-    //runtimeVersion: RuntimeVersion;
-    //derive: Derive<CodecResult, SubscriptionResult>;
-    //query: QueryableStorage<CodecResult, SubscriptionResult>;
-    //rpc: DecoratedRpc<CodecResult, SubscriptionResult>;
-    //tx: SubmittableExtrinsics<CodecResult, SubscriptionResult>;
-    //signer?: Signer;
-    //readonly type: ApiType;
-    //
-    //on: (type: ApiInterface$Events, handler: (...args: Array<any>) => any) => this;
-    //once: (type: ApiInterface$Events, handler: (...args: Array<any>) => any) => this;
+    Hash getGenesisHash();
 
-    Types.Derive derive();
+    RuntimeVersion getRuntimeVersion();
 
-    S query();
+    Types.Derive<ApplyResult> derive();
 
-    IModule rpc();
+    Types.QueryableStorage<ApplyResult> query();
 
-    Types.SubmittableExtrinsics tx();
+    Types.DecoratedRpc<ApplyResult> rpc();
 
-    ApiBase.ApiType getType();
+    Types.SubmittableExtrinsics<ApplyResult> tx();
 
-    EventEmitter on(IProvider.ProviderInterfaceEmitted type, EventEmitter.EventListener handler);
+    Types.Signer getSigner();
 
-    EventEmitter once(IProvider.ProviderInterfaceEmitted type, EventEmitter.EventListener handler);
 }

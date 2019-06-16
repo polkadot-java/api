@@ -4,41 +4,33 @@ package org.polkadot.api;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.onehilltech.promises.Promise;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.polkadot.api.Types.*;
 import org.polkadot.api.derive.Index;
 import org.polkadot.api.derive.Types.DeriveRealFunction;
-import org.polkadot.api.rx.Types.RxResult;
-import org.polkadot.api.types.ApiOptions;
-import org.polkadot.api.types.DecoratedRpc;
-import org.polkadot.api.types.DecoratedRpc.DecoratedRpcMethod;
-import org.polkadot.api.types.Types;
-import org.polkadot.api.types.Types.OnCallFunction;
+import org.polkadot.api.rx.ApiRx;
 import org.polkadot.common.EventEmitter;
-import org.polkadot.common.ReflectionUtils;
-import org.polkadot.direct.IApi;
+import org.polkadot.common.ExecutorsManager;
 import org.polkadot.direct.IRpcFunction;
 import org.polkadot.direct.IRpcModule;
 import org.polkadot.rpc.core.IRpc;
 import org.polkadot.rpc.core.RpcCore;
 import org.polkadot.rpc.provider.IProvider;
-import org.polkadot.rpc.rx.RpcRx;
-import org.polkadot.rpc.rx.types.IRpcRx;
 import org.polkadot.type.storage.FromMetadata;
 import org.polkadot.type.storage.Types.ModuleStorage;
 import org.polkadot.type.storage.Types.Storage;
 import org.polkadot.types.Codec;
-import org.polkadot.types.Types.CodecArg;
-import org.polkadot.types.Types.CodecCallback;
+import org.polkadot.types.Types.ConstructorCodec;
 import org.polkadot.types.TypesUtils;
 import org.polkadot.types.codec.CodecUtils;
 import org.polkadot.types.codec.Linkage;
+import org.polkadot.types.codec.TypeRegistry;
 import org.polkadot.types.metadata.Metadata;
 import org.polkadot.types.primitive.Method;
 import org.polkadot.types.primitive.Null;
 import org.polkadot.types.primitive.StorageKey;
-import org.polkadot.types.primitive.U64;
 import org.polkadot.types.rpc.RuntimeVersion;
 import org.polkadot.types.type.Event;
 import org.polkadot.types.type.Hash;
@@ -46,40 +38,37 @@ import org.polkadot.utils.Utils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
-public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<CodecResult, QueryableStorage> {
+import static org.polkadot.type.extrinsics.FromMetadata.fromMetadata;
+
+public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<ApplyResult> {
 
 
     public enum ApiType {
         RX, PROMISE
     }
 
+    public static final int KEEPALIVE_INTERVAL = 15000;
 
-    //private derive?: Derive<CodecResult, SubscriptionResult>;
+
     private Derive derive;
     private EventEmitter eventemitter;
-    //private _eventemitter: EventEmitter;
-    //private _extrinsics?: SubmittableExtrinsics<CodecResult, SubscriptionResult>;
-    //private _genesisHash?: Hash;
     private boolean isReady;
-    //protected readonly _options: ApiOptions;
-    //private _query?: QueryableStorage<CodecResult, SubscriptionResult>;
-    private DecoratedRpc<CodecResult, SubscriptionResult> rpc;
 
     /**
      * @description An external signer which will be used to sign extrinsic when account passed in is not KeyringPair
      */
     public Signer signer;
 
-    protected RpcCore rpcBase;
+    public RpcCore rpcBase;
+
+    protected DecoratedRpc<ApplyResult> decoratedRpc;
+
     protected ApiOptions options = new ApiOptions();
-    //protected _rpcBase: RpcBase; // FIXME These two could be merged
-    //protected _rpcRx: RpcRx; // FIXME These two could be merged
-    protected RpcRx rpcRx;
-    //private _runtimeMetadata?: Metadata;
-    //private _runtimeVersion?: RuntimeVersion;
-    //private _rx: Partial<ApiInterface$Rx> = {};
-    //private _type: ApiType;
+    private ApiInterfacePromiseDefault promisApi = new ApiInterfacePromiseDefault();
 
     /**
      * The type of this API instance, either 'rxjs' or 'promise'
@@ -102,7 +91,7 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
     public RuntimeVersion runtimeVersion;
 
     private Storage oriStorage;
-    private QueryableStorage storage;
+    private QueryableStorage<ApplyResult> storage;
     private Method.ModulesWithMethods oriExtrinsics;
     private SubmittableExtrinsics extrinsics;
 
@@ -125,20 +114,153 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
      *                 ```
      */
     public ApiBase(IProvider provider, ApiType apiType) {
+        this(new ApiOptions(), provider, apiType);
+    }
 
+
+    public ApiBase(ApiOptions options, ApiType apiType) {
+        this(options, null, apiType);
+    }
+
+    private ApiBase(ApiOptions options, IProvider provider, ApiType apiType) {
+
+        IProvider thisProvider = provider;
+        if (options.getSource() != null) {
+            thisProvider = options.getSource().rpcBase.getProvider().clone();
+        } else if (options.getProvider() != null) {
+            thisProvider = options.getProvider();
+        }
+        this.options = options;
 
         this.type = apiType;
-
-        final IProvider thisProvider = provider;
 
         this.rpcBase = new RpcCore(thisProvider);
         this.eventemitter = new EventEmitter();
         //this.rpcRx = new RpcRx(thisProvider);
         //this.rpc = this.decoratedRpc(this.rpcRx, this::onCall);
+        this.decoratedRpc = decorateRpc(rpcBase, this::onCall);
+
+        this.promisApi.rpc = decorateRpc(rpcBase, this.promiseOnCall);
+        this.promisApi.signer = options.getSigner();
+
+        if (options.getSource() != null) {
+            this.registerTypes(options.types);
+        }
 
         this.init();
+    }
 
 
+    static class ApiInterfacePromiseDefault implements ApiInterfacePromise {
+        Derive<Promise> derive;
+        QueryableStorage<Promise> query;
+        DecoratedRpc<Promise> rpc;
+        SubmittableExtrinsics<Promise> tx;
+        Hash genesisHash;
+        Metadata runtimeMetadata;
+        RuntimeVersion runtimeVersion;
+        Signer signer;
+
+        @Override
+        public Hash getGenesisHash() {
+            return genesisHash;
+        }
+
+        @Override
+        public RuntimeVersion getRuntimeVersion() {
+            return runtimeVersion;
+        }
+
+        @Override
+        public Derive<Promise> derive() {
+            return derive;
+        }
+
+        @Override
+        public QueryableStorage<Promise> query() {
+            return query;
+        }
+
+        @Override
+        public DecoratedRpc<Promise> rpc() {
+            return rpc;
+        }
+
+        @Override
+        public SubmittableExtrinsics<Promise> tx() {
+            return tx;
+        }
+
+        @Override
+        public Signer getSigner() {
+            return signer;
+        }
+
+    }
+
+    private OnCallDefinition<Promise> promiseOnCall = new OnCallDefinition<Promise>() {
+        @Override
+        public Promise apply(OnCallFunction method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback) {
+            List<Object> args = Lists.newArrayList();
+            if (params != null) {
+                args.addAll(params);
+            }
+
+            if (callback != null) {
+                args.add(callback);
+            }
+            return method.apply(args.toArray(new Object[0]));
+        }
+    };
+
+
+    /**
+     * @description Register additional user-defined of chain-specific types in the type registry
+     */
+    void registerTypes(Map<String, ConstructorCodec> types) {
+        if (types != null) {
+            TypeRegistry.registerTypes(types);
+        }
+    }
+
+    protected <ApplyResult> DecoratedRpc<ApplyResult> decorateRpc(RpcCore rpcCore, OnCallDefinition<ApplyResult> onCall) {
+
+        DecoratedRpc ret = new DecoratedRpc<ApplyResult>();
+        for (String sectionName : rpcCore.sectionNames()) {
+
+            DecoratedRpcSection decoratedRpcSection = new DecoratedRpcSection<ApplyResult>();
+
+            IRpc.RpcInterfaceSection section = rpcCore.section(sectionName);
+            for (String functionName : section.functionNames()) {
+                IRpcFunction function = section.function(functionName);
+
+
+                DecoratedRpcMethod decoratedRpcMethod = new DecoratedRpcMethod<ApplyResult>() {
+                    @Override
+                    public ApplyResult invoke(Object... params) {
+                        IRpcFunction.SubscribeCallback cb = null;
+                        List<Object> values = Lists.newArrayList(params);
+                        if (function.isSubscribe()) {
+                            if (CollectionUtils.isNotEmpty(values)) {
+                                Object o = values.get(values.size() - 1);
+                                if (o instanceof IRpcFunction.SubscribeCallback) {
+                                    Object remove = values.remove(values.size() - 1);
+                                    cb = (IRpcFunction.SubscribeCallback) remove;
+                                }
+                            }
+                        }
+
+                        return onCall.apply(function::invoke, values, function.isSubscribe(), cb);
+                    }
+                };
+
+                decoratedRpcSection.addFunction(functionName, decoratedRpcMethod);
+            }
+
+            ret.addSection(sectionName, decoratedRpcSection);
+        }
+
+        return ret;
     }
 
 
@@ -146,14 +268,16 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
         this.eventemitter.emit(type, args);
     }
 
+    ScheduledFuture<?> healthTimer = null;
+
     private void init() {
         //    let healthTimer: NodeJS.Timeout | null = null;
         this.rpcBase.getProvider().on(IProvider.ProviderInterfaceEmitted.disconnected, (v) -> {
             ApiBase.this.emit(IProvider.ProviderInterfaceEmitted.disconnected);
-            //if (healthTimer) {
-            //    clearInterval(healthTimer);
-            //    healthTimer = null;
-            //}
+            if (healthTimer != null && !healthTimer.isCancelled() && !healthTimer.isDone()) {
+                healthTimer.cancel(false);
+                healthTimer = null;
+            }
         });
 
 
@@ -161,37 +285,25 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
             this.emit(IProvider.ProviderInterfaceEmitted.error, error);
         });
 
-
         this.rpcBase.getProvider().on(IProvider.ProviderInterfaceEmitted.connected, args -> {
             ApiBase.this.emit(IProvider.ProviderInterfaceEmitted.connected);
-            //TODO 2019-05-10 00:01   loadMeta
 
-
-            //    try {
-            //const [hasMeta, cryptoReady] = await Promise.all([
-            //                this.loadMeta(),
-            //                cryptoWaitReady()
-            //]);
-            //
-            //        if (hasMeta && !this._isReady && cryptoReady) {
-            //            this._isReady = true;
-            //
-            //            this.emit('ready', this);
-            //        }
-            //
-            //        healthTimer = setInterval(() => {
-            //                this._rpcRx.system.health().toPromise().catch(() => {
-            //                // ignore
-            //        });
-            //}, KEEPALIVE_INTERVAL);
-            //    } catch (error) {
-            //        l.error('FATAL: Unable to initialize the API: ', error.message);
-            //    }
-
-            //ApiBase.this.emit(IProvider.ProviderInterfaceEmitted.ready, ApiBase.this);
         });
 
-        loadMeta();
+        this.loadMeta().then(
+                (result) -> {
+                    if (result && !this.isReady) {
+                        this.isReady = true;
+                        this.emit(IProvider.ProviderInterfaceEmitted.ready, this);
+                    }
+
+                    healthTimer = ExecutorsManager.schedule(() -> this.rpcBase.system().function("health").invoke(), KEEPALIVE_INTERVAL, TimeUnit.MILLISECONDS);
+                    return null;
+                }
+        )._catch(err -> {
+            err.printStackTrace();
+            return null;
+        });
     }
 
     private Promise<Boolean> loadMeta() {
@@ -199,85 +311,109 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
         // only load from on-chain if we are not a clone (default path), alternatively
         // just use the values from the source instance provided
         return Promise.all(
-                ApiBase.this.rpc().state().function("getMetadata").invoke(),
-                ApiBase.this.rpc().chain().function("getRuntimeVersion").invoke(),
-                ApiBase.this.rpc().chain().function("getBlockHash").invoke(0)
-                //
-                //ApiBase.this.rpc().chain().function("getRuntimeVersion").invoke()
+                this.options.source == null || !this.options.source.isReady
+                        ? new Promise[]{ApiBase.this.rpcBase.state().function("getMetadata").invoke(),
+                        ApiBase.this.rpcBase.chain().function("getRuntimeVersion").invoke(),
+                        ApiBase.this.rpcBase.chain().function("getBlockHash").invoke(0)}
+                        : new Promise[]{
+                        Promise.value(this.options.source.runtimeMetadata),
+                        Promise.value(this.options.source.runtimeVersion),
+                        Promise.value(this.options.source.genesisHash)
+                }
         ).then((results) -> {
             ApiBase.this.runtimeMetadata = (Metadata) results.get(0);
             ApiBase.this.runtimeVersion = (RuntimeVersion) results.get(1);
             ApiBase.this.genesisHash = (Hash) results.get(2);
 
-
-//    const extrinsics = extrinsicsFromMeta(this.runtimeMetadata.asV0);
+            //    const extrinsics = extrinsicsFromMeta(this.runtimeMetadata.asV0);
             //    const storage = storageFromMeta(this.runtimeMetadata.asV0);
-            Method.ModulesWithMethods modulesWithMethods = org.polkadot.type.extrinsics.FromMetadata.fromMetadata(ApiBase.this.runtimeMetadata.asV0());
+            Method.ModulesWithMethods modulesWithMethods = fromMetadata(ApiBase.this.runtimeMetadata.asV0());
             Storage storage = FromMetadata.fromMetadata(ApiBase.this.runtimeMetadata.asV0());
+
             ApiBase.this.oriStorage = storage;
-            ApiBase.this.storage = decorateStorage(storage);
+            ApiBase.this.storage = decorateStorage(storage, this::onCall);
             ApiBase.this.oriExtrinsics = modulesWithMethods;
-            ApiBase.this.extrinsics = decorateExtrinsics(modulesWithMethods);
+            ApiBase.this.extrinsics = decorateExtrinsics(modulesWithMethods, this::onCall);
 
-            ApiBase.this.derive = decorateDerive();
+            ApiBase.this.derive = decorateDerive(this.promisApi, this::onCall);
 
-            //ApiBase.this.runtimeVersion = (RuntimeVersion) results.get(0);
+            this.promisApi.genesisHash = this.genesisHash;
+            this.promisApi.runtimeVersion = this.runtimeVersion;
+            this.promisApi.query = decorateStorage(storage, this.promiseOnCall);
+            this.promisApi.tx = decorateExtrinsics(modulesWithMethods, this.promiseOnCall);
+            this.promisApi.derive = decorateDerive(this.promisApi, this.promiseOnCall);
 
             // only inject if we are not a clone (global init)
-            //if (!this._options.source) {
+            //if (this.options.source != null) {
             Event.injectMetadata(this.runtimeMetadata.asV0());
             Method.injectMethods(modulesWithMethods);
             //}
+            //this.emit(IProvider.ProviderInterfaceEmitted.ready, this);
 
-
-            this.emit(IProvider.ProviderInterfaceEmitted.ready, this);
-
-            return null;
+            return Promise.value(true);
         })._catch((err) -> {
             err.printStackTrace();
-            return null;
+            return Promise.value(false);
         });
-
     }
 
-    //  private decorateDerive<C, S> (apiRx: ApiInterface$Rx, onCall: OnCallDefinition<C, S>): Derive<C, S> {
-    private Derive decorateDerive() {
+    private Pair<IRpcFunction.SubscribeCallback, Object[]> parseArgs(Object... _args) {
+        IRpcFunction.SubscribeCallback callback = null;
+        Object[] args = null;
+        if (ArrayUtils.isNotEmpty(_args)
+                && _args[_args.length - 1] instanceof IRpcFunction.SubscribeCallback) {
+            callback = (IRpcFunction.SubscribeCallback) _args[_args.length - 1];
+            if (_args.length == 1) {
+                args = new Object[0];
+            } else {
+                args = ArrayUtils.subarray(_args, 0, _args.length - 1);
+            }
+        } else {
+            args = _args;
+        }
+        return Pair.of(callback, args);
+    }
 
-        Index.Derive derive = Index.decorateDerive(this, this.options.derives);
+    private <ApplyResult> Derive<ApplyResult> decorateDerive(ApiInterfacePromise apiInterfacePromise, OnCallDefinition<ApplyResult> onCallDefinition) {
 
-        Derive apiDerive = new Derive();
+        Index.Derive derive = Index.decorateDerive(apiInterfacePromise, this.options.derives);
+
+        Derive<ApplyResult> apiDerive = new Derive<>();
         for (String sectionName : derive.sectionNames()) {
             Index.DeriveRealSection section = derive.section(sectionName);
 
-            DeriveSection deriveSection = new DeriveSection();
+            DeriveSection<ApplyResult> deriveSection = new DeriveSection<>();
             for (String functionName : section.functionNames()) {
                 DeriveRealFunction function = section.function(functionName);
 
-                DeriveMethod deriveMethod = new DeriveMethod() {
+                DeriveMethod<ApplyResult> deriveMethod = new DeriveMethod<ApplyResult>() {
 
                     @Override
-                    public Promise call(Object... _args) {
+                    public ApplyResult call(Object... _args) {
 
-                        IRpcFunction.SubscribeCallback callback = null;
-                        Object[] args = null;
-                        if (ArrayUtils.isNotEmpty(_args)
-                                && _args[_args.length - 1] instanceof IRpcFunction.SubscribeCallback) {
-                            callback = (IRpcFunction.SubscribeCallback) _args[_args.length - 1];
-                            if (_args.length == 1) {
-                                args = new Object[0];
-                            } else {
-                                args = ArrayUtils.subarray(_args, 0, _args.length - 1);
-                            }
-                        } else {
-                            args = _args;
-                        }
-                        //TODO 2019-05-25 02:24
-                        Promise call = function.call(args);
+                        Pair<IRpcFunction.SubscribeCallback, Object[]> subscribeCallbackPair = parseArgs(_args);
+
+                        IRpcFunction.SubscribeCallback callback = subscribeCallbackPair.getLeft();
+                        Object[] args = subscribeCallbackPair.getRight();
+
                         IRpcFunction.SubscribeCallback finalCallback = callback;
-                        return call.then(result -> {
-                            finalCallback.callback(result);
-                            return Promise.value(result);
-                        });
+
+                        return onCallDefinition.apply(
+                                new OnCallFunction() {
+                                    @Override
+                                    public Promise apply(Object... params) {
+                                        //TODO 2019-06-16 17:32 just once
+                                        Promise call = function.call(params);
+                                        return call.then(result -> {
+                                            finalCallback.callback(result);
+                                            return Promise.value(result);
+                                        });
+                                    }
+                                },
+                                //function::call,
+                                Lists.newArrayList(args),
+                                callback != null,
+                                callback);
                     }
                 };
 
@@ -290,7 +426,7 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
     }
 
 
-    private SubmittableExtrinsics decorateExtrinsics(Method.ModulesWithMethods extrinsics) {
+    private <ApplyResult> SubmittableExtrinsics<ApplyResult> decorateExtrinsics(Method.ModulesWithMethods extrinsics, OnCallDefinition<ApplyResult> onCallDefinition) {
         SubmittableExtrinsics ret = new SubmittableExtrinsics();
 
         for (String sectionName : extrinsics.keySet()) {
@@ -301,7 +437,7 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
             for (String methodName : section.keySet()) {
                 Method.MethodFunction methodFunction = section.get(methodName);
 
-                SubmittableExtrinsicFunction submittableExtrinsicFunction = decorateExtrinsicEntry(methodFunction);
+                SubmittableExtrinsicFunction submittableExtrinsicFunction = decorateExtrinsicEntry(methodFunction, onCallDefinition);
                 submittableModuleExtrinsics.addFunction(methodName, submittableExtrinsicFunction);
             }
 
@@ -312,7 +448,7 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
         return ret;
     }
 
-    private SubmittableExtrinsicFunction decorateExtrinsicEntry(Method.MethodFunction method) {
+    private <ApplyResult> SubmittableExtrinsicFunction<ApplyResult> decorateExtrinsicEntry(Method.MethodFunction method, OnCallDefinition<ApplyResult> onCallDefinition) {
 
         SubmittableExtrinsicFunction ret = new SubmittableExtrinsicFunction() {
             @Override
@@ -329,69 +465,13 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
 
             @Override
             public SubmittableExtrinsic call(Object... params) {
-                return SubmittableExtrinsic.createSubmittableExtrinsic(ApiBase.this, method.apply(params), null);
+                return SubmittableExtrinsic.createSubmittableExtrinsic(promisApi, method.apply(params), null, onCallDefinition);
             }
         };
         return ret;
     }
 
-    //protected abstract ApiType getType();
-
-    protected abstract Types.BaseResult onCall(OnCallFunction<RxResult, RxResult> method, List<CodecArg> params, CodecCallback callback, boolean needsCallback);
-
-    //protected abstract onCall (method: OnCallFunction<RxResult, RxResult>, params?: Array<CodecArg>, callback?: CodecCallback, needsCallback?: boolean): CodecResult | SubscriptionResult;
-
-
-    private <C, S> DecoratedRpc<C, S> decoratedRpc(RpcRx rpc, Types.OnCallDefinition<C, S> onCall) {
-        String[] sectionNames = new String[]{"author", "chain", "state", "system"};
-
-        DecoratedRpc decoratedRpc = new DecoratedRpc();
-        for (String sectionName : sectionNames) {
-            IRpcRx.RpcRxInterfaceSection rxInterfaceSection = ReflectionUtils.getField(rpc, sectionName);
-
-            Map<String, IRpcRx.RpcRxInterfaceMethod> methods = rxInterfaceSection.getMethods();
-
-            for (String methodName : methods.keySet()) {
-
-                // FIXME Find a better way to know if a particular method is a subscription or not
-                final boolean needsCallback = methodName.contains("subscribe");
-
-
-                DecoratedRpcMethod decoratedRpcMethod = new DecoratedRpcMethod() {
-                    @Override
-                    public Object invoke1(CodecCallback callback) {
-                        return null;
-                    }
-
-                    @Override
-                    public Object invoke2(CodecArg arg1, CodecCallback callback) {
-                        return null;
-                    }
-
-                    @Override
-                    public Object invoke3(CodecArg arg1, CodecArg arg2, CodecArg arg3) {
-                        return null;
-                    }
-
-                };
-
-
-            }
-
-
-        }
-        //TODO 2019-05-05 10:09
-        return decoratedRpc;
-    }
-
-    public DecoratedRpc<CodecResult, SubscriptionResult> getRpc() {
-        return rpc;
-    }
-
-
-    public void once(EventEmitter.EventType eventType, EventEmitter.EventListener eventListener) {
-        this.eventemitter.once(eventType, eventListener);
-    }
+    protected abstract ApplyResult onCall(OnCallFunction method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback);
 
     /**
      * Derived results that are injected into the API, allowing for combinations of various query results.
@@ -404,13 +484,8 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
      * ```
      */
     @Override
-    public Derive derive() {
+    public Derive<ApplyResult> derive() {
         return this.derive;
-    }
-
-
-    public Storage queryOri() {
-        return oriStorage;
     }
 
     /**
@@ -427,7 +502,7 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
      * ```
      */
     @Override
-    public QueryableStorage query() {
+    public QueryableStorage<ApplyResult> query() {
         return storage;
     }
 
@@ -444,8 +519,8 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
      * ```
      */
     @Override
-    public IRpcModule rpc() {
-        return rpcBase;
+    public DecoratedRpc<ApplyResult> rpc() {
+        return decoratedRpc;
     }
 
     /**
@@ -465,9 +540,12 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
         return this.extrinsics;
     }
 
+    /**
+     * @description The type of this API instance, either 'rxjs' or 'promise'
+     */
     @Override
     public ApiType getType() {
-        return null;
+        return this.type;
     }
 
     /**
@@ -514,16 +592,16 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
         return this.eventemitter.once(type, handler);
     }
 
-    private QueryableStorage decorateStorage(Storage storage) {
-        QueryableStorage queryableStorage = new QueryableStorage();
+    private <ApplyResult> QueryableStorage<ApplyResult> decorateStorage(Storage storage, OnCallDefinition<ApplyResult> onCallDefinition) {
+        QueryableStorage<ApplyResult> queryableStorage = new QueryableStorage<>();
         for (String sectionName : storage.sectionNames()) {
 
-            QueryableModuleStorage moduleStorage = new QueryableModuleStorage();
+            QueryableModuleStorage<ApplyResult> moduleStorage = new QueryableModuleStorage<>();
 
             ModuleStorage section = storage.section(sectionName);
             for (String functionName : section.functionNames()) {
                 StorageKey.StorageFunction function = section.function(functionName);
-                QueryableStorageFunction storageFunction = decorateStorageEntry(function);
+                QueryableStorageFunction<ApplyResult> storageFunction = decorateStorageEntry(function, onCallDefinition);
 
                 moduleStorage.addFunction(functionName, storageFunction);
             }
@@ -532,14 +610,9 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
         return queryableStorage;
     }
 
-    private QueryableStorageFunction decorateStorageEntry(StorageKey.StorageFunction storageMethod) {
+    private <ApplyResult> QueryableStorageFunction<ApplyResult> decorateStorageEntry(StorageKey.StorageFunction storageMethod, OnCallDefinition<ApplyResult> onCallDefinition) {
 
-        // These signatures are allowed and exposed here -
-        //   (arg?: CodecArg): CodecResult;
-        //   (arg: CodecArg, callback: CodecCallback): SubscriptionResult;
-        //   (callback: CodecCallback): SubscriptionResult;
-
-        QueryableStorageFunction queryableStorageFunction = new QueryableStorageFunction() {
+        QueryableStorageFunction<ApplyResult> queryableStorageFunction = new QueryableStorageFunction<ApplyResult>() {
             @Override
             public byte[] apply(Object... args) {
                 return new byte[0];
@@ -551,69 +624,96 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
             }
 
             @Override
-            public Promise call(Object... _args) {
-
-                Object callback = null;
-                Object[] args = null;
-                if (ArrayUtils.isNotEmpty(_args)
-                        && _args[_args.length - 1] instanceof IRpcFunction.SubscribeCallback) {
-                    callback = _args[_args.length - 1];
-                    if (_args.length == 1) {
-                        args = new Object[0];
-                    } else {
-                        args = ArrayUtils.subarray(_args, 0, _args.length - 1);
-                    }
-                } else {
-                    args = _args;
-                }
-
+            public ApplyResult call(Object... _args) {
+                Pair<IRpcFunction.SubscribeCallback, Object[]> subscribeCallbackPair = parseArgs(_args);
+                IRpcFunction.SubscribeCallback callback = subscribeCallbackPair.getLeft();
+                Object[] args = subscribeCallbackPair.getRight();
 
                 if (storageMethod.getHeadKey() != null && args.length == 0) {
-                    return ApiBase.this.decorateStorageEntryLinked(storageMethod, callback);
+                    return ApiBase.this.decorateStorageEntryLinked(storageMethod, callback, onCallDefinition);
                 }
 
-                IRpcModule rpc = ApiBase.this.rpc();
+                IRpcModule rpc = ApiBase.this.rpcBase;
                 IRpc.RpcInterfaceSection state = rpc.state();
                 IRpcFunction subscribeStorage = state.function("subscribeStorage");
 
-                if (callback == null) {
-                    return subscribeStorage.invoke(
-                            new Object[]{
-                                    new Object[]{
-                                            new Object[]{storageMethod, args}
-                                    }
-                            }
-                    ).then((result) ->
-                            {
-                                //System.out.println(result);
-                                return Promise.value(((List) result).get(0));
-                            }
-                    );
-                } else {
-                    return subscribeStorage.invoke(
-                            new Object[]{
-                                    new Object[]{
-                                            new Object[]{storageMethod, args}
-                                    }, callback
-                            }
-                    );
+                //////////////////////
+
+                IRpcFunction.SubscribeCallback finalCallback = callback;
+                IRpcFunction.SubscribeCallback packCallback = callback;
+                if (callback != null) {
+                    packCallback = new IRpcFunction.SubscribeCallback() {
+                        IRpcFunction.SubscribeCallback realCallback = finalCallback;
+
+                        @Override
+                        public void callback(Object o) {
+                            Object result = ((List) o).get(0);
+                            realCallback.callback(result);
+                        }
+                    };
                 }
+                return onCallDefinition.apply(
+                        new OnCallFunction() {
+                            @Override
+                            public Promise apply(Object... params) {
+                                return subscribeStorage.invoke(
+                                        params
+                                ).then((result) ->
+                                        {
+                                            //TODO 2019-06-16 15:29 promise api return first, rx api return list
+                                            if (finalCallback == null) {
+                                                return Promise.value(((List) result).get(0));
+                                            }
+                                            IRpcFunction.Unsubscribe<Promise> result1 = (IRpcFunction.Unsubscribe<Promise>) result;
+                                            return Promise.value(result1);
+                                        }
+                                );
+                            }
+                        },
+                        Lists.newArrayList(new Object[]{new Object[]{new Object[]{storageMethod, args}}}),
+                        //packCallback != null,
+                        ApiBase.this instanceof ApiRx,
+                        packCallback
+                );
             }
 
             @Override
-            public Promise at(Object hash, Object arg) {
-                IRpcModule rpc = ApiBase.this.rpc();
+            public ApplyResult at(Object hash, Object arg) {
+                IRpcModule rpc = ApiBase.this.rpcBase;
                 IRpc.RpcInterfaceSection state = rpc.state();
                 IRpcFunction getStorage = state.function("getStorage");
-                return getStorage.invoke(new Object[]{storageMethod, arg}, hash);
+
+                return onCallDefinition.apply(
+                        new OnCallFunction() {
+                            @Override
+                            public Promise apply(Object... params) {
+                                return getStorage.invoke(new Object[]{storageMethod, params}, hash);
+                            }
+                        },
+                        Lists.newArrayList(arg),
+                        false,
+                        null
+                );
+                //return getStorage.invoke(new Object[]{storageMethod, arg}, hash);
             }
 
             @Override
-            public Promise<Hash> hash(Object arg) {
-                IRpcModule rpc = ApiBase.this.rpc();
+            public ApplyResult hash(Object arg) {
+                IRpcModule rpc = ApiBase.this.rpcBase;
                 IRpc.RpcInterfaceSection state = rpc.state();
                 IRpcFunction getStorageHash = state.function("getStorageHash");
-                return getStorageHash.invoke(new Object[]{storageMethod, arg});
+
+                return onCallDefinition.apply(
+                        new OnCallFunction() {
+                            @Override
+                            public Promise apply(Object... params) {
+                                return getStorageHash.invoke(new Object[]{storageMethod, params});
+                            }
+                        },
+                        Lists.newArrayList(arg),
+                        false,
+                        null
+                );
             }
 
             @Override
@@ -622,17 +722,24 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
             }
 
             @Override
-            public Promise<U64> size(Object arg) {
-                IRpcModule rpc = ApiBase.this.rpc();
+            public ApplyResult size(Object arg) {
+                IRpcModule rpc = ApiBase.this.rpcBase;
                 IRpc.RpcInterfaceSection state = rpc.state();
                 IRpcFunction getStorageSize = state.function("getStorageSize");
-                return getStorageSize.invoke(new Object[]{storageMethod, arg});
+
+                return onCallDefinition.apply(
+                        new OnCallFunction() {
+                            @Override
+                            public Promise apply(Object... params) {
+                                return getStorageSize.invoke(new Object[]{storageMethod, params});
+                            }
+                        },
+                        Lists.newArrayList(arg),
+                        false,
+                        null
+                );
             }
 
-            //@Override
-            //public Promise subCall(Object args, CodecCallback callback) {
-            //    return null;
-            //}
         };
 
         return queryableStorageFunction;
@@ -648,7 +755,7 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
         //BehaviorSubject<LinkageResult>;
         final Promise[] subject = {null};
 
-        IRpcModule rpc = ApiBase.this.rpc();
+        IRpcModule rpc = ApiBase.this.rpcBase;
         IRpc.RpcInterfaceSection state = rpc.state();
 
         IRpcFunction subscribeStorage = state.function("subscribeStorage");
@@ -715,38 +822,93 @@ public abstract class ApiBase<CodecResult, SubscriptionResult> implements IApi<C
         });
     }
 
-    private Promise decorateStorageEntryLinked(StorageKey.StorageFunction storageMethod, Object callback) {
-
-        //Map<Codec, Pair<Codec, Linkage<Codec>>> result = Maps.newLinkedHashMap();
-
-
+    private <ApplyResult> ApplyResult decorateStorageEntryLinked(StorageKey.StorageFunction storageMethod, IRpcFunction.SubscribeCallback callback, OnCallDefinition<ApplyResult> onCallDefinition) {
         // this handles the case where the head changes effectively, i.e. a new entry
         // appears at the top of the list, the new getNext gets kicked off
 
-        IRpcModule rpc = ApiBase.this.rpc();
+        IRpcModule rpc = ApiBase.this.rpcBase;
         IRpc.RpcInterfaceSection state = rpc.state();
 
         IRpcFunction subscribeStorage = state.function("subscribeStorage");
 
+        AtomicReference<Codec> head = new AtomicReference<>();
 
-        if (callback == null) {
-            return subscribeStorage.invoke(
-                    new Object[]{
-                            new Object[]{
-                                    new Object[]{storageMethod.getHeadKey()}
+
+        return onCallDefinition.apply(
+                new OnCallFunction() {
+                    @Override
+                    public Promise apply(Object... params) {
+
+                        return subscribeStorage.invoke(
+                                new Object[]{
+                                        new Object[]{
+                                                params
+                                        }
+                                }
+                        ).then(result -> {
+                            List<Object> list = CodecUtils.arrayLikeToList(result);
+                            if (!list.isEmpty()) {
+                                head.set((Codec) list.get(0));
                             }
-                    }
-            );
-        } else {
-            return subscribeStorage.invoke(
-                    new Object[]{
-                            new Object[]{
-                                    new Object[]{storageMethod.getHeadKey()}
-                            }, callback
-                    }
-            );
-        }
+                            return getNext(head.get(), head.get(), storageMethod);
 
+                        });
+
+                    }
+                },
+                Lists.newArrayList(storageMethod.getHeadKey()),
+                true,
+                callback
+        );
+    }
+
+    /**
+     * @description Contains the genesis Hash of the attached chain. Apart from being useful to determine the actual chain, it can also be used to sign immortal transactions.
+     */
+    @Override
+    public Hash getGenesisHash() {
+        return this.genesisHash;
+    }
+
+    /**
+     * @description Contains the version information for the current runtime.
+     */
+    @Override
+    public RuntimeVersion getRuntimeVersion() {
+        return this.runtimeVersion;
+    }
+
+    @Override
+    public org.polkadot.api.Types.Signer getSigner() {
+        return this.signer;
+    }
+
+    /**
+     * @description `true` when subscriptions are supported
+     */
+    public boolean hasSubscriptions() {
+        return this.rpcBase.getProvider().isHasSubscriptions();
+    }
+
+    /**
+     * @description Yields the current attached runtime metadata. Generally this is only used to construct extrinsics & storage, but is useful for current runtime inspection.
+     */
+    public Metadata runtimeMetadata() {
+        return this.runtimeMetadata;
+    }
+
+    /**
+     * @description Set an external signer which will be used to sign extrinsic when account passed in is not KeyringPair
+     */
+    public void setSigner(Signer signer) {
+        this.promisApi.signer = signer;
+    }
+
+    /**
+     * @description Disconnect from the underlying provider, halting all comms
+     */
+    public void disconnect() {
+        this.rpcBase.disconnect();
     }
 
 }

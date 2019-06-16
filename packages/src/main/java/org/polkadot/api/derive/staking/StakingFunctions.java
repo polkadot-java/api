@@ -2,6 +2,7 @@ package org.polkadot.api.derive.staking;
 
 import com.onehilltech.promises.Promise;
 import org.polkadot.api.ApiBase;
+import org.polkadot.api.Types.ApiInterfacePromise;
 import org.polkadot.api.derive.Types;
 import org.polkadot.api.derive.balances.BalancesFunctions;
 import org.polkadot.types.codec.CodecUtils;
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 public class StakingFunctions {
 
 
-    static Promise allBonds(ApiBase api, List<AccountId> stashIds) {
+    static Promise allBonds(ApiInterfacePromise api, List<AccountId> stashIds) {
         List<Promise> collect = stashIds.stream().map(id -> {
             //      (api.query.staking.bonded(id) as Observable<Option<AccountId>>)
             return api.query().section("staking").function("bonded").call(id);
@@ -26,7 +27,7 @@ public class StakingFunctions {
     /**
      * @description From the list of stash accounts, retrieve the list of controllers
      */
-    public static Types.DeriveRealFunction controllers(ApiBase api) {
+    public static Types.DeriveRealFunction controllers(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             //(): Observable<[Array<AccountId>, Array<Option<AccountId>>]> =>
             @Override
@@ -50,7 +51,7 @@ public class StakingFunctions {
     /**
      * Get the balances for all intentions and their nominators
      */
-    public static Types.DeriveRealFunction intentionsBalances(ApiBase api) {
+    public static Types.DeriveRealFunction intentionsBalances(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             //(): Observable<DerivedBalancesMap> =>
             @Override

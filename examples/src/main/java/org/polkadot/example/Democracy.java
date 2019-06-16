@@ -74,9 +74,9 @@ public class Democracy {
         Promise<ApiPromise> promise = newApi();
         promise.then(api -> {
 
-            Types.SubmittableExtrinsicFunction vote = api.tx().section("democracy").function("vote");
-            SubmittableExtrinsic call = vote.call(13, true);
-            call.signAndSend(Alice, new SubmittableExtrinsic.StatusCb() {
+            Types.SubmittableExtrinsicFunction<Promise> vote = api.tx().section("democracy").function("vote");
+            SubmittableExtrinsic<Promise> call = vote.call(13, true);
+            call.signAndSendCb(Alice, new SubmittableExtrinsic.StatusCb() {
                 @Override
                 public Object callback(SubmittableExtrinsic.SubmittableResult result) {
                     ExtrinsicStatus status = result.getStatus();
@@ -200,11 +200,11 @@ transfer.signAndSend(ALICE, ({ events = [], status }) => {
 
         ready.then(api -> {
 
-                    Types.QueryableStorage query = api.query();
-                    Types.QueryableModuleStorage democracy = query.section("democracy");
+                    Types.QueryableStorage<Promise> query = api.query();
+                    Types.QueryableModuleStorage<Promise> democracy = query.section("democracy");
 
-                    Types.QueryableStorageFunction votingPeriod = democracy.function("votingPeriod");
-                    Types.QueryableStorageFunction launchPeriod = democracy.function("launchPeriod");
+                    Types.QueryableStorageFunction<Promise> votingPeriod = democracy.function("votingPeriod");
+                    Types.QueryableStorageFunction<Promise> launchPeriod = democracy.function("launchPeriod");
                     readyApi.set(api);
                     return Promise.all(
                             votingPeriod.call(),

@@ -1,12 +1,17 @@
 package org.polkadot.rpc.rx;
 
+import com.onehilltech.promises.Promise;
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.BehaviorSubject;
 import org.polkadot.common.EventEmitter;
 import org.polkadot.direct.IRpcFunction;
 import org.polkadot.rpc.core.IRpc;
 import org.polkadot.rpc.core.RpcCore;
 import org.polkadot.rpc.provider.IProvider;
+import org.polkadot.utils.RxUtils;
 
 /**
  * RpcRx
@@ -105,10 +110,68 @@ public class RpcRx extends Types.RpcRxInterface {
 
         IRpcFunction function = section.function(name);
 
-//TODO 2019-05-24 01:11
-throw new UnsupportedOperationException();
+        if (function.isSubscribe()) {
+            return new Types.RpcRxInterfaceMethod() {
+                @Override
+                public Observable<Object> call(Object... params) {
+                    return createReplay(name, section, params);
+                }
+            };
+        }
 
+        return new Types.RpcRxInterfaceMethod() {
+            @Override
+            public Observable<Object> call(Object... params) {
+                Promise<Object> invoke = function.invoke(params);
+                return RxUtils.fromPromise(invoke);
+            }
+        };
     }
 
+    private Observable createReplay(String name, IRpc.RpcInterfaceSection section, Object... params) {
+        return Observable.create(new ObservableOnSubscribe<Object>() {
+            @Override
+            public void subscribe(ObservableEmitter<Object> emitter) throws Exception {
+                IRpcFunction function = section.function(name);
+                IRpcFunction.SubscribeCallback replayCallBack = RpcRx.this.createReplayCallBack(emitter);
+                Promise promise = function.invoke(params, replayCallBack)._catch(error -> {
+                    emitter.onError(error);
+                    return null;
+                });
+
+                emitter.setDisposable(new Disposable() {
+                    boolean disposed;
+
+                    @Override
+                    public void dispose() {
+                        if (disposed) {
+                            return;
+                        }
+                        disposed = true;
+
+                        promise.then(result -> function.unsubscribe((Integer) result))
+                                ._catch(err -> {
+                                    err.printStackTrace();
+                                    return null;
+                                });
+                    }
+
+                    @Override
+                    public boolean isDisposed() {
+                        return disposed;
+                    }
+                });
+            }
+        }).replay(1).refCount();
+    }
+
+    private IRpcFunction.SubscribeCallback createReplayCallBack(ObservableEmitter<Object> emitter) {
+        return new IRpcFunction.SubscribeCallback() {
+            @Override
+            public void callback(Object o) {
+                emitter.onNext(o);
+            }
+        };
+    }
 
 }

@@ -73,10 +73,10 @@ public class Staking {
 
                     System.out.println("=========start testValidators=========");
 
-                    Types.QueryableStorage query = api.query();
-                    Types.QueryableModuleStorage staking = query.section("staking");
+                    Types.QueryableStorage<Promise> query = api.query();
+                    Types.QueryableModuleStorage<Promise> staking = query.section("staking");
 
-                    Types.QueryableStorageFunction validators = staking.function("validators");
+                    Types.QueryableStorageFunction<Promise> validators = staking.function("validators");
 
                     return Promise.all(
                             validators.call(controller)
@@ -113,10 +113,10 @@ public class Staking {
 
                     System.out.println("=========start testNominators =========");
 
-                    Types.QueryableStorage query = api.query();
-                    Types.QueryableModuleStorage staking = query.section("staking");
+                    Types.QueryableStorage<Promise> query = api.query();
+                    Types.QueryableModuleStorage<Promise> staking = query.section("staking");
 
-                    Types.QueryableStorageFunction nominators = staking.function("nominators");
+                    Types.QueryableStorageFunction<Promise> nominators = staking.function("nominators");
 
                     return Promise.all(
                             nominators.call(controller)
@@ -153,9 +153,9 @@ public class Staking {
 
                     System.out.println("=========start testLedger=========");
 
-                    Types.QueryableStorage query = api.query();
-                    Types.QueryableModuleStorage staking = query.section("staking");
-                    Types.QueryableStorageFunction ledger = staking.function("ledger");
+                    Types.QueryableStorage<Promise> query = api.query();
+                    Types.QueryableModuleStorage<Promise> staking = query.section("staking");
+                    Types.QueryableStorageFunction<Promise> ledger = staking.function("ledger");
 
                     return Promise.all(
                             ledger.call(controller)
@@ -191,10 +191,10 @@ public class Staking {
 
                     System.out.println("=========start testBonded=========");
 
-                    Types.QueryableStorage query = api.query();
-                    Types.QueryableModuleStorage staking = query.section("staking");
+                    Types.QueryableStorage<Promise> query = api.query();
+                    Types.QueryableModuleStorage<Promise> staking = query.section("staking");
 
-                    Types.QueryableStorageFunction bonded = staking.function("bonded");
+                    Types.QueryableStorageFunction<Promise> bonded = staking.function("bonded");
 
                     return Promise.all(
                             bonded.call(controller)

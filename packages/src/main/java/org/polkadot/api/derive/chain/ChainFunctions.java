@@ -2,7 +2,7 @@ package org.polkadot.api.derive.chain;
 
 import com.google.common.collect.Lists;
 import com.onehilltech.promises.Promise;
-import org.polkadot.api.ApiBase;
+import org.polkadot.api.Types.ApiInterfacePromise;
 import org.polkadot.api.Types.QueryableModuleStorage;
 import org.polkadot.api.derive.Types;
 import org.polkadot.types.type.AccountId;
@@ -25,7 +25,7 @@ public class ChainFunctions {
      * });
      * ```
      */
-    public static Types.DeriveRealFunction bestNumber(ApiBase api) {
+    public static Types.DeriveRealFunction bestNumber(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             //(): Observable<BlockNumber> =>
             @Override
@@ -56,7 +56,7 @@ public class ChainFunctions {
      * });
      * ```
      */
-    public static Types.DeriveRealFunction bestNumberFinalized(ApiBase api) {
+    public static Types.DeriveRealFunction bestNumberFinalized(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             // (): Observable<BlockNumber> =>
             @Override
@@ -85,7 +85,7 @@ public class ChainFunctions {
      * });
      * ```
      */
-    public static Types.DeriveRealFunction bestNumberLag(ApiBase api) {
+    public static Types.DeriveRealFunction bestNumberLag(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             //(): Observable<BlockNumber> =>
             @Override
@@ -114,14 +114,14 @@ public class ChainFunctions {
      * console.log(`block #${blockNumber} was authored by ${author}`);
      * ```
      */
-    public static Types.DeriveRealFunction getHeader(ApiBase api) {
+    public static Types.DeriveRealFunction getHeader(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             //(hash: Uint8Array | string): Observable<HeaderExtended | undefined> =>
             @Override
             public Promise call(Object... args) {
                 Object hash = args[0];
 
-                QueryableModuleStorage session = api.query().section("session");
+                QueryableModuleStorage<Promise> session = api.query().section("session");
 
                 return Promise.all(
                         api.rpc().chain().function("getHeader").invoke(hash),
@@ -161,7 +161,7 @@ public class ChainFunctions {
      * });
      * ```
      */
-    public static Types.DeriveRealFunction subscribeNewHead(ApiBase api) {
+    public static Types.DeriveRealFunction subscribeNewHead(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             // (): Observable<HeaderExtended> =>
             @Override
@@ -169,7 +169,7 @@ public class ChainFunctions {
                 return api.rpc().chain().function("subscribeNewHead").invoke()
                         .then(result -> {
                             Header header = (Header) result;
-                            QueryableModuleStorage session = api.query().section("session");
+                            QueryableModuleStorage<Promise> session = api.query().section("session");
                             return Promise.all(
                                     Promise.value(header),
                                     session == null

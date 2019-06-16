@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 public class ApiUtils {
     private static final Logger logger = LoggerFactory.getLogger(ApiUtils.class);
 
-    //export default function filterEvents (extHash: U8a, { block: { extrinsics, header } }: SignedBlock, allEvents: Array<EventRecord>): Array<EventRecord> | undefined {
     public static List<EventRecord> filterEvents(byte[] extHash, SignedBlock signedBlock, List<EventRecord> allEvents) {
         // extrinsics to hashes
         String myHash = Utils.u8aToHex(extHash);

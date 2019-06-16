@@ -39,7 +39,7 @@ public class Democracy {
 
         //testVote();
         //waitLock();
-        
+
         testReferendumInfoOf();
 
         waitLock();
@@ -74,9 +74,9 @@ public class Democracy {
         Promise<ApiPromise> promise = newApi();
         promise.then(api -> {
 
-            Types.SubmittableExtrinsicFunction vote = api.tx().section("democracy").function("vote");
-            SubmittableExtrinsic call = vote.call(13, true);
-            call.signAndSend(Alice, new SubmittableExtrinsic.StatusCb() {
+            Types.SubmittableExtrinsicFunction<Promise> vote = api.tx().section("democracy").function("vote");
+            SubmittableExtrinsic<Promise> call = vote.call(13, true);
+            call.signAndSendCb(Alice, new SubmittableExtrinsic.StatusCb() {
                 @Override
                 public Object callback(SubmittableExtrinsic.SubmittableResult result) {
                     ExtrinsicStatus status = result.getStatus();
@@ -146,12 +146,13 @@ transfer.signAndSend(ALICE, ({ events = [], status }) => {
 
 
         ready.then(api -> {
-            return api.query().section("democracy").function("referendumInfoOf").call(2, new IRpcFunction.SubscribeCallback<Object>() {
-                @Override
-                public void callback(Object codec) {
-                    System.out.println("referendumInfoOf callback : " + codec);
-                }
-            });
+            return api.query().section("democracy").function("referendumInfoOf").call(2,
+                    new IRpcFunction.SubscribeCallback<Object>() {
+                        @Override
+                        public void callback(Object codec) {
+                            System.out.println("referendumInfoOf callback : " + codec);
+                        }
+                    });
         }).then(result -> {
             System.out.println("referendumInfoOf result  " + result);
             notifyLock();
@@ -172,8 +173,8 @@ transfer.signAndSend(ALICE, ({ events = [], status }) => {
         System.out.println("=========start testReferendumVotesFor=========");
 
         ready.then(api -> {
-            Types.DeriveSection democracy = api.derive().section("democracy");
-            Types.DeriveMethod function = democracy.function("referendumVotesFor");
+            Types.DeriveSection<Promise> democracy = api.derive().section("democracy");
+            Types.DeriveMethod<Promise> function = democracy.function("referendumVotesFor");
             return function.call(10, new IRpcFunction.SubscribeCallback() {
                         @Override
                         public void callback(Object result) {
@@ -200,11 +201,11 @@ transfer.signAndSend(ALICE, ({ events = [], status }) => {
 
         ready.then(api -> {
 
-                    Types.QueryableStorage query = api.query();
-                    Types.QueryableModuleStorage democracy = query.section("democracy");
+                    Types.QueryableStorage<Promise> query = api.query();
+                    Types.QueryableModuleStorage<Promise> democracy = query.section("democracy");
 
-                    Types.QueryableStorageFunction votingPeriod = democracy.function("votingPeriod");
-                    Types.QueryableStorageFunction launchPeriod = democracy.function("launchPeriod");
+                    Types.QueryableStorageFunction<Promise> votingPeriod = democracy.function("votingPeriod");
+                    Types.QueryableStorageFunction<Promise> launchPeriod = democracy.function("launchPeriod");
                     readyApi.set(api);
                     return Promise.all(
                             votingPeriod.call(),
@@ -221,8 +222,8 @@ transfer.signAndSend(ALICE, ({ events = [], status }) => {
                     System.out.println("*launchPeriod:" + launchPeriod);
 
                     ApiPromise api = readyApi.get();
-                    Types.DeriveSection chain = api.derive().section("chain");
-                    Types.DeriveMethod bestNumber = chain.function("bestNumber");
+                    Types.DeriveSection<Promise> chain = api.derive().section("chain");
+                    Types.DeriveMethod<Promise> bestNumber = chain.function("bestNumber");
 
                     return bestNumber.call((IRpcFunction.SubscribeCallback) o -> {
 

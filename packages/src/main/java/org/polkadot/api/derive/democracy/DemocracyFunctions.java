@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.onehilltech.promises.Promise;
 import org.apache.commons.collections4.CollectionUtils;
 import org.polkadot.api.ApiBase;
+import org.polkadot.api.Types.ApiInterfacePromise;
 import org.polkadot.api.Types.QueryableModuleStorage;
 import org.polkadot.api.Types.QueryableStorageFunction;
 import org.polkadot.api.derive.Types;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 
 public class DemocracyFunctions {
 
-    public static Types.DeriveRealFunction votes(ApiBase apiBase) {
+    public static Types.DeriveRealFunction votes(ApiInterfacePromise api) {
 
         Types.DeriveRealFunction ret = new Types.DeriveRealFunction() {
             //(referendumId: BN, accountIds: Array<AccountId> = []): Observable<Array<Vote>> => {
@@ -34,8 +35,8 @@ public class DemocracyFunctions {
                 if (CollectionUtils.isEmpty(accountIds)) {
                     return Promise.value(Lists.newArrayList());
                 } else {
-                    QueryableModuleStorage democracy = apiBase.query().section("democracy");
-                    QueryableStorageFunction voteOf = democracy.function("voteOf");
+                    QueryableModuleStorage<Promise> democracy = api.query().section("democracy");
+                    QueryableStorageFunction<Promise> voteOf = democracy.function("voteOf");
                     List<Promise> collect = accountIds.stream().map(accountId -> voteOf.call(Lists.newArrayList(referendumId, accountId))).collect(Collectors.toList());
 
                     return Promise.all(collect.toArray(new Promise[0]));
@@ -82,14 +83,14 @@ public class DemocracyFunctions {
     }
 
 
-    public static Types.DeriveRealFunction referendumInfo(ApiBase api) {
+    public static Types.DeriveRealFunction referendumInfo(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             //(index: BN | number): Observable<Option<ReferendumInfoExtended>> => {
             @Override
             public Promise call(Object... args) {
                 Number index = (Number) args[0];
 
-                QueryableStorageFunction referendumInfoOf = api.query().section("democracy").function("referendumInfoOf");
+                QueryableStorageFunction<Promise> referendumInfoOf = api.query().section("democracy").function("referendumInfoOf");
 
                 return referendumInfoOf.call(index.intValue())
                         .then(result -> {
@@ -108,7 +109,7 @@ public class DemocracyFunctions {
     }
 
 
-    public static Types.DeriveRealFunction referendumInfos(ApiBase api) {
+    public static Types.DeriveRealFunction referendumInfos(ApiInterfacePromise api) {
 
         Types.DeriveRealFunction referendumInfoOf = referendumInfo(api);
 
@@ -128,7 +129,7 @@ public class DemocracyFunctions {
         };
     }
 
-    public static Types.DeriveRealFunction referendums(ApiBase api) {
+    public static Types.DeriveRealFunction referendums(ApiInterfacePromise api) {
 
         return new Types.DeriveRealFunction() {
             //(): Observable<Array<Option<ReferendumInfoExtended>>> =>
@@ -166,7 +167,7 @@ public class DemocracyFunctions {
     }
 
 
-    public static Types.DeriveRealFunction referendumVotesFor(ApiBase api) {
+    public static Types.DeriveRealFunction referendumVotesFor(ApiInterfacePromise api) {
         Types.DeriveRealFunction ret = new Types.DeriveRealFunction() {
             //  return (referendumId: BN | number): Observable<Array<DerivedReferendumVote>> =>
             @Override

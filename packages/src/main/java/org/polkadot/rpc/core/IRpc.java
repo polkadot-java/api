@@ -7,14 +7,14 @@ import org.polkadot.direct.ISection;
 
 public interface IRpc {
 
-    abstract class RpcInterfaceMethod implements IRpcFunction<Promise> {
-        String subscription;
-
-        @Override
-        public abstract Promise invoke(Object... params);
-
-        abstract Promise unsubscribe(int id);
-    }
+    //abstract class RpcInterfaceMethod implements IRpcFunction<Promise> {
+    //    String subscription;
+    //
+    //    @Override
+    //    public abstract Promise invoke(Object... params);
+    //
+    //    abstract Promise unsubscribe(int id);
+    //}
 
     //T : () -> {}
     //T : codec

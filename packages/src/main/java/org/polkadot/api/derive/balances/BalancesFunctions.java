@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.onehilltech.promises.Promise;
 import org.apache.commons.collections4.CollectionUtils;
 import org.polkadot.api.ApiBase;
+import org.polkadot.api.Types.ApiInterfacePromise;
 import org.polkadot.api.Types.QueryableModuleStorage;
 import org.polkadot.api.derive.Types;
 import org.polkadot.api.derive.accounts.AccountFunctions;
@@ -18,13 +19,13 @@ import java.util.stream.Collectors;
 public class BalancesFunctions {
 
 
-    public static Types.DeriveRealFunction fees(ApiBase api) {
+    public static Types.DeriveRealFunction fees(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             // (): Observable<DerivedFees> => {
             @Override
             public Promise call(Object... args) {
 
-                QueryableModuleStorage feesSection = api.query().section("fees");
+                QueryableModuleStorage<Promise> feesSection = api.query().section("fees");
                 return Promise.all(
                         api.query().section("balances").function("creationFee").call(),
 
@@ -57,7 +58,7 @@ public class BalancesFunctions {
     public static AccountId EMPTY_ACCOUNT = new AccountId(new byte[32]);
 
 
-    public static Types.DeriveRealFunction votingBalance(ApiBase api) {
+    public static Types.DeriveRealFunction votingBalance(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             //(address: AccountIndex | AccountId | Address | string): Observable<DerivedBalances> => {
             @Override
@@ -111,7 +112,7 @@ public class BalancesFunctions {
     }
 
 
-    public static Types.DeriveRealFunction votingBalances(ApiBase api) {
+    public static Types.DeriveRealFunction votingBalances(ApiInterfacePromise api) {
 
         return new Types.DeriveRealFunction() {
             // (addresses?: Array<AccountId | AccountIndex | Address | string>): Observable<Array<DerivedBalances>> => {
@@ -134,7 +135,7 @@ public class BalancesFunctions {
     }
 
 
-    public static Types.DeriveRealFunction votingBalancesNominatorsFor(ApiBase api) {
+    public static Types.DeriveRealFunction votingBalancesNominatorsFor(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             //(address: AccountId | AccountIndex | Address | string): Observable<Array<DerivedBalances>> => {
             @Override
@@ -157,7 +158,7 @@ public class BalancesFunctions {
     }
 
 
-    public static Types.DeriveRealFunction validatingBalance(ApiBase api) {
+    public static Types.DeriveRealFunction validatingBalance(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             //(address: AccountId | AccountIndex | Address | string): Observable<DerivedBalances> => {
             @Override
@@ -191,7 +192,7 @@ public class BalancesFunctions {
     }
 
 
-    public static Types.DeriveRealFunction validatingBalances(ApiBase api) {
+    public static Types.DeriveRealFunction validatingBalances(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             //(accountIds: Array<AccountId | Address | string>): Observable<DerivedBalancesMap> => {
             @Override
