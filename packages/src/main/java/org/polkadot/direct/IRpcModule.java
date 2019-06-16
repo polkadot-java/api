@@ -14,7 +14,6 @@ public interface IRpcModule extends IModule<IRpc.RpcInterfaceSection> {
 
     IRpc.RpcInterfaceSection system();
 
-
     @Override
     default Set<String> sectionNames() {
         return Sets.newHashSet("author", "chain", "state", "system");

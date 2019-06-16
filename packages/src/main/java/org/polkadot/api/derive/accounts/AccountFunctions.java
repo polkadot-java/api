@@ -2,6 +2,7 @@ package org.polkadot.api.derive.accounts;
 
 import com.onehilltech.promises.Promise;
 import org.polkadot.api.ApiBase;
+import org.polkadot.api.Types.ApiInterfacePromise;
 import org.polkadot.api.Types.QueryableModuleStorage;
 import org.polkadot.api.derive.Types;
 import org.polkadot.common.keyring.address.AddressCodec;
@@ -19,13 +20,13 @@ import static org.polkadot.types.type.AccountIndex.ENUMSET_SIZE;
 public class AccountFunctions {
 
 
-    public static Types.DeriveRealFunction indexToId(ApiBase api) {
+    public static Types.DeriveRealFunction indexToId(ApiInterfacePromise api) {
 
         return new Types.DeriveRealFunction() {
             // (_accountIndex: AccountIndex | string): Observable<AccountId> => {
             @Override
             public Promise call(Object... args) {
-                QueryableModuleStorage querySection = api.query().section("indices");
+                QueryableModuleStorage<Promise> querySection = api.query().section("indices");
                 if (querySection == null) {
                     querySection = api.query().section("balances");
                 }
@@ -61,7 +62,7 @@ public class AccountFunctions {
      * all of the enumsets and returns all of the values found. This could be up to 32k depending
      * on the number of active accounts in the system
      */
-    public static Types.DeriveRealFunction indexes(ApiBase api) {
+    public static Types.DeriveRealFunction indexes(ApiInterfacePromise api) {
 
         return new Types.DeriveRealFunction() {
             //(): Observable<AccountIndexes> => {
@@ -109,7 +110,7 @@ public class AccountFunctions {
     }
 
 
-    public static Types.DeriveRealFunction idToIndex(ApiBase api) {
+    public static Types.DeriveRealFunction idToIndex(ApiInterfacePromise api) {
 
         return new Types.DeriveRealFunction() {
             //(accountId: AccountId | string): Observable<AccountIndex | undefined> =>
@@ -139,7 +140,7 @@ public class AccountFunctions {
         }
     }
 
-    public static Types.DeriveRealFunction idAndIndex(ApiBase api) {
+    public static Types.DeriveRealFunction idAndIndex(ApiInterfacePromise api) {
 
         return new Types.DeriveRealFunction() {
             //(address?: Address | AccountId | AccountIndex | string | null): Observable<AccountIdAndIndex> => {

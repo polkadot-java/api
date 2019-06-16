@@ -310,7 +310,11 @@ public class RpcCore implements IRpcModule {
                                 {
                                     logger.debug(" subscriptionId = {}", subscriptionId);
                                     return Promise.value(
-                                            (Unsubscribe<Promise>) () -> RpcCore.this.provider.unsubscribe(subType, unsubName, Integer.parseInt(subscriptionId))
+                                            (Unsubscribe<Promise>) () ->
+                                            {
+                                                System.out.println();
+                                                return RpcCore.this.provider.unsubscribe(subType, unsubName, Integer.parseInt(subscriptionId));
+                                            }
                                     );
                                 }
                         )._catch((err) -> {
@@ -343,34 +347,6 @@ public class RpcCore implements IRpcModule {
                             });
                             return Promise.value(result);
                         });
-
-
-                        //SubscribeCallback finalCb = cb;
-                        //IProvider.CallbackHandler update = (error, result) -> {
-                        //
-                        //    if (error != null) {
-                        //        logger.error("{}::{}", RpcCore.signature(jsonRpcMethod), error);
-                        //        return;
-                        //    }
-                        //
-                        //    finalCb.callback(RpcCore.this.formatOutput(jsonRpcMethod, params, result));
-                        //};
-
-                        /**
-                         Promise<String> subscribe = RpcCore.this.provider.subscribe(subType, subName, paramsJson, null);
-                         return subscribe.then(
-                         (String subscriptionId) ->
-                         {
-                         logger.debug(" subscriptionId = {}", subscriptionId);
-                         return Promise.value(
-                         (Unsubscribe<Promise>) () -> RpcCore.this.provider.unsubscribe(subType, unsubName, Integer.parseInt(subscriptionId))
-                         );
-                         }
-                         )._catch((err) -> {
-                         logger.error(" promise error ", err);
-                         return Promise.value(err);
-                         });
-                         **/
                     }
 
                 } catch (Exception e) {
@@ -379,10 +355,15 @@ public class RpcCore implements IRpcModule {
                 }
             }
 
-            //@Override
-            //Promise unsubscribe(int subscriptionId) {
-            //    return RpcCore.this.provider.unsubscribe(subType, unsubName, subscriptionId);
-            //}
+            @Override
+            public boolean isSubscribe() {
+                return true;
+            }
+
+            @Override
+            public Promise unsubscribe(int subscriptionId) {
+                return RpcCore.this.provider.unsubscribe(subType, unsubName, subscriptionId);
+            }
         };
 
         return ret;
@@ -393,21 +374,11 @@ public class RpcCore implements IRpcModule {
         return provider;
     }
 
-    public RpcInterfaceSection getAuthor() {
-        return author;
+    /**
+     * @description Manually disconnect from the attached provider
+     */
+    public void disconnect() {
+        this.provider.disconnect();
     }
-
-    public RpcInterfaceSection getChain() {
-        return chain;
-    }
-
-    public RpcInterfaceSection getState() {
-        return state;
-    }
-
-    public RpcInterfaceSection getSystem() {
-        return system;
-    }
-
 
 }

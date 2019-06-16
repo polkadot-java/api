@@ -76,6 +76,11 @@ public class TypeRegistry {
         }
     }
 
+    public static void registerTypes(Map<String, Types.ConstructorCodec> types) {
+        TypeRegistry defaultRegistry = getDefaultRegistry();
+        TypeRegistry.registry.putAll(types);
+    }
+
     public static void main(String[] args) {
         getDefaultRegistry();
     }

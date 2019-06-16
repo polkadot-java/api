@@ -3,7 +3,6 @@ package org.polkadot.direct;
 import com.onehilltech.promises.Promise;
 
 public interface IRpcFunction<T> extends IFunction {
-    //
 
     interface Unsubscribe<T> {
         T unsubscribe();
@@ -13,34 +12,15 @@ public interface IRpcFunction<T> extends IFunction {
         void callback(T t);
     }
 
-    //class RpcResult<T> extends Promise<T> {
-    //    public RpcResult(PromiseExecutor<T> impl) {
-    //        super(impl);
-    //    }
-    //}
-    //
-    //
-    //abstract class SubscriptionResult extends RpcResult<Unsubscribe> {
-    //    public SubscriptionResult(PromiseExecutor<Unsubscribe> impl) {
-    //        super(impl);
-    //    }
-    //}
-    //
-    //abstract class CodecResult extends RpcResult<Codec> {
-    //    public CodecResult(PromiseExecutor<Codec> impl) {
-    //        super(impl);
-    //    }
-    //}
-
     Promise<T> invoke(Object... params);
 
+    default boolean isSubscribe() {
+        return false;
+    }
 
-    //
-    //abstract class RpcInterfaceMethodNew<T extends IFunction.RpcResult> implements IFunction {
-    //    //String subscription;
-    //
-    //    abstract Promise<T> invoke(Object... params);
-    //
-    //    //abstract Promise<> unsubscribe(int id);
-    //}
+    default Promise unsubscribe(int subscriptionId) {
+        //TODO 2019-06-11 11:00
+        throw new UnsupportedOperationException();
+    }
+
 }

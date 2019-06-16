@@ -2,6 +2,7 @@ package org.polkadot.api.derive.session;
 
 import com.onehilltech.promises.Promise;
 import org.polkadot.api.ApiBase;
+import org.polkadot.api.Types.ApiInterfacePromise;
 import org.polkadot.api.derive.Types;
 import org.polkadot.api.derive.chain.ChainFunctions;
 import org.polkadot.types.codec.Option;
@@ -12,7 +13,7 @@ import java.math.BigInteger;
 public class SessionFunctions {
 
 
-    public static Types.DeriveRealFunction eraLength(ApiBase api) {
+    public static Types.DeriveRealFunction eraLength(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             // (): Observable<BN> =>
             @Override
@@ -37,7 +38,7 @@ public class SessionFunctions {
     }
 
 
-    public static Types.DeriveRealFunction sessionProgress(ApiBase api) {
+    public static Types.DeriveRealFunction sessionProgress(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             // (): Observable<BN> =>
             @Override
@@ -69,7 +70,7 @@ public class SessionFunctions {
     }
 
 
-    public static Types.DeriveRealFunction eraProgress(ApiBase api) {
+    public static Types.DeriveRealFunction eraProgress(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
             //(): Observable<BN> =>
             @Override

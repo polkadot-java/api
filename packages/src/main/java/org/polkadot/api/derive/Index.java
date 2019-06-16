@@ -1,7 +1,7 @@
 package org.polkadot.api.derive;
 
 import com.google.common.collect.Maps;
-import org.polkadot.api.ApiBase;
+import org.polkadot.api.Types.ApiInterfacePromise;
 import org.polkadot.api.derive.accounts.AccountFunctions;
 import org.polkadot.api.derive.balances.BalancesFunctions;
 import org.polkadot.api.derive.chain.ChainFunctions;
@@ -58,7 +58,7 @@ public class Index {
     }
 
     interface DeriveCustomMethod extends IFunction {
-        Types.DeriveRealFunction apply(ApiBase api);
+        Types.DeriveRealFunction apply(ApiInterfacePromise api);
     }
 
 
@@ -144,7 +144,10 @@ public class Index {
     }
 
 
-    static Derive injectFunctions(ApiBase api, Derive derive, DeriveCustom functions) {
+    static Derive injectFunctions(ApiInterfacePromise api, Derive derive, DeriveCustom functions) {
+        if (functions == null) {
+            return derive;
+        }
         for (String sectionName : functions.sectionNames()) {
             DeriveCustomSection section = functions.section(sectionName);
             DeriveRealSection result = derive.section(sectionName);
@@ -157,7 +160,7 @@ public class Index {
     }
 
 
-    public static Derive decorateDerive(ApiBase api, DeriveCustom custom) {
+    public static Derive decorateDerive(ApiInterfacePromise api, DeriveCustom custom) {
         Derive derive = new Derive();
 
         injectFunctions(api, derive, functions);

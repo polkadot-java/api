@@ -79,7 +79,6 @@ public class TypesUtils {
                     //logger.error(" codec class has move than one constructor {}, {}", clazz, constructors);
                 }
 
-
                 int parameterCount = constructor.getParameterCount();
                 Class<?>[] parameterTypes = constructor.getParameterTypes();
 
@@ -92,7 +91,7 @@ public class TypesUtils {
                 } else {
                     params = values;
                 }
-//TODO 2019-05-10 17:27  append null
+                //TODO 2019-05-10 17:27  append null
                 for (int i = 0; i < parameterTypes.length; i++) {
                     Class<?> parameterType = parameterTypes[i];
                 }

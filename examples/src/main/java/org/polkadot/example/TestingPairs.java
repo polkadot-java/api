@@ -19,6 +19,16 @@ public class TestingPairs {
     // NOTE This is not great, but a testing keyring is for testing - what happens is that in most cases
 // the keyring is initialises before anythign else. Since the sr25519 crypto is async, this creates
 // problems with adding the keys
+    static String[] Address = new String[]{
+            "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY", //Alice
+            "5GNJqTPyNqANBkUVMN1LPPrxXnFouWXoe2wNSmmEoLctxiZY", //Alice//stash
+            "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty", //Bob
+            "5FLSigC9HGRKVhB9FiEo4Y3koPsNmBmLJbpXg2mp1hXcS59Y", //Charlie
+            "5DAAnrj7VHTznn2AWBemMuyBwZWs6FNFjdyVXUeYum3PTXFy", //Dave
+            "5HGjWAeFDfFCWPsjFQdVV2Msvz2XtMktvgocEZcCj68kUMaw", //Eve
+            "5CiPPseXPECbkjWCa6MnjNokrgYjMqmKndv2rSnekmSK2DjL"  //Ferdie
+    };
+
     static byte[][][] PAIRS = new byte[][][]{
             new byte[][]{
                     hexToU8a("0x98319d4ff8a9508c4bb0cf0b5a78d760a0b2082c02775e6e82370816fedfff48925a225d97aa00682d6a59b95b18780c10d7032336e88f3442b42361f4a66011"),

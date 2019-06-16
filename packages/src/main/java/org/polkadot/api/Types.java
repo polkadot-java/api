@@ -1,21 +1,19 @@
 package org.polkadot.api;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.onehilltech.promises.Promise;
-import org.polkadot.direct.IFunction;
-import org.polkadot.direct.IModule;
-import org.polkadot.direct.ISection;
+import org.polkadot.api.derive.Index;
+import org.polkadot.common.EventEmitter;
+import org.polkadot.direct.*;
+import org.polkadot.rpc.provider.IProvider;
+import org.polkadot.types.Types.ConstructorCodec;
 import org.polkadot.types.Types.IExtrinsic;
 import org.polkadot.types.Types.SignatureOptions;
 import org.polkadot.types.primitive.Method;
 import org.polkadot.types.primitive.StorageKey;
-import org.polkadot.types.primitive.U64;
-import org.polkadot.types.type.Hash;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public interface Types {
 
@@ -48,38 +46,28 @@ public interface Types {
      * }
      */
 
-    abstract class QueryableStorageFunction extends StorageKey.StorageFunction {
-        public abstract Promise call(Object... args);
+    abstract class QueryableStorageFunction<ApplyResult> extends StorageKey.StorageFunction {
+        public abstract ApplyResult call(Object... args);
 
         //  at: (hash: Hash | Uint8Array | string, arg?: CodecArg) => CodecResult;
-        public abstract Promise at(Object hash, Object arg);
+        public abstract ApplyResult at(Object hash, Object arg);
 
-        public abstract Promise<Hash> hash(Object arg);
+        public abstract ApplyResult hash(Object arg);
+        //public abstract Promise<Hash> hash(Object arg);
 
         public abstract String key(Object arg);
 
-        public abstract Promise<U64> size(Object arg);
-
-        //public abstract Promise subCall(Object args, CodecCallback callback);
-
-        //(callback: CodecCallback): SubscriptionResult;
-        //(arg: CodecArg, callback: CodecCallback): SubscriptionResult;
-
-        //* (arg?: CodecArg): CodecResult;
-        //* at: (hash: Hash | Uint8Array | string, arg?: CodecArg) => CodecResult;
-        //* hash: (arg?: CodecArg) => HashResult<CodecResult, SubscriptionResult>;
-        //* key: (arg?: CodecArg) => string;
-        //* size: (arg?: CodecArg) => U64Result<CodecResult, SubscriptionResult>;
+        public abstract ApplyResult size(Object arg);
     }
 
-    class QueryableModuleStorage extends ISection<QueryableStorageFunction> {
+    class QueryableModuleStorage<ApplyResult> extends ISection<QueryableStorageFunction<ApplyResult>> {
     }
 
-    class QueryableStorage implements IModule<QueryableModuleStorage> {
-        Map<String, QueryableModuleStorage> sections = Maps.newLinkedHashMap();
+    class QueryableStorage<ApplyResult> implements IModule<QueryableModuleStorage<ApplyResult>> {
+        Map<String, QueryableModuleStorage<ApplyResult>> sections = Maps.newLinkedHashMap();
 
         @Override
-        public QueryableModuleStorage section(String section) {
+        public QueryableModuleStorage<ApplyResult> section(String section) {
             return sections.get(section);
         }
 
@@ -88,50 +76,22 @@ public interface Types {
             return sections.keySet();
         }
 
-        public void addSection(String name, QueryableModuleStorage section) {
+        @Override
+        public void addSection(String name, QueryableModuleStorage<ApplyResult> section) {
             this.sections.put(name, section);
         }
     }
 
-
-    //////////
-
-    //  export interface SubmittableExtrinsicFunction<CodecResult, SubscriptionResult> extends MethodFunction {
-    //(...params: Array<CodecArg>): SubmittableExtrinsic<CodecResult, SubscriptionResult>;
-    //  }
-    //
-    //  export interface SubmittableModuleExtrinsics<CodecResult, SubscriptionResult> {
-    //[index: string]: SubmittableExtrinsicFunction<CodecResult, SubscriptionResult>;
-    //  }
-    //
-    //  export interface SubmittableExtrinsics<CodecResult, SubscriptionResult> {
-    //[index: string]: SubmittableModuleExtrinsics<CodecResult, SubscriptionResult>;
-    //  }
-
-    //interface SubmittableExtrinsic<CodecResult, SubscriptionResult> extends IExtrinsic {
-    //    send (): SumbitableResultResult<CodecResult, SubscriptionResult>;
-    //
-    //    send (statusCb: (result: SubmittableResult) => any): SumbitableResultSubscription<CodecResult, SubscriptionResult>;
-    //
-    //    sign (account: KeyringPair, _options: Partial<SignatureOptions>): this;
-    //
-    //    signAndSend (account: KeyringPair | string | AccountId | Address, options?: Partial<Partial<SignatureOptions>>): SumbitableResultResult<CodecResult, SubscriptionResult>;
-    //
-    //    signAndSend (account: KeyringPair | string | AccountId | Address, statusCb: StatusCb): SumbitableResultSubscription<CodecResult, SubscriptionResult>;
-    //}
-    //
-
-
-    abstract class SubmittableExtrinsicFunction extends Method.MethodFunction {
+    abstract class SubmittableExtrinsicFunction<ApplyResult> extends Method.MethodFunction {
         //(...params: Array<CodecArg>): SubmittableExtrinsic<CodecResult, SubscriptionResult>;
-        public abstract SubmittableExtrinsic call(Object... params);
+        public abstract SubmittableExtrinsic<ApplyResult> call(Object... params);
     }
 
     class SubmittableModuleExtrinsics extends ISection<SubmittableExtrinsicFunction> {
 
     }
 
-    class SubmittableExtrinsics implements IModule<SubmittableModuleExtrinsics> {
+    class SubmittableExtrinsics<ApplyResult> implements IModule<SubmittableModuleExtrinsics> {
 
         Map<String, SubmittableModuleExtrinsics> sections = new LinkedHashMap<>();
 
@@ -167,41 +127,19 @@ public interface Types {
 
     }
 
-    /*
-    export interface DeriveMethodBase<CodecResult, SubscriptionResult> {
-  (...params: Array<CodecArg>): CodecResult;
-}
-
-interface DeriveMethodPromise<CodecResult, SubscriptionResult> extends DeriveMethodBase<CodecResult, SubscriptionResult> {
-  (callback: CodecCallback): SubscriptionResult;
-  (arg0: CodecArg, callback: CodecCallback): SubscriptionResult;
-  (arg0: CodecArg, arg1: CodecArg, callback: CodecCallback): SubscriptionResult;
-  (arg0: CodecArg, arg1: CodecArg, arg2: CodecArg, callback: CodecCallback): SubscriptionResult;
-}
-     */
-
-    abstract class DeriveMethod implements IFunction {
-        public abstract Promise call(Object... params);
-        //abstract Promise sendCall(Object... params);
-
-        //abstract Promise subCall(CodecCallback callback);
-        //
-        //abstract Promise subCall(Object arg0, CodecCallback callback);
-        //
-        //abstract Promise subCall(Object arg0, Object arg1, CodecCallback callback);
-        //
-        //abstract Promise subCall(Object arg0, Object arg1, Object arg2, CodecCallback callback);
+    abstract class DeriveMethod<ApplyResult> implements IFunction {
+        public abstract ApplyResult call(Object... params);
     }
 
-    class DeriveSection extends ISection<DeriveMethod> {
+    class DeriveSection<ApplyResult> extends ISection<DeriveMethod<ApplyResult>> {
 
     }
 
-    class Derive implements IModule<DeriveSection> {
-        Map<String, DeriveSection> sectionMap = new HashMap<>();
+    class Derive<ApplyResult> implements IModule<DeriveSection> {
+        Map<String, DeriveSection<ApplyResult>> sectionMap = new HashMap<>();
 
         @Override
-        public DeriveSection section(String section) {
+        public DeriveSection<ApplyResult> section(String section) {
             return sectionMap.get(section);
         }
 
@@ -215,4 +153,147 @@ interface DeriveMethodPromise<CodecResult, SubscriptionResult> extends DeriveMet
             this.sectionMap.put(sectionName, section);
         }
     }
+
+
+    interface ApiBaseInterface<ApplyResult> extends IApi<ApplyResult> {
+
+        ApiBase.ApiType getType();
+
+        EventEmitter on(IProvider.ProviderInterfaceEmitted type, EventEmitter.EventListener handler);
+
+        EventEmitter once(IProvider.ProviderInterfaceEmitted type, EventEmitter.EventListener handler);
+    }
+
+    interface ApiInterfacePromise extends IApi<Promise> {
+
+    }
+
+    class ApiOptions {
+        /**
+         * @description Add custom derives to be injected
+         */
+        Index.DeriveCustom derives;
+
+        /**
+         * @description Transport Provider from rpc-provider. If not specified, it will default to
+         * connecting to a WsProvider connecting localhost with the default port, i.e. `ws://127.0.0.1:9944`
+         */
+        IProvider provider;
+
+        /**
+         * @description An external signer which will be used to sign extrinsic when account passed in is not KeyringPair
+         */
+        Signer signer;
+        /**
+         * @description The source object to use for runtime information (only used when cloning)
+         */
+        ApiBase<?> source;
+        /**
+         * @description Additional types used by runtime modules. This is nessusary if the runtime modules
+         * uses types not available in the base Substrate runtime.
+         */
+        Map<String, ConstructorCodec> types;
+
+        public Index.DeriveCustom getDerives() {
+            return derives;
+        }
+
+        public void setDerives(Index.DeriveCustom derives) {
+            this.derives = derives;
+        }
+
+        public IProvider getProvider() {
+            return provider;
+        }
+
+        public void setProvider(IProvider provider) {
+            this.provider = provider;
+        }
+
+        public Signer getSigner() {
+            return signer;
+        }
+
+        public void setSigner(Signer signer) {
+            this.signer = signer;
+        }
+
+        public ApiBase<?> getSource() {
+            return source;
+        }
+
+        public void setSource(ApiBase<?> source) {
+            this.source = source;
+        }
+
+        public Map<String, ConstructorCodec> getTypes() {
+            return types;
+        }
+
+        public void setTypes(Map<String, ConstructorCodec> types) {
+            this.types = types;
+        }
+    }
+
+
+    interface OnCallDefinition<ApplyResult> {
+        ApplyResult apply(OnCallFunction method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback);
+    }
+
+    interface OnCallFunction {
+        Promise apply(Object... params);
+    }
+
+    class DecoratedRpc<ApplyResult> implements IModule<DecoratedRpcSection<ApplyResult>> {
+
+        Map<String, DecoratedRpcSection> sectionMap = Maps.newLinkedHashMap();
+
+        @Override
+        public DecoratedRpcSection section(String section) {
+            return sectionMap.get(section);
+        }
+
+        @Override
+        public Set<String> sectionNames() {
+            return Sets.newHashSet("author", "chain", "state", "system");
+        }
+
+
+        @Override
+        public void addSection(String sectionName, DecoratedRpcSection section) {
+            this.sectionMap.put(sectionName, section);
+        }
+
+        public DecoratedRpcSection<ApplyResult> author() {
+            return this.section("author");
+        }
+
+        public DecoratedRpcSection<ApplyResult> chain() {
+            return this.section("chain");
+        }
+
+        public DecoratedRpcSection<ApplyResult> state() {
+            return this.section("state");
+        }
+
+        public DecoratedRpcSection<ApplyResult> system() {
+            return this.section("system");
+        }
+    }
+
+    class DecoratedRpcSection<ApplyResult> extends ISection<DecoratedRpcMethod<ApplyResult>> {
+        Map<String, DecoratedRpcMethod> methodMap = new HashMap<>();
+
+        public DecoratedRpcMethod getMethod(String methodName) {
+            return methodMap.get(methodName);
+        }
+    }
+
+
+    // checked against max. params in jsonrpc, 1 for subs, 3 without
+    abstract class DecoratedRpcMethod<ApplyResult> implements IFunction {
+        public abstract ApplyResult invoke(Object... params);
+    }
+
+
 }
