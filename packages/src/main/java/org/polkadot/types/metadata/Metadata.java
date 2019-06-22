@@ -8,7 +8,6 @@ import org.polkadot.utils.Utils;
 import static org.polkadot.types.metadata.MagicNumber.MAGIC_NUMBER;
 
 /**
- * @name Metadata
  * The versioned runtime metadata as a decoded structure
  */
 public class Metadata extends MetadataVersioned {

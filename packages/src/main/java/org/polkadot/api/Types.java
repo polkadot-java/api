@@ -114,12 +114,12 @@ public interface Types {
 
     interface Signer {
         /**
-         * @description Signs an extrinsic, returning an id (>0) that can be used to retrieve updates
+         * Signs an extrinsic, returning an id (>0) that can be used to retrieve updates
          */
         Promise<Integer> sign(IExtrinsic extrinsic, String address, SignatureOptions options);
 
         /**
-         * @description Receives an update for the extrinsic signed by a `signer.sign`
+         * Receives an update for the extrinsic signed by a `signer.sign`
          */
         //update?: (int id, status: Hash | SubmittableResult) => void;
 
@@ -170,26 +170,26 @@ public interface Types {
 
     class ApiOptions {
         /**
-         * @description Add custom derives to be injected
+         * Add custom derives to be injected
          */
         Index.DeriveCustom derives;
 
         /**
-         * @description Transport Provider from rpc-provider. If not specified, it will default to
+         * Transport Provider from rpc-provider. If not specified, it will default to
          * connecting to a WsProvider connecting localhost with the default port, i.e. `ws://127.0.0.1:9944`
          */
         IProvider provider;
 
         /**
-         * @description An external signer which will be used to sign extrinsic when account passed in is not KeyringPair
+         * An external signer which will be used to sign extrinsic when account passed in is not KeyringPair
          */
         Signer signer;
         /**
-         * @description The source object to use for runtime information (only used when cloning)
+         * The source object to use for runtime information (only used when cloning)
          */
         ApiBase<?> source;
         /**
-         * @description Additional types used by runtime modules. This is nessusary if the runtime modules
+         * Additional types used by runtime modules. This is nessusary if the runtime modules
          * uses types not available in the base Substrate runtime.
          */
         Map<String, ConstructorCodec> types;
@@ -237,11 +237,11 @@ public interface Types {
 
 
     interface OnCallDefinition<ApplyResult> {
-        ApplyResult apply(OnCallFunction method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback);
+        ApplyResult apply(OnCallFunction<ApplyResult> method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback);
     }
 
-    interface OnCallFunction {
-        Promise apply(Object... params);
+    interface OnCallFunction<ApplyResult> {
+        ApplyResult apply(Object... params);
     }
 
     class DecoratedRpc<ApplyResult> implements IModule<DecoratedRpcSection<ApplyResult>> {

@@ -9,7 +9,6 @@ import org.polkadot.types.metadata.v0.Modules;
 import java.util.List;
 
 /**
- * @name StorageKey
  * A representation of a storage key (typically hashed) in the system. It can be
  * constructed by passing in a raw key or a StorageFunction with (optional) arguments.
  */

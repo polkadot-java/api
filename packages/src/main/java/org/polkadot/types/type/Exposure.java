@@ -7,8 +7,7 @@ import org.polkadot.types.codec.Struct;
 import org.polkadot.types.codec.Vector;
 
 /**
- * @name Exposure
- * @description A snapshot of the stake backing a single validator in the system
+ * A snapshot of the stake backing a single validator in the system
  */
 public class Exposure extends Struct {
 
@@ -22,7 +21,7 @@ public class Exposure extends Struct {
 
 
     /**
-     * @description The validator"s own stash that is exposed
+     * The validator"s own stash that is exposed
      */
     public Balance getOwn() {
         Compact own = this.getField("own");
@@ -30,7 +29,7 @@ public class Exposure extends Struct {
     }
 
     /**
-     * @description The total balance backing this validator
+     * The total balance backing this validator
      */
     public Balance getTotal() {
 
@@ -39,7 +38,7 @@ public class Exposure extends Struct {
     }
 
     /**
-     * @description The portions of nominators stashes that are exposed
+     * The portions of nominators stashes that are exposed
      */
     public Vector<IndividualExposure> getOthers() {
         return this.getField("others");

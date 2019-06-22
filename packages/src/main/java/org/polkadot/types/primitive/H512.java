@@ -4,7 +4,6 @@ import org.polkadot.types.codec.U8aFixed;
 
 
 /**
- * @name H512
  * Hash containing 512 bits (64 bytes), typically used for signatures
  */
 public class H512 extends U8aFixed {

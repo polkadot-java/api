@@ -11,7 +11,6 @@ public interface Events {
 
 
     /**
-     * @name MetadataEvent
      * The definition of an event
      */
     class MetadataEvent extends Struct {
@@ -26,14 +25,14 @@ public interface Events {
 
 
         /**
-         * The [[Type]] for args
+         * The {@link org.polkadot.types.type} for args
          */
         public Vector<Type> getArgs() {
             return this.getField("args");
         }
 
         /**
-         * The [[Text]] documentation
+         * The {@link org.polkadot.types.primitive.Text} documentation
          */
         public Vector<Text> getDocs() {
             return this.getField("docs");

@@ -5,7 +5,6 @@ import org.polkadot.types.codec.U8a;
 import org.polkadot.utils.Utils;
 
 /**
- * @name ExtrinsicEra
  * The era for an extrinsic, indicating either a mortal or immortal extrinsic
  */
 public class ExtrinsicEra extends U8a {

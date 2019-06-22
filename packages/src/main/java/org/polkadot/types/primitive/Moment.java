@@ -10,7 +10,6 @@ import java.math.BigInteger;
 import java.util.Date;
 
 /**
- * @name Moment
  * A wrapper around seconds/timestamps. Internally the representation only has
  * second precicion (aligning with Rust), so any numbers passed an/out are always
  * per-second. For any encoding/decoding the 1000 multiplier would be applied to
@@ -134,8 +133,7 @@ public class Moment extends Date implements Compactable {
     }
 
     /**
-     * @name MomentOf
-     * The Substrate MomentOf representation as a [[Moment]].
+     * The Substrate MomentOf representation as a Moment.
      */
     public static class MomentOf extends Moment {
         public MomentOf(Object value) {

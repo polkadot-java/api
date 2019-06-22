@@ -28,8 +28,7 @@ public class Schnorrkel {
     }
 
     /**
-     * @name schnorrkelKeypairFromSeed
-     * @description Returns a object containing a `publicKey` & `secretKey` generated from the supplied seed.
+     * Returns a object containing a `publicKey` & `secretKey` generated from the supplied seed.
      */
     //export default function schnorrkelKeypairFromSeed (seed: Uint8Array): Keypair {
     //    return keypairFromU8a(
@@ -44,8 +43,7 @@ public class Schnorrkel {
 
 
     /**
-     * @name schnorrkelSign
-     * @description Returns message signature of `message`, using the supplied pair
+     * Returns message signature of `message`, using the supplied pair
      */
     //export default function schnorrkelSign (message: Uint8Array, { publicKey, secretKey }: Partial<Keypair>): Uint8Array {
     //    assert(publicKey && publicKey.length === 32, 'Expected valid publicKey, 32-bytes');
@@ -60,8 +58,7 @@ public class Schnorrkel {
     }
 
     /**
-     * @name schnorrkelVerify
-     * @description Verifies the signature of `message`, using the supplied pair
+     * Verifies the signature of `message`, using the supplied pair
      */
     //export default function schnorrkelVerify (message: Uint8Array, signature: Uint8Array, publicKey: Uint8Array): boolean {
     //    return sr25519Verify(signature, message, publicKey);

@@ -88,7 +88,7 @@ public class Compact extends Base<Compactable> implements Codec {
 
 
     /**
-     * @description Returns the number of bits in the value
+     * Returns the number of bits in the value
      */
     public int bitLength() {
         return this.raw.bitLength();
@@ -124,14 +124,14 @@ public class Compact extends Base<Compactable> implements Codec {
     }
 
     /**
-     * @description Returns the number representation for the value
+     * Returns the number representation for the value
      */
     public long toNumber() {
         return this.raw.toNumber();
     }
 
     /**
-     * @description Returns the string representation of the value
+     * Returns the string representation of the value
      */
     @Override
     public String toString() {

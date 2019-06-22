@@ -8,10 +8,9 @@ import org.polkadot.types.rpc.RuntimeVersion;
 import org.polkadot.utils.UtilsCrypto;
 
 /**
- * @name SignaturePayload
- * A signing payload for an [[Extrinsic]]. For the final encoding, it is variable length based
+ * A signing payload for an {@link org.polkadot.type.extrinsics}. For the final encoding, it is variable length based
  * on the conetnts included
- * <p>
+ * 
  * 8 bytes The Transaction Index/Nonce as provided in the transaction itself.
  * 2+ bytes The Function Descriptor as provided in the transaction itself.
  * 2 bytes The Transaction Era as provided in the transaction itself.
@@ -53,28 +52,28 @@ public class SignaturePayload extends Struct {
 
 
     /**
-     * The block [[Hash]] the signature applies to (mortal/immortal)
+     * The block {@link org.polkadot.types.type.Hash} the signature applies to (mortal/immortal)
      */
     public Hash getBlockHash() {
         return this.getField("blockHash");
     }
 
     /**
-     * The [[Method]] contained in the payload
+     * The {@link org.polkadot.types.primitive.Method} contained in the payload
      */
     public Method getMethod() {
         return this.getField("method");
     }
 
     /**
-     * The [[ExtrinsicEra]]
+     * The ExtrinsicEra
      */
     public ExtrinsicEra getEra() {
         return this.getField("era");
     }
 
     /**
-     * The [[Nonce]]
+     * The {@link org.polkadot.types.type.Nonce}
      */
     public NonceCompact getNonce() {
         return this.getField("nonce");

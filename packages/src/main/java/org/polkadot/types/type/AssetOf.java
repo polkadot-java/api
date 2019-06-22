@@ -1,8 +1,7 @@
 package org.polkadot.types.type;
 
 /**
- * @name AssetOf
- * @description The Substrate AssetOf representation as a [[Balance]].
+ * The Substrate AssetOf representation as a {@link org.polkadot.types.type.Balance}.
  */
 public class AssetOf extends Balance {
     public AssetOf(Object value) {

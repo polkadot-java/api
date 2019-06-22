@@ -31,13 +31,13 @@ import java.util.regex.Pattern;
  *
  * WsProviderDir
  *
- * The WebSocket Provider allows sending requests using WebSocket to a WebSocket RPC server TCP port. Unlike the [[HttpProvider]], it does support subscriptions and allows listening to events such as new blocks or balance changes.
+ * The WebSocket Provider allows sending requests using WebSocket to a WebSocket RPC server TCP port. Unlike the HttpProvider, it does support subscriptions and allows listening to events such as new blocks or balance changes.
  * **Example**
  * ```java
  * import org.polkadot.rpc.provider.ws.WsProviderDir;
  * WsProviderDir provider = new WsProviderDir('ws://127.0.0.1:9944');
  * ```
- * @see [[HttpProvider]]
+ * @see org.polkadot.rpc.provider.http.HttpProvider
  */
 public class WsProvider implements IWsProvider {
 
@@ -131,8 +131,8 @@ public class WsProvider implements IWsProvider {
     }
 
     /**
-     * @summary Manually connect
-     * The [[WsProviderDir]] connects automatically by default, however if you decided otherwise, you may
+     * Manually connect
+     * The WsProviderDir connects automatically by default, however if you decided otherwise, you may
      * connect manually using this method.
      */
     @Override
@@ -349,7 +349,7 @@ public class WsProvider implements IWsProvider {
     }
 
     /**
-     * @description Returns a clone of the object
+     * Returns a clone of the object
      */
     @Override
     public IProvider clone() {
@@ -384,7 +384,7 @@ public class WsProvider implements IWsProvider {
     /**
      * @param {ProviderInterface$Emitted} type Event
      * @param {ProviderInterface$EmitCb}  sub  Callback
-     * Listens on events after having subscribed using the [[subscribe]] function.
+     * Listens on events after having subscribed using the subscribe function.
      */
     @Override
     public void on(ProviderInterfaceEmitted emitted, EventEmitter.EventListener cb) {
@@ -396,17 +396,18 @@ public class WsProvider implements IWsProvider {
      * @param {string}                     method   Subscription method
      * @param {Array<any>}                 params   Parameters
      * @param {ProviderInterface$Callback} callback Callback
-     * @return {Promise<number>}                     Promise resolving to the dd of the subscription you can use with [[unsubscribe]].
+     * @return {Promise<number>}                     Promise resolving to the dd of the subscription you can use with unsubscribe.
      * subscribe
      * Allows subscribing to a specific event.
      * **Example**
      * ```java
-     * WsProviderDir provider = new WsProviderDir('ws://127.0.0.1:9944');
+     * WsProviderDir provider = new WsProviderDir("ws://127.0.0.1:9944");
      * Rpc rpc = new Rpc(provider);
-     * rpc.state.subscribeStorage([[storage.balances.freeBalance, <Address>]], (_, values) => {
+     * rpc.state.subscribeStorage(storage.balances.freeBalance, <Address>, (_, values) => {
      * System.out.println(values)
      * }).then((subscriptionId) => {
-     * System.out.println('balance changes subscription id: ', subscriptionId)
+     * System.out.print("balance changes subscription id: ")
+     * System.out.println(subscriptionId)
      * })
      * ```
      */
@@ -416,7 +417,7 @@ public class WsProvider implements IWsProvider {
     }
 
     /**
-     * Allows unsubscribing to subscriptions made with [[subscribe]].
+     * Allows unsubscribing to subscriptions made with subscribe.
      */
     @Override
     public Promise<String> unsubscribe(String type, String method, int id) {

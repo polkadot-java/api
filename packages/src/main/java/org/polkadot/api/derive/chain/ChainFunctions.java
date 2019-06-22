@@ -16,12 +16,13 @@ public class ChainFunctions {
 
 
     /**
-     * @description Get the latest block number.
-     * @example <BR>
-     * <p>
-     * ```javascript
+     * Get the latest block number.
+     * **example**  
+     * 
+     * ```java
      * api.derive.chain.bestNumber((blockNumber) => {
-     * console.log(`the current best block is #${blockNumber}`);
+     * System.out.print("the current best block is ");
+     * System.out.println(blockNumber);
      * });
      * ```
      */
@@ -46,13 +47,13 @@ public class ChainFunctions {
 
 
     /**
-     * @description Get the latest finalised block number.
-     * example
-     * <BR>
-     * <p>
-     * ```javascript
+     * Get the latest finalised block number.
+     * **example**  
+     * 
+     * ```java
      * api.derive.chain.bestNumberFinalized((blockNumber) => {
-     * console.log(`the current finalised block is #${blockNumber}`);
+     *     System.out.print("the current finalised block is ");
+     *     System.out.print(blockNumber);
      * });
      * ```
      */
@@ -76,12 +77,12 @@ public class ChainFunctions {
 
 
     /**
-     * @description Calculates the lag between finalised head and best head
-     * @example <BR>
-     * <p>
-     * ```javascript
+     * Calculates the lag between finalised head and best head
+     * **example**  
+     * 
+     * ```java
      * api.derive.chain.bestNumberLag((lag) => {
-     * console.log(`finalised is ${lag} blocks behind head`);
+     *     System.out.printf("finalised is %d blocks behind head", lag);
      * });
      * ```
      */
@@ -105,14 +106,7 @@ public class ChainFunctions {
     }
 
     /**
-     * @description Get the a specific block header and extend it with the author
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * const { author, blockNumber } = await api.derive.chain.getHeader('0x123...456');
-     * <p>
-     * console.log(`block #${blockNumber} was authored by ${author}`);
-     * ```
+     * Get the a specific block header and extend it with the author
      */
     public static Types.DeriveRealFunction getHeader(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {
@@ -152,13 +146,7 @@ public class ChainFunctions {
     }
 
     /**
-     * @description Subscribe to block headers and extend it with the author
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * api.derive.chain.subscribeNewHead(({ author, blockNumber }) => {
-     * console.log(`block #${blockNumber} was authored by ${author}`);
-     * });
+     * Subscribe to block headers and extend it with the author
      * ```
      */
     public static Types.DeriveRealFunction subscribeNewHead(ApiInterfacePromise api) {

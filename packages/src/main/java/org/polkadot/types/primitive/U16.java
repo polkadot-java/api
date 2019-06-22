@@ -4,7 +4,6 @@ package org.polkadot.types.primitive;
 import org.polkadot.types.codec.UInt;
 
 /**
- * @name U16
  * An 16-bit unsigned integer
  */
 public class U16 extends UInt {

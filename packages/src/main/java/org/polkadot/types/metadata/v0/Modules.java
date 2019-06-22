@@ -30,7 +30,7 @@ public interface Modules {
         }
 
         /**
-         * The [[Type]]
+         * The {@link org.polkadot.types.type}
          */
         public Type getType() {
             return (Type) this.get("type");
@@ -49,14 +49,14 @@ public interface Modules {
 
 
         /**
-         * The [[FunctionArgumentMetadata]] for arguments
+         * The FunctionArgumentMetadata for arguments
          */
         public Vector<FunctionArgumentMetadata> getArguments() {
             return this.getField("arguments");
         }
 
         /**
-         * The [[Text]] documentation
+         * The {@link org.polkadot.types.primitive.Text} documentation
          */
         public Vector<Text> getDocumentation() {
             return this.getField("documentation");
@@ -87,7 +87,7 @@ public interface Modules {
 
 
         /**
-         * The functions available as [[FunctionMetadata]]
+         * The functions available as FunctionMetadata
          */
         public Vector<FunctionMetadata> getFunctions() {
             return this.getField("functions");
@@ -111,7 +111,7 @@ public interface Modules {
 
 
         /**
-         * The calls as [[CallMetadata]]
+         * The calls as CallMetadata
          */
         public CallMetadata getCall() {
             return this.getField("call");
@@ -213,7 +213,7 @@ public interface Modules {
         }
 
         /**
-         * The value as a [[Type]] value
+         * The value as a {@link org.polkadot.types.type} value
          */
         //TODO 2019-05-08 1819 cast error
         public PlainType asType() {

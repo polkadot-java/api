@@ -6,8 +6,7 @@ import org.polkadot.types.codec.Compact;
 import org.polkadot.types.codec.Struct;
 
 /**
- * @name IndividualExposure
- * @description The Substrate IndividualExposure for staking
+ * The Substrate IndividualExposure for staking
  */
 public class IndividualExposure extends Struct {
     public IndividualExposure(Object value) {
@@ -18,7 +17,7 @@ public class IndividualExposure extends Struct {
     }
 
     /**
-     * @description The value
+     * The value
      */
     public Balance getValue() {
         Compact compact = this.getField("value");
@@ -26,7 +25,7 @@ public class IndividualExposure extends Struct {
     }
 
     /**
-     * @description The AccountId
+     * The AccountId
      */
     public AccountId getWho() {
         return this.getField("who");

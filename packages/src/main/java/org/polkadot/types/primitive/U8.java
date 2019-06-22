@@ -3,7 +3,6 @@ package org.polkadot.types.primitive;
 import org.polkadot.types.codec.UInt;
 
 /**
- * @name U8
  * An 8-bit unsigned integer
  */
 public class U8 extends UInt {

@@ -25,7 +25,7 @@ public interface Calls {
         }
 
         /**
-         * The [[Type]]
+         * The {@link org.polkadot.types.type}
          */
         public Type getType() {
             return this.getField("type");
@@ -34,7 +34,6 @@ public interface Calls {
 
 
     /**
-     * @name MetadataCall
      * The definition of a call
      */
     class MetadataCall extends Struct {
@@ -49,14 +48,14 @@ public interface Calls {
 
 
         /**
-         * The [[MetadataCallArg]] for arguments
+         * The MetadataCallArg for arguments
          */
         public Vector<MetadataCallArg> getArgs() {
             return this.getField("args");
         }
 
         /**
-         * The [[Text]] documentation
+         * The {@link org.polkadot.types.primitive.Text} documentation
          */
         public Vector<Text> getDocs() {
             return this.getField("docs");

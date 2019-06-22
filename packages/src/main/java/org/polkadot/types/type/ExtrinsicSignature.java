@@ -14,8 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * @name ExtrinsicSignature
- * A container for the [[Signature]] associated with a specific [[Extrinsic]]
+ * A container for the {@link org.polkadot.types.type.Signature} associated with a specific {@link org.polkadot.type.extrinsics}
  */
 public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignature {
 
@@ -82,7 +81,7 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
     }
 
     /**
-     * The [[ExtrinsicEra]] (mortal or immortal) this signature applies to
+     * The ExtrinsicEra (mortal or immortal) this signature applies to
      */
     public ExtrinsicEra getEra() {
         return this.getField("era");
@@ -90,21 +89,21 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
 
 
     /**
-     * The [[Nonce]] for the signature
+     * The {@link org.polkadot.types.type.Nonce} for the signature
      */
     public NonceCompact getNonce() {
         return this.getField("nonce");
     }
 
     /**
-     * The actuall [[Signature]] hash
+     * The actuall {@link org.polkadot.types.type.Signature} hash
      */
     public Signature getSignature() {
         return this.getField("signature");
     }
 
     /**
-     * The [[Address]] that signed
+     * The {@link org.polkadot.types.type.Address} that signed
      */
     public Address getSigner() {
         return this.getField("signer");
@@ -168,7 +167,7 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
 
     /**
      * @param isBare true when the value has none of the type-specific prefixes (internal)
-     * @description Encodes the value as a Uint8Array as per the parity-codec specifications
+     * Encodes the value as a Uint8Array as per the parity-codec specifications
      */
     @Override
     public byte[] toU8a(boolean isBare) {

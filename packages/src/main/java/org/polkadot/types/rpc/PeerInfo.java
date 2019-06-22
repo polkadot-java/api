@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @name PeerInfo
  * A system peer info indicator, reported back over RPC
  */
 public class PeerInfo extends Struct {

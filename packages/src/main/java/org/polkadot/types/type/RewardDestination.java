@@ -5,8 +5,7 @@ import com.google.common.collect.Lists;
 import org.polkadot.types.codec.Enum;
 
 /**
- * @name RewardDestination
- * @description A destination account for payment
+ * A destination account for payment
  */
 public class RewardDestination extends Enum {
     public RewardDestination(Object value) {

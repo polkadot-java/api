@@ -25,28 +25,28 @@ public interface Storage {
         }
 
         /**
-         * The mapped key as [[Text]]
+         * The mapped key as {@link org.polkadot.types.primitive.Text}
          */
         public Text getKey1() {
             return this.getField("key1");
         }
 
         /**
-         * The mapped key as [[Text]]
+         * The mapped key as {@link org.polkadot.types.primitive.Text}
          */
         public Text getKey2() {
             return this.getField("key2");
         }
 
         /**
-         * The mapped key as [[Text]]
+         * The mapped key as {@link org.polkadot.types.primitive.Text}
          */
         public Text getKeyHasher() {
             return this.getField("keyHasher");
         }
 
         /**
-         * The mapped key as [[Text]]
+         * The mapped key as {@link org.polkadot.types.primitive.Text}
          */
         public Text getValue() {
             return this.getField("value");
@@ -99,7 +99,7 @@ public interface Storage {
         }
 
         /**
-         * The value as a [[Type]] value
+         * The value as a {@link org.polkadot.types.type} value
          */
         public PlainType asType() {
             return (PlainType) this.value();
@@ -127,7 +127,6 @@ public interface Storage {
 
 
     /**
-     * @name MetadataModule
      * The definition of a storage function
      */
     class MetadataStorageV3 extends Struct {
@@ -142,21 +141,21 @@ public interface Storage {
         }
 
         /**
-         * The [[Text]] documentation
+         * The {@link org.polkadot.types.primitive.Text} documentation
          */
         public Vector<Text> getDocs() {
             return this.getField("docs");
         }
 
         /**
-         * The [[Bytes]] fallback default
+         * The {@link org.polkadot.types.primitive.Bytes} fallback default
          */
         public Bytes getFallback() {
             return this.getField("fallback");
         }
 
         /**
-         * The [[MetadataArgument]] for arguments
+         * The MetadataArgument for arguments
          */
         public MetadataStorageModifier getModifier() {
             return this.getField("modifier");
@@ -170,7 +169,7 @@ public interface Storage {
         }
 
         /**
-         * The [[MetadataStorageType]]
+         * The MetadataStorageType
          */
         public MetadataStorageType getType() {
             return this.getField("type");

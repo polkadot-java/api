@@ -20,7 +20,7 @@ public interface Calls {
 
 
         /**
-         * The [[U16]] index for the call
+         * The {@link org.polkadot.types.primitive.U16} index for the call
          */
         public U16 getIndex() {
             return this.getField("index");
@@ -53,7 +53,7 @@ public interface Calls {
 
 
         /**
-         * The [[OuterDispathCall]] wrapped
+         * The OuterDispathCall wrapped
          */
         public Vector<OuterDispatchCall> getCalls() {
             return this.getField("calls");

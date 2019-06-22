@@ -28,6 +28,12 @@ The API is split up into a number of internal packages
 - [@polkadot/type](packages/src/main/java/org/polkadot/type/) Basic types such as extrinsics and storage.
 - [@polkadot/types](packages/src/main/java/org/polkadot/types/) Codecs for all Polkadot primitives.
 
+## Document
+
+See the generated JavaDoc in /doc folder.
+
+To generate JavaDoc, reference `gendoc.sh` in the root folder.
+
 ## Integrate the API into your projects
 
 Currently the library is under active development, the best way to use the library is to link to the source code directly.  
@@ -116,8 +122,7 @@ tweetnacl, pure Java -- 100%
 ## Progress of milestone 2
 
 In general all JS API were converted to Java.  
-Though we need to check if anything were missed, and check if all documents were converted.
-
+All documents were converted and generated in JavaDoc.
 
 ## How to build and use sr25591 JNI
 

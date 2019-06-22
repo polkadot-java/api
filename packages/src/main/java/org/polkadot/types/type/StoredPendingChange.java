@@ -11,8 +11,7 @@ import org.polkadot.utils.MapUtils;
 import java.util.List;
 
 /**
- * @name StoredPendingChange
- * @description Stored pending change for a Grandpa events
+ * Stored pending change for a Grandpa events
  */
 public class StoredPendingChange extends Struct {
 
@@ -30,8 +29,7 @@ public class StoredPendingChange extends Struct {
 
 
     /**
-     * @name NextAuthority
-     * @description The next authority available as [[SessionKey]]
+     * The next authority available as SessionKey
      */
     public static class NextAuthority extends Tuple {
         public NextAuthority(Object value) {

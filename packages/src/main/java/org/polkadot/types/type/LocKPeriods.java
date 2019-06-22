@@ -4,7 +4,6 @@ package org.polkadot.types.type;
 import org.polkadot.types.primitive.I8;
 
 /**
- * @name LocKPeriods
  * @description
  * A number of lock periods.
  */

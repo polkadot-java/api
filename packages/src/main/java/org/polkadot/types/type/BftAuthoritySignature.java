@@ -5,7 +5,6 @@ import org.polkadot.types.Types;
 import org.polkadot.types.codec.Tuple;
 
 /**
- * @name BftAuthoritySignature
  * Represents a Bft Hash and Signature pairing, typically used in reporting
  * network behaviour.
  */
@@ -26,14 +25,14 @@ public class BftAuthoritySignature extends Tuple {
 
 
     /**
-     * The wrapped [[AuthoriyId]]
+     * The wrapped AuthoriyId
      */
     public AuthorityId getAuthorityId() {
         return this.getFiled(0);
     }
 
     /**
-     * The wrapped [[Signature]] value
+     * The wrapped {@link org.polkadot.types.type.Signature} value
      */
     public Signature getSignature() {
         return this.getFiled(1);
@@ -45,7 +44,6 @@ public class BftAuthoritySignature extends Tuple {
     }
 
     /**
-     * @name BftHashSignature
      * Represents a Bft Hash and Signature pairing, typically used in reporting
      * network behaviour.
      */
@@ -60,14 +58,14 @@ public class BftAuthoritySignature extends Tuple {
 
 
         /**
-         * The wrapped [[Hash]]
+         * The wrapped {@link org.polkadot.types.type.Hash}
          */
         public Hash getHash() {
             return this.getFiled(0);
         }
 
         /**
-         * The wrapped [[Signature]]
+         * The wrapped {@link org.polkadot.types.type.Signature}
          */
         public Signature getSignature() {
             return this.getFiled(1);

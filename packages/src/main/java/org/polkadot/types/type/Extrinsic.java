@@ -19,12 +19,9 @@ import java.util.List;
 
 
 /**
- * @name Extrinsic
  * Representation of an Extrinsic in the system. It contains the actual call,
  * (optional) signature and encodes with an actual length prefix
- * <p>
- * {@link https://github.com/paritytech/wiki/blob/master/Extrinsic.md#the-extrinsic-format-for-node}.
- * <p>
+ * 
  * Can be:
  * - signed, to create a transaction
  * - left as is, to create an inherent
@@ -78,7 +75,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
 
 
     /**
-     * The arguments passed to for the call, exposes args so it is compatible with [[Method]]
+     * The arguments passed to for the call, exposes args so it is compatible with {@link org.polkadot.types.primitive.Method}
      */
     @Override
     public List<Codec> getArgs() {
@@ -86,7 +83,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * Thge argument defintions, compatible with [[Method]]
+     * Thge argument defintions, compatible with {@link org.polkadot.types.primitive.Method}
      */
     @Override
     public Types.ConstructorDef getArgsDef() {
@@ -129,7 +126,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * `true` is method has `Origin` argument (compatibility with [[Method]])
+     * `true` is method has `Origin` argument (compatibility with {@link org.polkadot.types.primitive.Method})
      */
     @Override
     public boolean hasOrigin() {
@@ -152,7 +149,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * The [[FunctionMetadata]] that describes the extrinsic
+     * The FunctionMetadata that describes the extrinsic
      */
     @Override
     public Modules.FunctionMetadata getMeta() {
@@ -160,7 +157,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * The [[Method]] this extrinsic wraps
+     * The {@link org.polkadot.types.primitive.Method} this extrinsic wraps
      */
     @Override
     public Method getMethod() {
@@ -168,7 +165,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * The [[ExtrinsicSignature]]
+     * The ExtrinsicSignature
      */
     @Override
     public ExtrinsicSignature getSignature() {
@@ -176,7 +173,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     /**
-     * Add an [[ExtrinsicSignature]] to the extrinsic (already generated)
+     * Add an ExtrinsicSignature to the extrinsic (already generated)
      */
     //addSignature(signer:Address|Uint8Array, signature:Uint8Array, nonce:AnyNumber, era?:Uint8Array):Extrinsic
     @Override

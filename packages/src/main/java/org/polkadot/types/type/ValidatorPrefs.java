@@ -7,8 +7,7 @@ import org.polkadot.types.codec.Struct;
 import org.polkadot.types.primitive.U32;
 
 /**
- * @name ValidatorPrefs
- * @description Validator preferences
+ * Validator preferences
  */
 public class ValidatorPrefs extends Struct {
     public ValidatorPrefs(Object value) {
@@ -20,14 +19,14 @@ public class ValidatorPrefs extends Struct {
 
 
     /**
-     * @description The unstake threshold as [[U32]]
+     * The unstake threshold as {@link org.polkadot.types.primitive.U32}
      */
     public U32 getUnstakeThreshold() {
         return this.getField("unstakeThreshold");
     }
 
     /**
-     * @description The payment config for the validator as a [[Compact]] [[Balance]]
+     * The payment config for the validator as a {@link org.polkadot.types.codec.Compact} {@link org.polkadot.types.type.Balance}
      */
     public Compact getValidatorPayment() {
         return this.getField("validatorPayment");

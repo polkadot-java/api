@@ -22,14 +22,14 @@ public interface Events {
 
 
         /**
-         * The arguments of [[Type]]
+         * The arguments of {@link org.polkadot.types.type}
          */
         public Vector<Type> getArguments() {
             return this.getField("arguments");
         }
 
         /**
-         * The [[Text]] documentation
+         * The {@link org.polkadot.types.primitive.Text} documentation
          */
         public Vector<Text> getDocumentation() {
             return this.getField("documentation");
@@ -52,7 +52,7 @@ public interface Events {
         }
 
         /**
-         * The [[EventMetadata]]
+         * The EventMetadata
          */
         public Vector<EventMetadata> getEvents() {
             return this.getFiled(1);

@@ -10,7 +10,6 @@ import org.polkadot.utils.Utils;
 
 
 /**
- * @name Address
  * A wrapper around an AccountId and/or AccountIndex that is encoded with a prefix.
  * Since we are dealing with underlying publicKeys (or shorter encoded addresses),
  * we extend from Base with an AccountId/AccountIndex wrapper. Basically the Address

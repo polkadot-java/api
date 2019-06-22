@@ -4,6 +4,7 @@ package org.polkadot.api;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.onehilltech.promises.Promise;
+import io.reactivex.Observable;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,6 +19,7 @@ import org.polkadot.direct.IRpcModule;
 import org.polkadot.rpc.core.IRpc;
 import org.polkadot.rpc.core.RpcCore;
 import org.polkadot.rpc.provider.IProvider;
+import org.polkadot.rpc.rx.RpcRx;
 import org.polkadot.type.storage.FromMetadata;
 import org.polkadot.type.storage.Types.ModuleStorage;
 import org.polkadot.type.storage.Types.Storage;
@@ -59,11 +61,12 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
     private boolean isReady;
 
     /**
-     * @description An external signer which will be used to sign extrinsic when account passed in is not KeyringPair
+     * An external signer which will be used to sign extrinsic when account passed in is not KeyringPair
      */
     public Signer signer;
 
     public RpcCore rpcBase;
+    public RpcRx rpcRx;
 
     protected DecoratedRpc<ApplyResult> decoratedRpc;
 
@@ -85,6 +88,7 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      * Yields the current attached runtime metadata. Generally this is only used to construct extrinsics & storage, but is useful for current runtime inspection.
      */
     private Metadata runtimeMetadata;
+
     /**
      * Contains the version information for the current runtime.
      */
@@ -100,18 +104,16 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      *
      * @param provider the Provider instance
      * @param apiType  the type of the API
-     *                 <p>
-     *                 **Example**
-     *                 ```java
-     *                 <p>
-     *                 import org.polkadot.api.ApiBase;
-     *                 <p>
-     *                 ApiBase api = new ApiBase();
-     *                 <p>
-     *                 api.rpc().subscribeNewHead((header) => {
-     *                 //System.out.println(`new block #${header.blockNumber.toNumber()}`);
-     *                 });
-     *                 ```
+     * 
+     * **Example**  
+     * ```java
+     * import org.polkadot.api.ApiBase;
+     * ApiBase api = new ApiBase();
+     * api.rpc().subscribeNewHead((header) => {
+     *     System.out.println("new block ");
+     *     System.out.println(header.blockNumber);
+     * });
+     * ```
      */
     public ApiBase(IProvider provider, ApiType apiType) {
         this(new ApiOptions(), provider, apiType);
@@ -135,6 +137,9 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
         this.type = apiType;
 
         this.rpcBase = new RpcCore(thisProvider);
+
+        this.rpcRx = new RpcRx(thisProvider);
+
         this.eventemitter = new EventEmitter();
         //this.rpcRx = new RpcRx(thisProvider);
         //this.rpc = this.decoratedRpc(this.rpcRx, this::onCall);
@@ -198,9 +203,16 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
 
     }
 
+    private OnCallDefinition<Observable> rxOnCall = new OnCallDefinition<Observable>() {
+        @Override
+        public Observable apply(OnCallFunction<Observable> method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback) {
+            return method.apply(params.toArray(new Object[0]));
+        }
+    };
+
     private OnCallDefinition<Promise> promiseOnCall = new OnCallDefinition<Promise>() {
         @Override
-        public Promise apply(OnCallFunction method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback) {
+        public Promise apply(OnCallFunction<Promise> method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback) {
             List<Object> args = Lists.newArrayList();
             if (params != null) {
                 args.addAll(params);
@@ -215,7 +227,7 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
 
 
     /**
-     * @description Register additional user-defined of chain-specific types in the type registry
+     * Register additional user-defined of chain-specific types in the type registry
      */
     void registerTypes(Map<String, ConstructorCodec> types) {
         if (types != null) {
@@ -479,7 +491,8 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      * **Example**
      * ```java
      * api.derive.chain.bestNumber((number) => {
-     * //System.out.println('best number', number);
+     *     System.out.print("best number ");
+     *     System.out.println(number);
      * });
      * ```
      */
@@ -497,7 +510,8 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      * <p>
      * ```java
      * api.query.balances.freeBalance(<accountId>, (balance) => {
-     * //System.out.println('new balance', balance);
+     *     System.out.print("new balance ");
+     *     System.out.println(balance);
      * });
      * ```
      */
@@ -514,7 +528,8 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      * **Example**
      * ```java
      * api.rpc.chain.subscribeNewHead((header) => {
-     * //System.out.println('new header', header);
+     *     System.out.print("new header ");
+     *     System.out.println(header);
      * });
      * ```
      */
@@ -531,7 +546,8 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      * api.tx.balances
      * .transfer(<recipientId>, <balance>)
      * .signAndSend(<keyPair>, ({status}) => {
-     * //System.out.println('tx status', status.asFinalized.toHex());
+     *     System.out.print("tx status ");
+     *     System.out.println(status.asFinalized.toHex());
      * });
      * ```
      */
@@ -541,7 +557,7 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
     }
 
     /**
-     * @description The type of this API instance, either 'rxjs' or 'promise'
+     * The type of this API instance, either 'rxjs' or 'promise'
      */
     @Override
     public ApiType getType() {
@@ -553,17 +569,16 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      *
      * @param type    The type of event to listen to. Available events are `connected`, `disconnected`, `ready` and `error`
      * @param handler The callback to be called when the event fires. Depending on the event type, it could fire with additional arguments.
-     *                <p>
-     *                **Example**
-     *                ```java
-     *                api.on('connected', () => {
-     *                //System.out.println('API has been connected to the endpoint');
-     *                });
-     *                <p>
-     *                api.on('disconnected', () => {
-     *                //System.out.println('API has been disconnected from the endpoint');
-     *                });
-     *                ```
+     * **Example**  
+	 *
+     * ```java
+     * api.on('connected', () => {
+     *     System.out.println("API has been connected to the endpoint");
+     * });
+     * api.on('disconnected', () => {
+     *     System.out.println("API has been disconnected from the endpoint");
+     * });
+     * ```
      */
     @Override
     public EventEmitter on(IProvider.ProviderInterfaceEmitted type, EventEmitter.EventListener handler) {
@@ -575,17 +590,15 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      *
      * @param type    The type of event to listen to. Available events are `connected`, `disconnected`, `ready` and `error`
      * @param handler The callback to be called when the event fires. Depending on the event type, it could fire with additional arguments.
-     *                <p>
-     *                **Example**
-     *                ```java
-     *                api.once('connected', () => {
-     *                //System.out.println('API has been connected to the endpoint');
-     *                });
-     *                <p>
-     *                api.once('disconnected', () => {
-     *                //System.out.println('API has been disconnected from the endpoint');
-     *                });
-     *                ```
+     * **Example**  
+     * ```java
+     * api.once('connected', () => {
+     *     System.out.println("API has been connected to the endpoint");
+     * });
+     * api.once('disconnected', () => {
+     *     System.out.println("API has been disconnected from the endpoint");
+     * });
+     * ```
      */
     @Override
     public EventEmitter once(IProvider.ProviderInterfaceEmitted type, EventEmitter.EventListener handler) {
@@ -863,7 +876,7 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
     }
 
     /**
-     * @description Contains the genesis Hash of the attached chain. Apart from being useful to determine the actual chain, it can also be used to sign immortal transactions.
+     * Contains the genesis Hash of the attached chain. Apart from being useful to determine the actual chain, it can also be used to sign immortal transactions.
      */
     @Override
     public Hash getGenesisHash() {
@@ -871,7 +884,7 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
     }
 
     /**
-     * @description Contains the version information for the current runtime.
+     * Contains the version information for the current runtime.
      */
     @Override
     public RuntimeVersion getRuntimeVersion() {
@@ -884,28 +897,28 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
     }
 
     /**
-     * @description `true` when subscriptions are supported
+     * `true` when subscriptions are supported
      */
     public boolean hasSubscriptions() {
         return this.rpcBase.getProvider().isHasSubscriptions();
     }
 
     /**
-     * @description Yields the current attached runtime metadata. Generally this is only used to construct extrinsics & storage, but is useful for current runtime inspection.
+     * Yields the current attached runtime metadata. Generally this is only used to construct extrinsics & storage, but is useful for current runtime inspection.
      */
     public Metadata runtimeMetadata() {
         return this.runtimeMetadata;
     }
 
     /**
-     * @description Set an external signer which will be used to sign extrinsic when account passed in is not KeyringPair
+     * Set an external signer which will be used to sign extrinsic when account passed in is not KeyringPair
      */
     public void setSigner(Signer signer) {
         this.promisApi.signer = signer;
     }
 
     /**
-     * @description Disconnect from the underlying provider, halting all comms
+     * Disconnect from the underlying provider, halting all comms
      */
     public void disconnect() {
         this.rpcBase.disconnect();

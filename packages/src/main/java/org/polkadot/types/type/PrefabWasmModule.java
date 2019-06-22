@@ -10,8 +10,7 @@ import org.polkadot.types.primitive.Null;
 import org.polkadot.types.primitive.U32;
 
 /**
- * @name PrefabWasmModule
- * @description Struct to encode the vesting schedule of an individual account
+ * Struct to encode the vesting schedule of an individual account
  */
 public class PrefabWasmModule extends Struct {
 
@@ -33,28 +32,28 @@ public class PrefabWasmModule extends Struct {
     }
 
     /**
-     * @description The code as [[Bytes]]
+     * The code as {@link org.polkadot.types.primitive.Bytes}
      */
     public Bytes getCode() {
         return this.getField("code");
     }
 
     /**
-     * @description The initial as [[Compact]]
+     * The initial as {@link org.polkadot.types.codec.Compact}
      */
     public Compact getInitial() {
         return this.getField("initial");
     }
 
     /**
-     * @description The maximum as [[Compact]]
+     * The maximum as {@link org.polkadot.types.codec.Compact}
      */
     public Compact getMaximum() {
         return this.getField("maximum");
     }
 
     /**
-     * @description The scheduleVersion value as [[Compact]]
+     * The scheduleVersion value as {@link org.polkadot.types.codec.Compact}
      */
     public Compact getScheduleVersion() {
         return this.getField("scheduleVersion");

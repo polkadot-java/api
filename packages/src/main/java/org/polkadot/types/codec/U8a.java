@@ -8,8 +8,7 @@ import java.util.Arrays;
 
 
 /**
- * @name U8a
- * @description A basic wrapper around Uint8Array, with no frills and no fuss. It does differ
+ * A basic wrapper around Uint8Array, with no frills and no fuss. It does differ
  * from other implementations wher it will consume the full Uint8Array as passed to
  * it. As such it is meant to be subclassed where the wrapper takes care of the
  * actual lengths instead of used directly.

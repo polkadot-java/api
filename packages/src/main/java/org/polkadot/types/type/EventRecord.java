@@ -7,8 +7,7 @@ import org.polkadot.types.primitive.Null;
 import org.polkadot.types.primitive.U32;
 
 /**
- * @name EventRecord
- * A record for an [[Event]] (as specified by [[Metadata]]) with the specific [[Phase]] of
+ * A record for an {@link org.polkadot.types.type.Event} (as specified by Metadata) with the specific Phase of
  * application.
  */
 public class EventRecord extends Struct {
@@ -20,14 +19,14 @@ public class EventRecord extends Struct {
     }
 
     /**
-     * The [[Event]] this record refers to
+     * The {@link org.polkadot.types.type.Event} this record refers to
      */
     public Event getEvent() {
         return this.getField("event");
     }
 
     /**
-     * The [[Phase]] where the event was generated
+     * The Phase where the event was generated
      */
     public Phase getPhase() {
         return this.getField("phase");
@@ -35,8 +34,7 @@ public class EventRecord extends Struct {
 
 
     /**
-     * @name ApplyExtrinsic
-     * The [[Phase]] where the extrinsic is applied
+     * The Phase where the extrinsic is applied
      */
     public static class ApplyExtrinsic extends U32 {
         public ApplyExtrinsic(Object value) {
@@ -45,15 +43,13 @@ public class EventRecord extends Struct {
     }
 
     /**
-     * @name Finalization
-     * The [[Phase]] where the extrinsic is being Finalized
+     * The Phase where the extrinsic is being Finalized
      */
     public static class Finalization extends Null {
     }
 
     /**
-     * @name Phase
-     * An [[EnumType]] that indicates the specific phase where the [[EventRecord]] was generated
+     * An {@link org.polkadot.types.codec.EnumType} that indicates the specific phase where the EventRecord was generated
      */
     //export class Phase extends EnumType<ApplyExtrinsic | Finalization> {
     public static class Phase extends EnumType {
@@ -71,14 +67,14 @@ public class EventRecord extends Struct {
 
 
         /**
-         * Returns the item as a [[ApplyExtrinsic]]
+         * Returns the item as a ApplyExtrinsic
          */
         public ApplyExtrinsic asApplyExtrinsic() {
             return (ApplyExtrinsic) this.value();
         }
 
         /**
-         * Returns the item as a [[Finalization]]
+         * Returns the item as a Finalization
          */
         public Finalization asFinalization() {
             return (Finalization) this.value();

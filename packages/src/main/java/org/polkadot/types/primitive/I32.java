@@ -1,8 +1,7 @@
 package org.polkadot.types.primitive;
 
 /**
- * @name I32
- * @description An 32-bit signed integer
+ * An 32-bit signed integer
  */
 public class I32 extends Int {
     public I32(Object value) {

@@ -7,8 +7,7 @@ import org.polkadot.utils.Utils;
 import java.util.List;
 
 /**
- * @name Enum
- * @description A codec wrapper for an enum. Enums are encoded as a single byte, where the byte
+ * A codec wrapper for an enum. Enums are encoded as a single byte, where the byte
  * is a zero-indexed value. This class allows you to retrieve the value either
  * by `toNumber()` exposing the actual raw index, or `toString()` returning a
  * string representation (as provided as part of the constructor)

@@ -8,8 +8,7 @@ import org.polkadot.types.primitive.Type;
 import org.polkadot.utils.Utils;
 
 /**
- * @name Option
- * @description An Option is an optional field. Basically the first byte indicates that there is
+ * An Option is an optional field. Basically the first byte indicates that there is
  * is value to follow. If the byte is `1` there is an actual value. So the Option
  * implements that - decodes, checks for optionality and wraps the required structure
  * with a value if/as required/found.

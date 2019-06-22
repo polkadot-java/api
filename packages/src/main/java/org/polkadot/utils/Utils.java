@@ -24,16 +24,14 @@ import java.util.stream.Collectors;
 public class Utils {
 
     /**
-     * @name isHex
-     * @summary Tests for a hex string.
-     * @description Checks to see if the input value is a `0x` prefixed hex string. Optionally (`bitLength` !== -1) checks to see if the bitLength is correct.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { isHex } from '@polkadot/util';
-     * <p>
-     * isHex('0x1234'); // => true
-     * isHex('0x1234', 8); // => false
+     * Tests for a hex string.
+     * Checks to see if the input value is a `0x` prefixed hex string. Optionally (`bitLength` !== -1) checks to see if the bitLength is correct.
+	 * 
+     * **example** 
+     * 
+     * ```java
+     * isHex("0x1234"); // => true
+     * isHex("0x1234", 8); // => false
      * ```
      */
     static final String HEX_REGEX = "^0x[a-fA-F0-9]+$";
@@ -60,16 +58,13 @@ public class Utils {
 
 
     /**
-     * @name hexToU8a
-     * @summary Creates a Buffer object from a hex string.
-     * @description `null` inputs returns an empty `Uint8Array` result. Hex input values return the actual bytes value converted to a Uint8Array. Anything that is not a hex string (including the `0x` prefix) throws an error.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { hexToU8a } from '@polkadot/util';
-     * <p>
-     * hexToU8a('0x80001f'); // Uint8Array([0x80, 0x00, 0x1f])
-     * hexToU8a('0x80001f', 32); // Uint8Array([0x00, 0x80, 0x00, 0x1f])
+     * Creates a Buffer object from a hex string.
+     * `null` inputs returns an empty `Uint8Array` result. Hex input values return the actual bytes value converted to a Uint8Array. Anything that is not a hex string (including the `0x` prefix) throws an error.
+     * **example**  
+     * 
+     * ```java
+     * hexToU8a("0x80001f"); // Uint8Array([0x80, 0x00, 0x1f])
+     * hexToU8a("0x80001f", 32); // Uint8Array([0x00, 0x80, 0x00, 0x1f])
      * ```
      */
     //export default function hexToU8a (_value?: string | null, bitLength: number = -1): Uint8Array {
@@ -103,15 +98,12 @@ public class Utils {
 
 
     /**
-     * @name hexStripPrefix
-     * @summary Strips any leading `0x` prefix.
-     * @description Tests for the existence of a `0x` prefix, and returns the value without the prefix. Un-prefixed values are returned as-is.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { hexStripPrefix } from '@polkadot/util';
-     * <p>
-     * console.log('stripped', hexStripPrefix('0x1234')); // => 1234
+     * Strips any leading `0x` prefix.
+     * Tests for the existence of a `0x` prefix, and returns the value without the prefix. Un-prefixed values are returned as-is.
+     * **example**  
+     * 
+     * ```java
+     * System.out.println(hexStripPrefix("0x1234")); // => 1234
      * ```
      */
     //export default function hexStripPrefix (value?: string | null): string {
@@ -134,15 +126,12 @@ public class Utils {
     }
 
     /**
-     * @name hexHasPrefix
-     * @summary Tests for the existence of a `0x` prefix.
-     * @description Checks for a valid hex input value and if the start matched `0x`
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { hexHasPrefix } from '@polkadot/util';
-     * <p>
-     * console.log('has prefix', hexHasPrefix('0x1234')); // => true
+     * Tests for the existence of a `0x` prefix.
+     * Checks for a valid hex input value and if the start matched `0x`
+     * **example**  
+     * 
+     * ```java
+     * System.out.println(hexHasPrefix("0x1234")); // => true
      * ```
      */
     //export default function hexHasPrefix (value?: string | null): boolean {
@@ -159,15 +148,12 @@ public class Utils {
 
 
     /**
-     * @name isU8a
-     * @summary Tests for a `Uint8Array` object instance.
-     * @description Checks to see if the input object is an instance of `Uint8Array`.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { isUint8Array } from '@polkadot/util';
-     * <p>
-     * console.log('isU8a', isU8a([])); // => false
+     * Tests for a `Uint8Array` object instance.
+     * Checks to see if the input object is an instance of `Uint8Array`.
+     * **example**  
+     * 
+     * ```java
+     * System.out.println(isU8a([])); // => false
      * ```
      */
     //export default function isU8a (value?: any): value is Uint8Array {
@@ -182,15 +168,12 @@ public class Utils {
      * @param _options            Options to pass while converting
      * @param _options.isLe       Convert using Little Endian
      * @param _options.isNegative Convert using two's complement
-     * @name hexToBn
-     * @summary Creates a BN.js bignumber object from a hex string.
-     * @description `null` inputs returns a `BN(0)` result. Hex input values return the actual value converted to a BN. Anything that is not a hex string (including the `0x` prefix) throws an error.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { hexToBn } from '@polkadot/util';
-     * <p>
-     * hexToBn('0x123480001f'); // => BN(0x123480001f)
+     * Creates a BN.js bignumber object from a hex string.
+     * `null` inputs returns a `BN(0)` result. Hex input values return the actual value converted to a BN. Anything that is not a hex string (including the `0x` prefix) throws an error.
+     * **example**  
+     * 
+     * ```java
+     * hexToBn("0x123480001f"); // => BN(0x123480001f)
      * ```
      */
     //export default function hexToBn (value?: string | number | null, options: ToBnOptions | boolean = { isLe: false, isNegative: false }): BN {
@@ -240,14 +223,11 @@ public class Utils {
      * @param options            Options to pass while converting
      * @param options.isLe       Convert using Little Endian
      * @param options.isNegative Convert using two's complement
-     * @name u8aToBn
-     * @summary Creates a BN from a Uint8Array object.
-     * @description `UInt8Array` input values return the actual BN. `null` or `undefined` values returns an `0x0` value.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { u8aToBn } from '@polkadot/util';
-     * <p>
+     * Creates a BN from a Uint8Array object.
+     * `UInt8Array` input values return the actual BN. `null` or `undefined` values returns an `0x0` value.
+     * **example**  
+     * 
+     * ```java
      * u8aToHex(new Uint8Array([0x68, 0x65, 0x6c, 0x6c, 0xf])); // 0x68656c0f
      * ```
      */
@@ -261,15 +241,11 @@ public class Utils {
 
 
     /**
-     * @name bnToBn
-     * @summary Creates a BN value from a BN.js bignumber or number input.
-     * @description `null` inputs returns a `0x0` result, BN values returns the value, numnbers returns a BN representation.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import BN from 'bn.js';
-     * import { bnToBn } from '@polkadot/util';
-     * <p>
+     * Creates a BN value from a BN.js bignumber or number input.
+     * `null` inputs returns a `0x0` result, BN values returns the value, numnbers returns a BN representation.
+     * **example**  
+     * 
+     * ```java
      * bnToBn(0x1234); // => BN(0x1234)
      * bnToBn(new BN(0x1234)); // => BN(0x1234)
      * ```
@@ -295,15 +271,11 @@ public class Utils {
 
 
     /**
-     * @name bnToHex
-     * @summary Creates a hex value from a BN.js bignumber object.
-     * @description `null` inputs returns a `0x` result, BN values return the actual value as a `0x` prefixed hex value. Anything that is not a BN object throws an error. With `bitLength` set, it fixes the number to the specified length.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import BN from 'bn.js';
-     * import { bnToHex } from '@polkadot/util';
-     * <p>
+     * Creates a hex value from a BN.js bignumber object.
+     * `null` inputs returns a `0x` result, BN values return the actual value as a `0x` prefixed hex value. Anything that is not a BN object throws an error. With `bitLength` set, it fixes the number to the specified length.
+     * **example**  
+     * 
+     * ```java
      * bnToHex(new BN(0x123456)); // => '0x123456'
      * ```
      */
@@ -337,14 +309,11 @@ public class Utils {
 
 
     /**
-     * @name bnToU8a
-     * @summary Creates a Uint8Array object from a BN.
-     * @description `null`/`undefined`/`NaN` inputs returns an empty `Uint8Array` result. `BN` input values return the actual bytes value converted to a `Uint8Array`. Optionally convert using little-endian format if `isLE` is set.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { bnToU8a } from '@polkadot/util';
-     * <p>
+     * Creates a Uint8Array object from a BN.
+     * `null`/`undefined`/`NaN` inputs returns an empty `Uint8Array` result. `BN` input values return the actual bytes value converted to a `Uint8Array`. Optionally convert using little-endian format if `isLE` is set.
+     * **example**  
+     * 
+     * ```java
      * bnToU8a(new BN(0x1234)); // => [0x12, 0x34]
      * ```
      */
@@ -437,16 +406,13 @@ public class Utils {
 
 
     /**
-     * @name compactFromU8a
-     * @description Retrievs the offset and encoded length from a compact-prefixed value
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { compactFromU8a } from '@polkadot/util';
-     * <p>
-     * const [offset, length] = compactFromU8a(new Uint8Array([254, 255, 3, 0]), 32));
-     * <p>
-     * console.log('value offset=', offset, 'length=', length); // 4, 0xffff
+     * Retrievs the offset and encoded length from a compact-prefixed value
+     * **example**  
+     * 
+     * ```java
+     * Pair<Integer, BigInteger> = compactFromU8a(new Uint8Array([254, 255, 3, 0]), 32));
+     * 
+     * System.out.printf("value offset=%d length=%d", offset, length); // 4, 0xffff
      * ```
      */
     //export default function compactFromU8a (_input: Uint8Array | string, bitLength: BitLength = DEFAULT_BITLENGTH): [number, BN] {
@@ -505,14 +471,11 @@ public class Utils {
     }
 
     /**
-     * @name u8aToString
-     * @summary Creates a utf-8 string from a Uint8Array object.
-     * @description `UInt8Array` input values return the actual decoded utf-8 string. `null` or `undefined` values returns an empty string.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { u8aToString } from '@polkadot/util';
-     * <p>
+     * Creates a utf-8 string from a Uint8Array object.
+     * `UInt8Array` input values return the actual decoded utf-8 string. `null` or `undefined` values returns an empty string.
+     * **example**  
+     * 
+     * ```java
      * u8aToString(new Uint8Array([0x68, 0x65, 0x6c, 0x6c, 0x6f])); // hello
      * ```
      */
@@ -540,14 +503,11 @@ public class Utils {
     static final String ALPHABET = "0123456789abcdef";
 
     /**
-     * @name u8aToHex
-     * @summary Creates a hex string from a Uint8Array object.
-     * @description `UInt8Array` input values return the actual hex string. `null` or `undefined` values returns an `0x` string.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { u8aToHex } from '@polkadot/util';
-     * <p>
+     * Creates a hex string from a Uint8Array object.
+     * `UInt8Array` input values return the actual hex string. `null` or `undefined` values returns an `0x` string.
+     * **example**  
+     * 
+     * ```java
      * u8aToHex(new Uint8Array([0x68, 0x65, 0x6c, 0x6c, 0xf])); // 0x68656c0f
      * ```
      */
@@ -590,15 +550,12 @@ public class Utils {
 
 
     /**
-     * @name stringToU8a
-     * @summary Creates a Uint8Array object from a utf-8 string.
-     * @description String input values return the actual encoded `UInt8Array`. `null` or `undefined` values returns an empty encoded array.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { stringToU8a } from '@polkadot/util';
-     * <p>
-     * stringToU8a('hello'); // [0x68, 0x65, 0x6c, 0x6c, 0x6f]
+     * Creates a Uint8Array object from a utf-8 string.
+     * String input values return the actual encoded `UInt8Array`. `null` or `undefined` values returns an empty encoded array.
+     * **example**  
+     * 
+     * ```java
+     * stringToU8a("hello"); // [0x68, 0x65, 0x6c, 0x6c, 0x6f]
      * ```
      */
     //export default function stringToU8a (value?: string): Uint8Array {
@@ -613,14 +570,11 @@ public class Utils {
 
 
     /**
-     * @name compactAddLength
-     * @description Adds a length prefix to the input value
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { compactAddLength } from '@polkadot/util';
-     * <p>
-     * console.log(compactAddLength(new Uint8Array([0xde, 0xad, 0xbe, 0xef]))); // Uint8Array([4 << 2, 0xde, 0xad, 0xbe, 0xef])
+     * Adds a length prefix to the input value
+     * **example**  
+     * 
+     * ```java
+     * System.out.println(compactAddLength(new Uint8Array([0xde, 0xad, 0xbe, 0xef]))); // Uint8Array([4 << 2, 0xde, 0xad, 0xbe, 0xef])
      * ```
      */
     //export default function compactAddLength (input: Uint8Array): Uint8Array {
@@ -640,14 +594,11 @@ public class Utils {
 //const MAX_U32 = new BN(2).pow(new BN(32 - 2)).subn(1);
 
     /**
-     * @name compactToU8a
-     * @description Encodes a number into a compact representation
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { compactToU8a } from '@polkadot/util';
-     * <p>
-     * console.log(compactToU8a(511, 32)); // Uint8Array([0b11111101, 0b00000111])
+     * Encodes a number into a compact representation
+     * **example**  
+     * 
+     * ```java
+     * System.out.println(compactToU8a(511, 32)); // Uint8Array([0b11111101, 0b00000111])
      * ```
      */
     //export default function compactToU8a (_value: BN | number): Uint8Array {
@@ -679,14 +630,11 @@ public class Utils {
     }
 
     /**
-     * @name u8aConcat
-     * @summary Creates a concatenated Uint8Array from the inputs.
-     * @description Concatenates the input arrays into a single `UInt8Array`.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { u8aConcat } from '@polkadot/util';
-     * <p>
+     * Creates a concatenated Uint8Array from the inputs.
+     * Concatenates the input arrays into a single `UInt8Array`.
+     * **example**  
+     * 
+     * ```java
      * u8aConcat(
      * new Uint8Array([1, 2, 3]),
      * new Uint8Array([4, 5, 6])
@@ -710,14 +658,11 @@ public class Utils {
 
 
     /**
-     * @name u8aToU8a
-     * @summary Creates a Uint8Array value from a Uint8Array, Buffer, string or hex input.
-     * @description `null` ior `undefined` nputs returns a `[]` result, Uint8Array values returns the value, hex strings returns a Uint8Array representation.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { u8aToU8a } from '@polkadot/util';
-     * <p>
+     * Creates a Uint8Array value from a Uint8Array, Buffer, string or hex input.
+     * `null` ior `undefined` nputs returns a `[]` result, Uint8Array values returns the value, hex strings returns a Uint8Array representation.
+     * **example**  
+     * 
+     * ```java
      * u8aToU8a(new Uint8Array([0x12, 0x34]); // => Uint8Array([0x12, 0x34])
      * u8aToU8a(0x1234); // => Uint8Array([0x12, 0x34])
      * ```
@@ -762,15 +707,12 @@ public class Utils {
 
 
     /**
-     * @name stringLowerFirst
-     * @summary Lowercase the first letter of a string
-     * @description Lowercase the first letter of a string
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { stringLowerFirst } from '@polkadot/util';
-     * <p>
-     * stringLowerFirst('ABC'); // => 'aBC'
+     * Lowercase the first letter of a string
+     * Lowercase the first letter of a string
+     * **example**  
+     * 
+     * ```java
+     * stringLowerFirst("ABC"); // => 'aBC'
      * ```
      */
     //export default function stringLowerFirst (value?: string | null): string {
@@ -829,17 +771,14 @@ public class Utils {
 
 
     /**
-     * @name u8aFixLength
-     * @summary Shifts a Uint8Array to a specific bitLength
-     * @description Returns a uint8Array with the specified number of bits contained in the return value. (If bitLength is -1, length checking is not done). Values with more bits are trimmed to the specified length.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { u8aFixLength } from '@polkadot/util';
-     * <p>
-     * u8aFixLength('0x12') // => 0x12
-     * u8aFixLength('0x12', 16) // => 0x0012
-     * u8aFixLength('0x1234', 8) // => 0x12
+     * Shifts a Uint8Array to a specific bitLength
+     * Returns a uint8Array with the specified number of bits contained in the return value. (If bitLength is -1, length checking is not done). Values with more bits are trimmed to the specified length.
+     * **example**  
+     * 
+     * ```java
+     * u8aFixLength("0x12", -1, false) // => 0x12
+     * u8aFixLength("0x12", 16, false) // => 0x0012
+     * u8aFixLength("0x1234", 8, false) // => 0x12
      * ```
      */
     //  export default function u8aFixLength (value: Uint8Array, bitLength: number = -1, atStart: boolean = false): Uint8Array {
@@ -872,14 +811,11 @@ public class Utils {
 
 
     /**
-     * @name randomAsU8a
-     * @summary Creates a Uint8Array filled with random bytes.
-     * @description Returns a `Uint8Array` with the specified (optional) length filled with random bytes.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { randomAsU8a } from '@polkadot/util-crypto';
-     * <p>
+     * Creates a Uint8Array filled with random bytes.
+     * Returns a `Uint8Array` with the specified (optional) length filled with random bytes.
+     * **example**  
+     * 
+     * ```java
      * randomAsU8a(); // => Uint8Array([...])
      * ```
      */
@@ -898,14 +834,11 @@ public class Utils {
 
 
     /**
-     * @name compactStripLength
-     * @description Removes the length prefix, returning both the total length (including the value + compact encoding) and the decoded value with the correct length
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { compactStripLength } from '@polkadot/util';
-     * <p>
-     * console.log(compactStripLength(new Uint8Array([2 << 2, 0xde, 0xad]))); // [2, Uint8Array[0xde, 0xad]]
+     * Removes the length prefix, returning both the total length (including the value + compact encoding) and the decoded value with the correct length
+     * **example**  
+     * 
+     * ```java
+     * System.out.println(compactStripLength(new Uint8Array([2 << 2, 0xde, 0xad]))); // [2, Uint8Array[0xde, 0xad]]
      * ```
      */
     //  export default function compactStripLength (input: Uint8Array, bitLength: BitLength = DEFAULT_BITLENGTH): [number, Uint8Array] {

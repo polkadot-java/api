@@ -1,8 +1,7 @@
 package org.polkadot.types.type;
 
 /**
- * @name Amount
- * @description The Substrate Amount representation as a [[Balance]].
+ * The Substrate Amount representation as a {@link org.polkadot.types.type.Balance}.
  */
 public class Amount extends Balance {
     public Amount(Object value) {

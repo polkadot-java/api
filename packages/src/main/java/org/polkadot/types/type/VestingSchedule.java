@@ -5,8 +5,7 @@ import org.polkadot.types.Types;
 import org.polkadot.types.codec.Struct;
 
 /**
- * @name VestingSchedule
- * @description Struct to encode the vesting schedule of an individual account
+ * Struct to encode the vesting schedule of an individual account
  */
 public class VestingSchedule extends Struct {
     public VestingSchedule(Object value) {
@@ -18,14 +17,14 @@ public class VestingSchedule extends Struct {
 
 
     /**
-     * @description The offset as [[Balance]]
+     * The offset as {@link org.polkadot.types.type.Balance}
      */
     public Balance getOffset() {
         return this.getField("offset");
     }
 
     /**
-     * @description The perBlock value as [[Balance]]
+     * The perBlock value as {@link org.polkadot.types.type.Balance}
      */
     public Balance getPerBlock() {
         return this.getField("perBlock");

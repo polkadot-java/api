@@ -4,8 +4,7 @@ import org.polkadot.types.primitive.Bytes;
 
 
 /**
- * @name Key
- * @description The Substrate Key representation as a [[Bytes]] (`vec<u8>`).
+ * The Substrate Key representation as a {@link org.polkadot.types.primitive.Bytes} (`vec<u8>`).
  */
 public class Key extends Bytes {
     public Key(Object value) {

@@ -11,8 +11,7 @@ import org.polkadot.types.primitive.Null;
 import org.polkadot.types.primitive.U64;
 
 /**
- * @name AttestedCandidate
- * @description An attested candidate
+ * An attested candidate
  */
 public class AttestedCandidate extends Struct {
 
@@ -113,14 +112,14 @@ public class AttestedCandidate extends Struct {
 
 
         /**
-         * @description Returns the item as a [[ExplicitCandidateSignature]]
+         * Returns the item as a ExplicitCandidateSignature
          */
         public ExplicitCandidateSignature asExplicitCandidateSignature() {
             return (ExplicitCandidateSignature) this.value();
         }
 
         /**
-         * @description Returns the item as a [[ImplicitCandidateSignature]]
+         * Returns the item as a ImplicitCandidateSignature
          */
         public ImplicitCandidateSignature asImplicitCandidateSignature() {
             return (ImplicitCandidateSignature) this.value();

@@ -33,13 +33,12 @@ public interface Index {
     }
 
     /**
-     * @name pair
-     * @summary Creates a keyring pair object
-     * @description Creates a keyring pair object with provided account public key, metadata, and encoded arguments.
+     * Creates a keyring pair object
+     * Creates a keyring pair object with provided account public key, metadata, and encoded arguments.
      * The keyring pair stores the account state including the encoded address and associated metadata.
-     * <p>
+     * 
      * It has properties whose values are functions that may be called to perform account actions:
-     * <p>
+     * 
      * - `address` function retrieves the address associated with the account.
      * - `decodedPkcs8` function is called with the account passphrase and account encoded public key.
      * It decodes the encoded public key using the passphrase provided to obtain the decoded account public key

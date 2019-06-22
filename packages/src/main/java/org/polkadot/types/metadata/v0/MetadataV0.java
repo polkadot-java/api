@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 // end and work up. (Just so we don't use before definition)
 
 /**
- * @name MetadataV0
  * The runtime metadata as a decoded structure
  */
 public class MetadataV0 extends Struct implements MetadataInterface {
@@ -68,14 +67,14 @@ public class MetadataV0 extends Struct implements MetadataInterface {
     }
 
     /**
-     * Wrapped [[OuterDispatchCall]]
+     * Wrapped OuterDispatchCall
      */
     public Vector<Calls.OuterDispatchCall> getCalls() {
         return ((Calls.OuterDispatchMetadata) this.getField("outerDispatch")).getField("calls");
     }
 
     /**
-     * Wrapped [[OuterEventMetadataEvent]]
+     * Wrapped OuterEventMetadataEvent
      */
     public Vector<Events.OuterEventMetadataEvent> getEvents() {
         return ((Events.OuterEventMetadata) this.getField("outerEvent")).getField("events");
@@ -83,7 +82,7 @@ public class MetadataV0 extends Struct implements MetadataInterface {
 
 
     /**
-     * Wrapped [[RuntimeModuleMetadata]]
+     * Wrapped RuntimeModuleMetadata
      */
     public Vector<Modules.RuntimeModuleMetadata> getModules() {
         return this.getField("modules");
