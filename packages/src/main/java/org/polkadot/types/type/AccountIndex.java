@@ -9,9 +9,8 @@ import org.polkadot.utils.Utils;
 import java.math.BigInteger;
 
 /**
- * @name AccountIndex
  * A wrapper around an AccountIndex, which is a shortened, variable-length encoding
- * for an Account. We extends from [[U32]] to provide the number-like properties.
+ * for an Account. We extends from {@link org.polkadot.types.primitive.U32} to provide the number-like properties.
  */
 public class AccountIndex extends U32 {
     public static final BigInteger ENUMSET_SIZE = BigInteger.valueOf(64);

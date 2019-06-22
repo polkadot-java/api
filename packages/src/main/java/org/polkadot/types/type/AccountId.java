@@ -6,7 +6,6 @@ import org.polkadot.types.codec.U8aFixed;
 import org.polkadot.utils.Utils;
 
 /**
- * @name AccountId
  * A wrapper around an AccountId/PublicKey representation. Since we are dealing with
  * underlying PublicKeys (32 bytes in length), we extend from U8aFixed which is
  * just a Uint8Array wrapper with a fixed length.
@@ -63,8 +62,7 @@ public class AccountId extends U8aFixed {
     }
 
     /**
-     * @name AccountIdOf
-     * The Substrate AccountIdOf representation as a [[AccountId]].
+     * The Substrate AccountIdOf representation as a AccountId.
      */
     public static class AccountIdOf extends AccountId {
         public AccountIdOf(Object value) {

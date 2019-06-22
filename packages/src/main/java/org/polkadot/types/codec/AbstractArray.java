@@ -93,7 +93,7 @@ public class AbstractArray<T extends Codec> extends ArrayList<T> implements Code
     // new instance.
 
     /**
-     * @description Filters the array with the callback
+     * Filters the array with the callback
      * @param callbackfn The filter function
      * @param thisArg The `this` object to apply the result to
      */
@@ -104,7 +104,7 @@ public class AbstractArray<T extends Codec> extends ArrayList<T> implements Code
     /**
      * @param callbackfn The mapping function
      * @param thisArg    The `this` onject to apply the result to
-     * @description Maps the array with the callback
+     * Maps the array with the callback
      */
     //map<U> (callbackfn: (value: T, index: number, array: Array<T>) => U, thisArg?: any): Array<U> {
     //      return this.toArray().map(callbackfn, thisArg);

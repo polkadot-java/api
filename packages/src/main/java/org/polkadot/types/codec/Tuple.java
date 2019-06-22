@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @name Tuple
- * @description A Tuple defines an anonymous fixed-length array, where each element has its
+ * A Tuple defines an anonymous fixed-length array, where each element has its
  * own type. It extends the base JS `Array` object.
  */
 public class Tuple extends AbstractArray<Codec> {

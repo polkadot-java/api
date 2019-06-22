@@ -25,7 +25,7 @@ public class StakingFunctions {
     }
 
     /**
-     * @description From the list of stash accounts, retrieve the list of controllers
+     * From the list of stash accounts, retrieve the list of controllers
      */
     public static Types.DeriveRealFunction controllers(ApiInterfacePromise api) {
         return new Types.DeriveRealFunction() {

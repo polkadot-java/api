@@ -14,7 +14,6 @@ import org.polkadot.types.metadata.v3.ToV2;
 import java.util.List;
 
 /**
- * @name MetadataVersioned
  * The versioned runtime metadata as a decoded structure
  */
 public class MetadataVersioned extends Struct implements Types.MetadataInterface {

@@ -1,8 +1,7 @@
 package org.polkadot.types.primitive;
 
 /**
- * @name I16
- * @description An 16-bit signed integer
+ * An 16-bit signed integer
  */
 public class I16 extends Int {
     public I16(Object value) {

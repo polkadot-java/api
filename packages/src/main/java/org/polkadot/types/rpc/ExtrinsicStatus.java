@@ -12,8 +12,7 @@ import org.polkadot.utils.MapUtils;
 import java.util.LinkedHashMap;
 
 /**
- * @name ExtrinsicStatus
- * An [[EnumType]] that indicates the status of the [[Extrinsic]] as been submitted
+ * An {@link org.polkadot.types.codec.EnumType} that indicates the status of the {@link org.polkadot.type.extrinsics} as been submitted
  */
 //export default class ExtrinsicStatus extends EnumType<Future | Ready | Finalized | Usurped | Broadcast | Dropped | Invalid> {
 public class ExtrinsicStatus extends EnumType {
@@ -36,49 +35,49 @@ public class ExtrinsicStatus extends EnumType {
 
 
     /**
-     * Returns the item as a [[Broadcast]]
+     * Returns the item as a {@link org.polkadot.types.rpc.ExtrinsicStatus.Broadcast}
      */
     public Broadcast asBroadcast() {
         return (Broadcast) this.value();
     }
 
     /**
-     * Returns the item as a [[Dropped]]
+     * Returns the item as a {@link org.polkadot.types.rpc.ExtrinsicStatus.Dropped}
      */
     public Dropped asDropped() {
         return (Dropped) this.value();
     }
 
     /**
-     * Returns the item as a [[Finalized]]
+     * Returns the item as a {@link org.polkadot.types.rpc.ExtrinsicStatus.Finalized}
      */
     public Finalized asFinalized() {
         return (Finalized) this.value();
     }
 
     /**
-     * Returns the item as a [[Future]]
+     * Returns the item as a {@link org.polkadot.types.rpc.ExtrinsicStatus.Future}
      */
     public Future asFuture() {
         return (Future) this.value();
     }
 
     /**
-     * Returns the item as a [[Invalid]]
+      * Returns the item as a {@link org.polkadot.types.rpc.ExtrinsicStatus.Invalid}
      */
     public Invalid asInvalid() {
         return (Invalid) this.value();
     }
 
     /**
-     * Returns the item as a [[Ready]]
+     * Returns the item as a {@link org.polkadot.types.rpc.ExtrinsicStatus.Ready}
      */
     public Ready asReady() {
         return (Ready) this.value();
     }
 
     /**
-     * Returns the item as a [[Usurped]]
+     * Returns the item as a {@link org.polkadot.types.rpc.ExtrinsicStatus.Usurped}
      */
     public Usurped asUsurped() {
         return (Usurped) this.value();
@@ -134,8 +133,7 @@ public class ExtrinsicStatus extends EnumType {
     }
 
     /**
-     * @name Broadcast
-     * An [[ExtrinsicStatus]] indicating that the [[Extrinsic]] has been boradcast to peers
+     * An {@link org.polkadot.types.rpc.ExtrinsicStatus} indicating that the {@link org.polkadot.type.extrinsics} has been boradcast to peers
      */
     public static class Broadcast extends Vector<Text> {
         public Broadcast(Object value) {
@@ -145,15 +143,13 @@ public class ExtrinsicStatus extends EnumType {
 
 
     /**
-     * @name Dropped
-     * An [[ExtrinsicStatus]] indicating that the [[Extrinsic]] has been dropped
+     * An {@link org.polkadot.types.rpc.ExtrinsicStatus} indicating that the {@link org.polkadot.type.extrinsics} has been dropped
      */
     public static class Dropped extends Null {
     }
 
     /**
-     * @name Finalized
-     * An [[ExtrinsicStatus] indicating that the [[Extrinsic]]] has been finalized and included
+     * An {@link org.polkadot.types.rpc.ExtrinsicStatus} indicating that the {@link org.polkadot.type.extrinsics}] has been finalized and included
      */
     public static class Finalized extends Hash {
         public Finalized(Object value) {
@@ -162,29 +158,25 @@ public class ExtrinsicStatus extends EnumType {
     }
 
     /**
-     * @name Future
-     * An [[ExtrinsicStatus]] indicating that the [[Extrinsic]] has been added to the future queue
+     * An {@link org.polkadot.types.rpc.ExtrinsicStatus} indicating that the {@link org.polkadot.type.extrinsics} has been added to the future queue
      */
     public static class Future extends Null {
     }
 
     /**
-     * @name Ready
-     * An [[ExtrinsicStatus]] indicating that the [[Extrinsic]] has been added to the ready queue
+     * An {@link org.polkadot.types.rpc.ExtrinsicStatus} indicating that the {@link org.polkadot.type.extrinsics} has been added to the ready queue
      */
     public static class Ready extends Null {
     }
 
     /**
-     * @name Invalid
-     * An [[ExtrinsicStatus]] indicating that the [[Extrinsic]] is invalid
+     * An {@link org.polkadot.types.rpc.ExtrinsicStatus} indicating that the {@link org.polkadot.type.extrinsics} is invalid
      */
     public static class Invalid extends Null {
     }
 
     /**
-     * @name Usurped
-     * An [[ExtrinsicStatus]] indicating that the [[Extrinsic]] has been usurped
+     * An {@link org.polkadot.types.rpc.ExtrinsicStatus} indicating that the {@link org.polkadot.type.extrinsics} has been usurped
      */
     public static class Usurped extends Hash {
         public Usurped(Object value) {

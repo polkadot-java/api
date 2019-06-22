@@ -5,8 +5,7 @@ import org.polkadot.types.Types;
 import org.polkadot.types.codec.Struct;
 
 /**
- * @name BalanceLock
- * @description The Substrate BalanceLock for staking
+ * The Substrate BalanceLock for staking
  */
 public class BalanceLock extends Struct {
 
@@ -20,28 +19,28 @@ public class BalanceLock extends Struct {
     }
 
     /**
-     * @description The amount
+     * The amount
      */
     public Balance getAmount() {
         return this.getField("amount");
     }
 
     /**
-     * @description The lock id
+     * The lock id
      */
     public LockIdentifier getId() {
         return this.getField("id");
     }
 
     /**
-     * @description The reasons
+     * The reasons
      */
     public WithdrawReasons getReasons() {
         return this.getField("reasons");
     }
 
     /**
-     * @description Until when this is available
+     * Until when this is available
      */
     public BlockNumber getUntil() {
         return this.getField("until");

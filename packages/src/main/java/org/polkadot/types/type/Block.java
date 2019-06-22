@@ -7,7 +7,6 @@ import org.polkadot.utils.UtilsCrypto;
 import java.util.List;
 
 /**
- * @name Block
  * A block encoded with header and extrinsics
  */
 public class Block extends Struct {
@@ -42,14 +41,14 @@ public class Block extends Struct {
 
 
     /**
-     * Encodes a content [[Hash]] for the block
+     * Encodes a content {@link org.polkadot.types.type.Hash} for the block
      */
     public Hash getcontentHash() {
         return new Hash(UtilsCrypto.blake2AsU8a(this.toU8a(), 256));
     }
 
     /**
-     * The [[Extrinsics]] contained in the block
+     * The Extrinsics contained in the block
      */
     public Extrinsics getExtrinsics() {
         return this.getField("extrinsics");
@@ -57,14 +56,14 @@ public class Block extends Struct {
 
 
     /**
-     * Block/header [[Hash]]
+     * Block/header {@link org.polkadot.types.type.Hash}
      */
     public Hash getHash() {
         return this.getHeader().getHash();
     }
 
     /**
-     * The [[Header]] of the block
+     * The {@link org.polkadot.types.type.Header} of the block
      */
     public Header getHeader() {
         return this.getField("header");

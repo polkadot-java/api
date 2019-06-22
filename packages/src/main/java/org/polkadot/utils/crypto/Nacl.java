@@ -12,14 +12,11 @@ import java.security.Signature;
 public class Nacl {
 
     /**
-     * @name naclDecrypt
-     * @summary Decrypts a message using the supplied secretKey and nonce
-     * @description Returns an decrypted message, using the `secret` and `nonce`.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { naclDecrypt } from '@polkadot/util-crypto';
-     * <p>
+     * Decrypts a message using the supplied secretKey and nonce
+     * Returns an decrypted message, using the `secret` and `nonce`.
+     * **example**  
+     * 
+     * ```java
      * naclDecrypt([...], [...], [...]); // => [...]
      * ```
      */
@@ -32,14 +29,11 @@ public class Nacl {
 
 
     /**
-     * @name naclEncrypt
-     * @summary Encrypts a message using the supplied secretKey and nonce
-     * @description Returns an encrypted message, using the `secretKey` and `nonce`. If the `nonce` was not supplied, a random value is generated.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { naclEncrypt } from '@polkadot/util-crypto';
-     * <p>
+     * Encrypts a message using the supplied secretKey and nonce
+     * Returns an encrypted message, using the `secretKey` and `nonce`. If the `nonce` was not supplied, a random value is generated.
+     * **example**  
+     * 
+     * ```java
      * naclEncrypt([...], [...]); // => [...]
      * ```
      */
@@ -74,14 +68,11 @@ public class Nacl {
 
 
     /**
-     * @name naclKeypairFromSeed
-     * @summary Creates a new public/secret keypair from a seed.
-     * @description Returns a object containing a `publicKey` & `secretKey` generated from the supplied seed.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { naclKeypairFromSeed } from '@polkadot/util-crypto';
-     * <p>
+     * Creates a new public/secret keypair from a seed.
+     * Returns a object containing a `publicKey` & `secretKey` generated from the supplied seed.
+     * **example**  
+     * 
+     * ```java
      * naclKeypairFromSeed(...); // => { secretKey: [...], publicKey: [...] }
      * ```
      */
@@ -108,14 +99,11 @@ public class Nacl {
 
 
     /**
-     * @name naclSign
-     * @summary Signs a message using the supplied secretKey
-     * @description Returns message signature of `message`, using the `secretKey`.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { naclSign } from '@polkadot/util-crypto';
-     * <p>
+     * Signs a message using the supplied secretKey
+     * Returns message signature of `message`, using the `secretKey`.
+     * **example**  
+     * 
+     * ```java
      * naclSign([...], [...]); // => [...]
      * ```
      */
@@ -144,14 +132,11 @@ public class Nacl {
 
 
     /**
-     * @name naclSign
-     * @summary Verifies the signature on the supplied message.
-     * @description Verifies the `signature` on `message` with the supplied `plublicKey`. Returns `true` on sucess, `false` otherwise.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { naclVerify } from '@polkadot/util-crypto';
-     * <p>
+     * Verifies the signature on the supplied message.
+     * Verifies the `signature` on `message` with the supplied `plublicKey`. Returns `true` on sucess, `false` otherwise.
+     * **example**  
+     * 
+     * ```java
      * naclVerify([...], [...], [...]); // => true/false
      * ```
      */

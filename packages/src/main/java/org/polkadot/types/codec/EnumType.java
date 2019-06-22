@@ -20,8 +20,7 @@ import static org.polkadot.utils.Utils.hexToU8a;
 
 
 /**
- * @name EnumType
- * @description This implements an enum, that based on the value wraps a different type. It is effectively
+ * This implements an enum, that based on the value wraps a different type. It is effectively
  * an extension to enum where the value type is determined by the actual index.
  */
 // TODO:
@@ -198,7 +197,7 @@ public class EnumType<T> extends Base<Codec> implements Codec {
     }
 
     /**
-     * Checks if the Enum points to a [[Null]] type (deprecated, use isNone)
+     * Checks if the Enum points to a {@link org.polkadot.types.primitive.Null} type (deprecated, use isNone)
      */
     public boolean isNull() {
         return this.raw instanceof Null;
@@ -221,7 +220,7 @@ public class EnumType<T> extends Base<Codec> implements Codec {
     }
 
   /**
-   * Checks if the Enum points to a [[Null]] type
+   * Checks if the Enum points to a {@link org.polkadot.types.primitive.Null} type
    */
     public boolean isNone() {
         return this.isNull();

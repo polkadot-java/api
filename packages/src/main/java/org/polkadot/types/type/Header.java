@@ -13,8 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * @name Header
- * A [[Block]] header
+ * A {@link org.polkadot.types.type.Block} header
  */
 public class Header extends Struct {
 
@@ -32,7 +31,7 @@ public class Header extends Struct {
 
 
     /**
-     * The wrapped [[BlockNumber]]
+     * The wrapped {@link org.polkadot.types.type.BlockNumber}
      */
     public BlockNumber getBlockNumber() {
         Compact number = this.getField("number");
@@ -41,21 +40,21 @@ public class Header extends Struct {
 
 
     /**
-     * The wrapped [[Digest]]
+	 * The wrapped {@link org.polkadot.types.type.Digest}
      */
     public Digest getDigest() {
         return this.getField("digest");
     }
 
     /**
-     * The wrapped extrisics root as a [[Hash]]
+     * The wrapped extrisics root as a {@link org.polkadot.types.type.Hash}
      */
     public Hash getExtrinsicsRoot() {
         return this.getField("extrinsicsRoot");
     }
 
     /**
-     * Convenience method, encodes the header and calculates the [[Hash]]
+     * Convenience method, encodes the header and calculates the {@link org.polkadot.types.type.Hash}
      */
     public Hash getHash() {
         byte[] bytes = UtilsCrypto.blake2AsU8a(this.toU8a(), 256);
@@ -70,14 +69,14 @@ public class Header extends Struct {
     }
 
     /**
-     * The wrapped parent as a [[Hash]]
+     * The wrapped parent as a {@link org.polkadot.types.type.Hash}
      */
     public Hash getParentHash() {
         return this.getField("parentHash");
     }
 
     /**
-     * The wrapped state root as a [[Hash]]
+     * The wrapped state root as a {@link org.polkadot.types.type.Hash}
      */
 
     public Hash getStateRoot() {
@@ -100,8 +99,7 @@ public class Header extends Struct {
 
 
     /**
-     * @name HeaderExtended
-     * @description A [[Block]] header with an additional `author` field that indicates the block author
+     * A {@link org.polkadot.types.type.Block} header with an additional `author` field that indicates the block author
      */
     public static class HeaderExtended extends Header {
         private AccountId author;
@@ -141,7 +139,7 @@ public class Header extends Struct {
 
 
         /**
-         * @description Convenience method, returns the author for the block
+         * Convenience method, returns the author for the block
          */
         public AccountId getAuthor() {
             return this.author;
@@ -149,7 +147,7 @@ public class Header extends Struct {
 
 
         /**
-         * @description Creates the JSON representation
+         * Creates the JSON representation
          */
 
         @Override

@@ -9,10 +9,9 @@ import org.polkadot.types.type.KeyValue;
 
 
 /**
- * @name StorageChangeSet
- * A set of storage changes. It contains the [[Block]] hash and
+ * A set of storage changes. It contains the Block hash and
  * a list of the actual changes that took place as an array of
- * [[KeyValueOption]]
+ * KeyValueOption
  */
 public class StorageChangeSet extends Struct {
     //type StorageChangeSetValue = {

@@ -7,11 +7,10 @@ import org.polkadot.types.primitive.U64;
 //export { default as Index } from './Nonce';
 
 /**
- * @name Index
  * The Nonce or number of transactions sent by a specific account. Generally used
  * with extrinsics to determine the order of execution. implemented as a Substrate
- * [[U64]]
- * @see Nonce
+ * U64
+ * @see org.polkadot.types.type.Nonce
  */
 public class Index extends U64 {
     public Index(Object value) {

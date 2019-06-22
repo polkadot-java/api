@@ -9,10 +9,9 @@ import org.polkadot.utils.Utils;
 import java.math.BigInteger;
 
 /**
- * @name Bytes
  * A Bytes wrapper for Vec<u8>. The significant difference between this and a normal Uint8Array
  * is that this version allows for length-encoding. (i.e. it is a variable-item codec, the same
- * as what is found in [[Text]] and [[Vector]])
+ * as what is found in {@link org.polkadot.types.primitive.Text} and {@link org.polkadot.types.codec.Vector})
  */
 public class Bytes extends U8a {
     //constructor (value?: AnyU8a) {

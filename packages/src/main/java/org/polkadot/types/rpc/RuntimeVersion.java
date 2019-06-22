@@ -82,7 +82,6 @@ public class RuntimeVersion extends Struct implements Types.RuntimeVersionInterf
 
 
     /**
-     * @name ApiId
      * An identifier for the runtime API
      */
     public static class ApiId extends U8aFixed {
@@ -99,8 +98,7 @@ public class RuntimeVersion extends Struct implements Types.RuntimeVersionInterf
 
 
     /**
-     * @name RuntimeVersionApi
-     * A [[Tuple]] that conatins the [[ApiId]] and [[U32]] version
+     * A {@link org.polkadot.types.codec.Tuple} that contains the ApiId and {@link org.polkadot.types.primitive.U32} version
      */
     public static class RuntimeVersionApi extends Tuple {
         //  constructor (value?: RuntimeVersionApiValue | Uint8Array) {
@@ -113,14 +111,14 @@ public class RuntimeVersion extends Struct implements Types.RuntimeVersionInterf
 
 
         /**
-         * The [[ApiId]]
+         * The ApiId
          */
         public ApiId getId() {
             return this.getFiled(0);
         }
 
         /**
-         * The specific version as [[U32]]
+         * The specific version as {@link org.polkadot.types.primitive.U32}
          */
         public U32 getVersion() {
             return this.getFiled(1);

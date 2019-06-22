@@ -5,7 +5,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.polkadot.utils.Utils;
 
 /**
- * @name U8aFixed
  * A U8a that manages a a sequence of bytes up to the specified bitLength. Not meant
  * to be used directly, rather is should be subclassed with the specific lengths.
  */

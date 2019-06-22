@@ -19,7 +19,6 @@ public class MetadataV1 extends Struct implements Types.MetadataInterface {
 
 
     /**
-     * @name MetadataModule
      * The definition of a module in the system
      */
     public static class MetadataModule extends Struct {

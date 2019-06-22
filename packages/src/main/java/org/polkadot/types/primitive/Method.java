@@ -16,7 +16,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * @name Method
  * Extrinsic function descriptor, as defined in
  * {@link https://github.com/paritytech/wiki/blob/master/Extrinsic.md#the-extrinsic-format-for-node}.
  */
@@ -42,7 +41,6 @@ public class Method extends Struct implements Types.IMethod {
 
 
     /**
-     * @name MethodIndex
      * A wrapper around the `[sectionIndex, methodIndex]` value that uniquely identifies a method
      */
     public static class MethodIndex extends U8aFixed {
@@ -177,7 +175,7 @@ public class Method extends Struct implements Types.IMethod {
      * @param value - Value to decode, one of:
      *              - hex
      *              - Uint8Array
-     *              - {@see DecodeMethodInput}
+     *              - @see DecodeMethodInput
      * @param _meta - Metadata to use, so that `injectMethods` lookup is not
      *              necessary.
      */
@@ -349,7 +347,7 @@ public class Method extends Struct implements Types.IMethod {
     }
 
     /**
-     * The [[FunctionMetadata]]
+     * The FunctionMetadata
      */
     @Override
     public Modules.FunctionMetadata getMeta() {

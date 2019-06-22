@@ -4,8 +4,7 @@ import com.google.common.collect.Lists;
 import org.polkadot.types.codec.Enum;
 
 /**
- * @name NewAccountOutcome
- * @description Enum to track the outcome for creation of an [[AccountId]]
+ * Enum to track the outcome for creation of an AccountId
  */
 public class NewAccountOutcome extends Enum {
     //constructor (index?: U8a | Uint8Array | number) {

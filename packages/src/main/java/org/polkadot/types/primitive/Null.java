@@ -3,7 +3,6 @@ package org.polkadot.types.primitive;
 import org.polkadot.types.Codec;
 
 /**
- * @name Null
  * Implements a type that does not contain anything (apart from `null`)
  */
 public class Null implements Codec {

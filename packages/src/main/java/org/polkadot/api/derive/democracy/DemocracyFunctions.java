@@ -49,8 +49,7 @@ public class DemocracyFunctions {
 
 
     /**
-     * @name ReferendumInfoExtended
-     * @description A [[ReferendumInfo]] with an additional `index` field
+     * A ReferendumInfo with an additional `index` field
      */
     public static class ReferendumInfoExtended extends ReferendumInfo {
         private ReferendumIndex index;
@@ -65,14 +64,14 @@ public class DemocracyFunctions {
         }
 
         /**
-         * @description Convenience getter, returns the referendumIndex
+         * Convenience getter, returns the referendumIndex
          */
         public ReferendumIndex getIndex() {
             return this.index;
         }
 
         /**
-         * @description Creates the JSON representation
+         * Creates the JSON representation
          */
         @Override
         public Object toJson() {

@@ -22,8 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * @name Event
- * A representation of a system event. These are generated via the [[Metadata]] interfaces and
+ * A representation of a system event. These are generated via the Metadata interfaces and
  * specific to a specific Substrate runtime
  */
 public class Event extends Struct {
@@ -32,8 +31,7 @@ public class Event extends Struct {
     public static final Map<String, Types.ConstructorCodec<EventData>> EventTypes = new ConcurrentHashMap<>();
 
     /**
-     * @name EventData
-     * Wrapper for the actual data that forms part of an [[Event]]
+     * Wrapper for the actual data that forms part of an Event
      */
     public static class EventData extends Tuple {
         private Events.EventMetadata meta;
@@ -104,8 +102,7 @@ public class Event extends Struct {
     }
 
     /**
-     * @name EventIndex
-     * This follows the same approach as in [[Method]], we have the `[sectionIndex, methodIndex]` pairing
+     * This follows the same approach as in {@link org.polkadot.types.primitive.Method}, we have the `[sectionIndex, methodIndex]` pairing
      * that indicates the actual event fired
      */
     public static class EventIndex extends U8aFixed {
@@ -176,21 +173,21 @@ public class Event extends Struct {
 
 
     /**
-     * The wrapped [[EventData]]
+     * The wrapped EventData
      */
     public EventData getData() {
         return this.getField("data");
     }
 
     /**
-     * The [[EventIndex]], identifying the raw event
+     * The EventIndex, identifying the raw event
      */
     public EventIndex getIndex() {
         return this.getField("index");
     }
 
     /**
-     * The [[EventMetadata]] with the documentation
+     * The EventMetadata with the documentation
      */
     public Events.EventMetadata getMeta() {
         return this.getData().meta;
@@ -211,7 +208,7 @@ public class Event extends Struct {
     }
 
     /**
-     * The [[TypeDef]] for the event
+     * The TypeDef for the event
      */
     public List<CreateType.TypeDef> getTypeDef() {
         return this.getData().typeDef;

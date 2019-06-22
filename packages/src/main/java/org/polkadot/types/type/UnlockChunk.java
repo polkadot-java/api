@@ -9,8 +9,7 @@ import java.math.BigInteger;
 
 
 /**
- * @name UnlockChunk
- * @description Just a Balance/BlockNumber tuple to encode when a chunk of funds will be unlocked
+ * Just a Balance/BlockNumber tuple to encode when a chunk of funds will be unlocked
  */
 public class UnlockChunk extends Struct {
 
@@ -22,7 +21,7 @@ public class UnlockChunk extends Struct {
     }
 
     /**
-     * @description Era number at which point it'll be unlocked
+     * Era number at which point it'll be unlocked
      */
     public BlockNumber getEra() {
         Compact era = this.getField("era");
@@ -31,7 +30,7 @@ public class UnlockChunk extends Struct {
     }
 
     /**
-     * @description Amount of funds to be unlocked
+     * Amount of funds to be unlocked
      */
     public Balance getValue() {
         Compact value = this.getField("value");

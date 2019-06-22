@@ -7,8 +7,7 @@ import org.polkadot.types.codec.Struct;
 import org.polkadot.types.codec.Vector;
 
 /**
- * @name StakingLedger
- * @description The ledger of a (bonded) stash
+ * The ledger of a (bonded) stash
  */
 public class StakingLedger extends Struct {
     public StakingLedger(Object value) {
@@ -21,7 +20,7 @@ public class StakingLedger extends Struct {
     }
 
     /**
-     * @description The total amount of the stash's balance that will be at stake in any forthcoming rounds
+     * The total amount of the stash's balance that will be at stake in any forthcoming rounds
      */
     public Balance getActive() {
         Compact active = this.getField("active");
@@ -29,14 +28,14 @@ public class StakingLedger extends Struct {
     }
 
     /**
-     * @description The stash account whose balance is actually locked and at stake
+     * The stash account whose balance is actually locked and at stake
      */
     public AccountId getStash() {
         return this.getField("stash");
     }
 
     /**
-     * @description The total amount of the stash's balance that we are currently accounting for. It's just `active` plus all the `unlocking` balances
+     * The total amount of the stash's balance that we are currently accounting for. It's just `active` plus all the `unlocking` balances
      */
     public Balance getTotal() {
         Compact total = this.getField("total");
@@ -44,7 +43,7 @@ public class StakingLedger extends Struct {
     }
 
     /**
-     * @description Any balance that is becoming free, which may eventually be transferred out of the stash (assuming it doesn't get slashed first)
+     * Any balance that is becoming free, which may eventually be transferred out of the stash (assuming it doesn't get slashed first)
      */
     public Vector<UnlockChunk> getUnlocking() {
         return this.getField("unlocking");

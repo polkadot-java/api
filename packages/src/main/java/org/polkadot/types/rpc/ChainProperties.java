@@ -4,7 +4,6 @@ package org.polkadot.types.rpc;
 import java.util.Objects;
 
 /**
- * @name ChainProperties
  * Wraps the properties retrieved from the chain via the `system.properties` RPC call.
  */
 public class ChainProperties extends Json {

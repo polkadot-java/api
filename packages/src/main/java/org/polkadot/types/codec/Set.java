@@ -13,8 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @name Set
- * @description An Set is an array of string values, represented an an encoded type by
+ * An Set is an array of string values, represented an an encoded type by
  * a bitwise representation of the values.
  */
 // FIXME This is a prime candidate to extend the JavaScript built-in Set
@@ -89,7 +88,7 @@ public class Set extends Base<List<String>> implements Codec {
     }
 
     /**
-     * @description The length of the value when encoded as a Uint8Array
+     * The length of the value when encoded as a Uint8Array
      */
     @Override
     public int getEncodedLength() {
@@ -97,7 +96,7 @@ public class Set extends Base<List<String>> implements Codec {
     }
 
     /**
-     * @description true is the Set contains no values
+     * true is the Set contains no values
      */
     @Override
     public boolean isEmpty() {
@@ -105,7 +104,7 @@ public class Set extends Base<List<String>> implements Codec {
     }
 
     /**
-     * @description The actual set values as a Array<string>
+     * The actual set values as a Array<string>
      */
     public List<String> values() {
         return this.raw;
@@ -113,7 +112,7 @@ public class Set extends Base<List<String>> implements Codec {
 
 
     /**
-     * @description The encoded value for the set members
+     * The encoded value for the set members
      */
     public long valueEncoded() {
         return Set.encodeSet(this.setValues, this.raw);
@@ -121,7 +120,7 @@ public class Set extends Base<List<String>> implements Codec {
 
 
     /**
-     * @description Compares the value of the input to see if there is a match
+     * Compares the value of the input to see if there is a match
      */
     @Override
     public boolean eq(Object other) {
@@ -142,7 +141,7 @@ public class Set extends Base<List<String>> implements Codec {
     }
 
     /**
-     * @description Returns a hex string representation of the value
+     * Returns a hex string representation of the value
      */
     @Override
     public String toHex() {
@@ -151,7 +150,7 @@ public class Set extends Base<List<String>> implements Codec {
 
 
     /**
-     * @description Converts the Object to JSON, typically used for RPC transfers
+     * Converts the Object to JSON, typically used for RPC transfers
      */
     @Override
     public Object toJson() {
@@ -160,7 +159,7 @@ public class Set extends Base<List<String>> implements Codec {
 
 
     /**
-     * @description Returns the string representation of the value
+     * Returns the string representation of the value
      */
     @Override
     public String toString() {
@@ -169,7 +168,7 @@ public class Set extends Base<List<String>> implements Codec {
 
     /**
      * @param isBare true when the value has none of the type-specific prefixes (internal)
-     * @description Encodes the value as a Uint8Array as per the parity-codec specifications
+     * Encodes the value as a Uint8Array as per the parity-codec specifications
      */
     @Override
     public byte[] toU8a(boolean isBare) {

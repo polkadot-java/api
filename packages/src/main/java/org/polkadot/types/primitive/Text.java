@@ -9,7 +9,6 @@ import java.util.Arrays;
 
 
 /**
- * @name Text
  * This is a string wrapper, along with the length. It is used both for strings as well
  * as items such as documentation. It simply extends the standard JS `String` built-in
  * object, inheriting all methods exposed from `String`.

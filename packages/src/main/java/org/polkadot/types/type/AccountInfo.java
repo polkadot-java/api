@@ -6,8 +6,7 @@ import org.polkadot.types.primitive.Bytes;
 import org.polkadot.types.primitive.U64;
 
 /**
- * @name AccountInfo
- * @description An Account information structure for contracts
+ * An Account information structure for contracts
  */
 public class AccountInfo extends Struct {
     public AccountInfo(Object value) {
@@ -20,14 +19,14 @@ public class AccountInfo extends Struct {
 
 
     /**
-     * @description The size of stored value in octet
+     * The size of stored value in octet
      */
     public U64 getCurrentMemStored() {
         return this.getField("currentMemStored");
     }
 
     /**
-     * @description Unique ID for the subtree encoded as a byte
+     * Unique ID for the subtree encoded as a byte
      */
     public Bytes getTrieId() {
         return this.getField("trieId");

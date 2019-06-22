@@ -13,8 +13,7 @@ import org.polkadot.types.primitive.U32;
 import org.polkadot.types.primitive.U64;
 
 /**
- * @name Digest
- * A [[Header]] Digest
+ * A Header Digest
  */
 public class Digest extends Struct {
     public Digest(Object value) {
@@ -24,7 +23,7 @@ public class Digest extends Struct {
     }
 
     /**
-     * The [[DigestItem]] logs
+     * The DigestItem logs
      */
     public Vector<DigestItem> getLogs() {
         return this.getField("logs");
@@ -32,8 +31,7 @@ public class Digest extends Struct {
 
 
     /**
-     * @name Other
-     * Log item that is just a stream of [[Bytes]]
+     * Log item that is just a stream of {@link org.polkadot.types.primitive.Bytes}
      */
     public static class Other extends Bytes {
 
@@ -43,7 +41,6 @@ public class Digest extends Struct {
     }
 
     /**
-     * @name AuthoritiesChange
      * Log for Authories changed
      */
     public static class AuthoritiesChange extends Vector<AuthorityId> {
@@ -53,7 +50,6 @@ public class Digest extends Struct {
     }
 
     /**
-     * @name ChangesTrieRoot
      * Log for changes to the Trie root
      */
     public static class ChangesTrieRoot extends Hash {
@@ -64,7 +60,6 @@ public class Digest extends Struct {
     }
 
     /**
-     * @name Seal
      * Log item indicating a sealing event
      */
     public static class Seal extends Tuple {
@@ -78,14 +73,14 @@ public class Digest extends Struct {
         }
 
         /**
-         * The wrapped [[Signature]]
+         * The wrapped {@link org.polkadot.types.type.Signature}
          */
         public Signature getSignature() {
             return this.getFiled(1);
         }
 
         /**
-         * The wrapped [[U64]] slot
+         * The wrapped {@link org.polkadot.types.primitive.U64} slot
          */
         public U64 slot() {
             return this.getFiled(0);
@@ -93,7 +88,6 @@ public class Digest extends Struct {
     }
 
     /**
-     * @name Consensus
      * Log item indicating consensus
      */
     public static class Consensus extends Tuple {
@@ -114,14 +108,14 @@ public class Digest extends Struct {
         }
 
         /**
-         * The wrapped engine [[U32]]
+         * The wrapped engine {@link org.polkadot.types.primitive.U32}
          */
         public U32 getEngine() {
             return this.getFiled(0);
         }
 
         /**
-         * The wrapped [[Bytes]]
+         * The wrapped {@link org.polkadot.types.primitive.Bytes}
          */
         public Bytes getData() {
             return getFiled(1);
@@ -139,8 +133,7 @@ public class Digest extends Struct {
     }
 
     /**
-     * @name DigestItem
-     * A [[EnumType]] the specifies the specific item in the logs of a [[Digest]]
+     * A {@link org.polkadot.types.codec.EnumType} the specifies the specific item in the logs of a Digest
      */
     //export class DigestItem extends EnumType<AuthoritiesChange | ChangesTrieRoot | Other| Seal> {
     public static class DigestItem extends EnumType {
@@ -158,49 +151,49 @@ public class Digest extends Struct {
 
 
         /**
-         * Returns the item as a [[AuthoritiesChange]]
+         * Returns the item as a AuthoritiesChange
          */
         public Vector<AuthorityId> getAsAuthoritiesChange() {
             return (Vector<AuthorityId>) this.value();
         }
 
         /**
-         * Returns the item as a [[ChangesTrieRoot]]
+         * Returns the item as a ChangesTrieRoot
          */
         public ChangesTrieRoot getAsChangesTrieRoot() {
             return (ChangesTrieRoot) this.value();
         }
 
         /**
-         * @desciption Retuns the item as a [[Consensus]]
+         * @desciption Retuns the item as a Consensus
          */
         public Consensus getAsConsensus() {
             return (Consensus) this.value();
         }
 
         /**
-         * Returns the item as a [[Other]]
+         * Returns the item as a Other
          */
         public Other getAsOther() {
             return (Other) this.value();
         }
 
         /**
-         * Returns the item as a [[Seal]]
+         * Returns the item as a Seal
          */
         public Seal getAsSeal() {
             return (Seal) this.value();
         }
 
         /**
-         * Returns true on [[Consensus]]
+         * Returns true on Consensus
          */
         public boolean isConsensus() {
             return this.getType().equals("Consensus");
         }
 
         /**
-         * Returns true on [[Seal]]
+         * Returns true on Seal
          */
         public boolean isSeal() {
             return this.getType().equals("Seal");

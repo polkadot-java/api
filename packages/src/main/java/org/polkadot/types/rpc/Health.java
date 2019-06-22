@@ -9,7 +9,6 @@ import org.polkadot.utils.MapUtils;
 import java.util.Map;
 
 /**
- * @name Health
  * A system health indicator, reported back over RPC
  */
 public class Health extends Struct {
@@ -35,7 +34,7 @@ public class Health extends Struct {
     }
 
     /**
-     * The numbers of peers as [[U32]]
+     * The numbers of peers as {@link org.polkadot.types.primitive.U32}
      */
     public USize getPeers() {
         return this.getField("peers");

@@ -312,7 +312,6 @@ public class RpcCore implements IRpcModule {
                                     return Promise.value(
                                             (Unsubscribe<Promise>) () ->
                                             {
-                                                System.out.println();
                                                 return RpcCore.this.provider.unsubscribe(subType, unsubName, Integer.parseInt(subscriptionId));
                                             }
                                     );
@@ -375,7 +374,7 @@ public class RpcCore implements IRpcModule {
     }
 
     /**
-     * @description Manually disconnect from the attached provider
+     * Manually disconnect from the attached provider
      */
     public void disconnect() {
         this.provider.disconnect();

@@ -13,15 +13,12 @@ import java.math.BigInteger;
 public class UtilsCrypto {
 
     /**
-     * @name blake2AsU8a
-     * @summary Creates a blake2b u8a from the input.
-     * @description From a `Uint8Array` input, create the blake2b and return the result as a u8a with the specified `bitLength`.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { blake2AsU8a } from '@polkadot/util-crypto';
-     * <p>
-     * blake2AsU8a('abc'); // => [0xba, 0x80, 0xa53, 0xf98, 0x1c, 0x4d, 0x0d]
+     * Creates a blake2b u8a from the input.
+     * From a `Uint8Array` input, create the blake2b and return the result as a u8a with the specified `bitLength`.
+     * **example**  
+     * 
+     * ```java
+     * blake2AsU8a("abc"); // => [0xba, 0x80, 0xa53, 0xf98, 0x1c, 0x4d, 0x0d]
      * ```
      */
     //  export default function blake2AsU8a (data: Uint8Array | string, bitLength: number = 256, key: Uint8Array | null = null): Uint8Array {
@@ -65,15 +62,12 @@ public class UtilsCrypto {
 
 
     /**
-     * @name xxhashAsU8a
-     * @summary Creates a xxhash64 u8a from the input.
-     * @description From either a `string`, `Uint8Array` or a `Buffer` input, create the xxhash64 and return the result as a `Uint8Array` with the specified `bitLength`.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { xxhashAsU8a } from '@polkadot/util-crypto';
-     * <p>
-     * xxhashAsU8a('abc'); // => 0x44bc2cf5ad770999
+     * Creates a xxhash64 u8a from the input.
+     * From either a `string`, `Uint8Array` or a `Buffer` input, create the xxhash64 and return the result as a `Uint8Array` with the specified `bitLength`.
+     * **example**  
+     * 
+     * ```java
+     * xxhashAsU8a("abc"); // => 0x44bc2cf5ad770999
      * ```
      */
     //export default function xxhashAsU8a (data: Buffer | Uint8Array | string, bitLength: number = 64): Uint8Array {
@@ -100,15 +94,12 @@ public class UtilsCrypto {
 
 
     /**
-     * @name xxhash64AsBn
-     * @summary Creates a xxhash BN from the input.
-     * @description From either a `string`, `Uint8Array` or a `Buffer` input, create the xxhash and return the result as a BN.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { xxhash64AsNumber } from '@polkadot/util-crypto';
-     * <p>
-     * xxhash64AsBn('abcd', 0xabcd)); // => new BN(0xe29f70f8b8c96df7)
+     * Creates a xxhash BN from the input.
+     * From either a `string`, `Uint8Array` or a `Buffer` input, create the xxhash and return the result as a BN.
+     * **example**  
+     * 
+     * ```java
+     * xxhash64AsBn("abcd", 0xabcd)); // => new BN(0xe29f70f8b8c96df7)
      * ```
      */
     //export default function xxhash64AsBn (data: Buffer | Uint8Array | string, seed: number): BN {
@@ -123,15 +114,12 @@ public class UtilsCrypto {
     }
 
     /**
-     * @name xxhash64AsRaw
-     * @summary Creates a xxhash non-prefixed hex from the input.
-     * @description From either a `string`, `Uint8Array` or a `Buffer` input, create the xxhash and return the result as a non-prefixed hex string.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { xxhash64AsRaw } from '@polkadot/util-crypto';
-     * <p>
-     * xxhash64AsRaw('abcd', 0xabcd)); // => e29f70f8b8c96df7
+     * Creates a xxhash non-prefixed hex from the input.
+     * From either a `string`, `Uint8Array` or a `Buffer` input, create the xxhash and return the result as a non-prefixed hex string.
+     * **example**  
+     * 
+     * ```java
+     * xxhash64AsRaw("abcd", 0xabcd)); // => e29f70f8b8c96df7
      * ```
      */
     //export default function xxhash64AsRaw (data: Buffer | Uint8Array | string, seed: number): string {
@@ -143,15 +131,12 @@ public class UtilsCrypto {
 
 
     /**
-     * @name xxhash64AsValue
-     * @summary Creates a hex number from the input.
-     * @description From either a `string`, `Uint8Array` or a `Buffer` input, create the xxhash and return the result as a hex number
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { xxhash64AsValue } from '@polkadot/util-crypto';
-     * <p>
-     * xxhash64AsValue('abcd', 0xabcd)); // => e29f70f8b8c96df7
+     * Creates a hex number from the input.
+     * From either a `string`, `Uint8Array` or a `Buffer` input, create the xxhash and return the result as a hex number
+     * **example**  
+     * 
+     * ```java
+     * xxhash64AsValue("abcd", 0xabcd)); // => e29f70f8b8c96df7
      * ```
      */
     //export default function xxhash64AsValue (data: Buffer | Uint8Array | string, seed: number): number {
@@ -184,14 +169,11 @@ public class UtilsCrypto {
 
 
     /**
-     * @name randomAsU8a
-     * @summary Creates a Uint8Array filled with random bytes.
-     * @description Returns a `Uint8Array` with the specified (optional) length filled with random bytes.
-     * @example <BR>
-     * <p>
-     * ```javascript
-     * import { randomAsU8a } from '@polkadot/util-crypto';
-     * <p>
+     * Creates a Uint8Array filled with random bytes.
+     * Returns a `Uint8Array` with the specified (optional) length filled with random bytes.
+     * **example**  
+     * 
+     * ```java
      * randomAsU8a(); // => Uint8Array([...])
      * ```
      */

@@ -8,8 +8,7 @@ import org.polkadot.types.type.BftAuthoritySignature.BftHashSignature;
 import org.polkadot.types.type.BftAuthoritySignature.BftHashSignatureValue;
 
 /**
- * @name MisbehaviorReport
- * @description A Misbehaviour report of [[MisbehavioirKind]] against a specific [[AuthorityId]]
+ * A Misbehaviour report of MisbehavioirKind against a specific AuthorityId
  */
 public class MisbehaviorReport extends Struct {
 
@@ -58,8 +57,7 @@ public class MisbehaviorReport extends Struct {
 
 
     /**
-     * @name BftAtReport
-     * @description A report of a/b hash-signature pairs for a specific index. This is the same
+     * A report of a/b hash-signature pairs for a specific index. This is the same
      * structure as is used in BftDoublePrepare & BftDoubleCommit
      */
     // FIXME It is not entirely obvious from the actual Rust code what the specific
@@ -76,21 +74,21 @@ public class MisbehaviorReport extends Struct {
         }
 
         /**
-         * @description The first report [[BftHashSignature]]
+         * The first report {@link org.polkadot.types.type.BftAuthoritySignature.BftHashSignature}
          */
         public BftHashSignature getA() {
             return this.getField("a");
         }
 
         /**
-         * @description The second report [[BftHashSignature]]
+         * The second report {@link org.polkadot.types.type.BftAuthoritySignature.BftHashSignature}
          */
         public BftHashSignature getB() {
             return this.getField("b");
         }
 
         /**
-         * @description The round this report applies to as [[U32]]
+         * The round this report applies to as {@link org.polkadot.types.primitive.U32}
          */
         public U32 getRound() {
             return this.getField("round");
@@ -99,8 +97,7 @@ public class MisbehaviorReport extends Struct {
 
 
     /**
-     * @name BftProposeOutOfTurn
-     * @description A report for out-of-turn proposals
+     * A report for out-of-turn proposals
      */
     public static class BftProposeOutOfTurn extends Struct {
         //constructor (value? BftAtReportValue | Uint8Array) {
@@ -114,14 +111,14 @@ public class MisbehaviorReport extends Struct {
         }
 
         /**
-         * @description The [[BftHashSignature]] the report applies to
+         * The {@link org.polkadot.types.type.BftAuthoritySignature.BftHashSignature} the report applies to
          */
         public BftHashSignature getA() {
             return this.getField("a");
         }
 
         /**
-         * @description The round as [[u32]]
+         * The round as {@link org.polkadot.types.primitive.U32}
          */
         public U32 getRound() {
             return this.getField("round");
@@ -129,8 +126,7 @@ public class MisbehaviorReport extends Struct {
     }
 
     /**
-     * @name BftDoublePropose
-     * @description Report of a double-propose
+     * Report of a double-propose
      */
     public static class BftDoublePropose extends BftAtReport {
         public BftDoublePropose(Object value) {
@@ -139,8 +135,7 @@ public class MisbehaviorReport extends Struct {
     }
 
     /**
-     * @name BftDoublePrepare
-     * @description Report of a double-prepare
+     * Report of a double-prepare
      */
     public static class BftDoublePrepare extends BftAtReport {
         public BftDoublePrepare(Object value) {
@@ -149,8 +144,7 @@ public class MisbehaviorReport extends Struct {
     }
 
     /**
-     * @name BftDoubleCommit
-     * @description Report of a double-commit
+     * Report of a double-commit
      */
     public static class BftDoubleCommit extends BftAtReport {
         public BftDoubleCommit(Object value) {
@@ -159,8 +153,7 @@ public class MisbehaviorReport extends Struct {
     }
 
     /**
-     * @name MisbehaviorKind
-     * @description An [[EnumType]] containing a Bft misbehaviour
+     * An {@link org.polkadot.types.codec.EnumType} containing a Bft misbehaviour
      */
     //EnumType<BftProposeOutOfTurn | BftDoublePropose | BftDoublePrepare | BftDoubleCommit> {
     public static class MisbehaviorKind extends EnumType {
@@ -175,28 +168,28 @@ public class MisbehaviorReport extends Struct {
         }
 
         /**
-         * @description Returns the item as a [[BftDoubleCommit]]
+         * Returns the item as a BftDoubleCommit
          */
         public BftDoubleCommit asBftDoubleCommit() {
             return (BftDoubleCommit) this.value();
         }
 
         /**
-         * @description Returns the item as a [[BftDoublePrepare]]
+         * Returns the item as a BftDoublePrepare
          */
         public BftDoublePrepare asBftDoublePrepare() {
             return (BftDoublePrepare) this.value();
         }
 
         /**
-         * @description Returns the item as a [[BftDoublePropose]]
+         * Returns the item as a BftDoublePropose
          */
         public BftDoublePropose asBftDoublePropose() {
             return (BftDoublePropose) this.value();
         }
 
         /**
-         * @description Returns the item as a [[BftProposeOutOfTurn]]
+         * Returns the item as a BftProposeOutOfTurn
          */
         public BftProposeOutOfTurn asBftProposeOutOfTurn() {
             return (BftProposeOutOfTurn) this.value();
@@ -227,28 +220,28 @@ public class MisbehaviorReport extends Struct {
 
 
     /**
-     * @description The [[MisbehaviorKind]]
+     * The MisbehaviorKind
      */
     public MisbehaviorKind getMisbehavior() {
         return this.getField("misbehavior");
     }
 
     /**
-     * @description The [[Hash]] of the parent block
+     * The {@link org.polkadot.types.type.Hash} of the parent block
      */
     public Hash getParentHash() {
         return this.getField("parentHash");
     }
 
     /**
-     * @description The [[BlockNumber]] of the parent
+     * The {@link org.polkadot.types.type.BlockNumber} of the parent
      */
     public BlockNumber getParentNumber() {
         return this.getField("parentNumber");
     }
 
     /**
-     * @description The [[authorityId]] the report applies to
+     * The AuthorityId the report applies to
      */
     public AuthorityId getTarget() {
         return this.getField("target");

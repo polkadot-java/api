@@ -4,7 +4,6 @@ package org.polkadot.types.primitive;
 import org.polkadot.types.codec.UInt;
 
 /**
- * @name U32
  * An 32-bit unsigned integer
  */
 public class U32 extends UInt {
