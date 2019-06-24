@@ -312,6 +312,7 @@ public class RpcCore implements IRpcModule {
                                     return Promise.value(
                                             (Unsubscribe<Promise>) () ->
                                             {
+                                                System.out.println();
                                                 return RpcCore.this.provider.unsubscribe(subType, unsubName, Integer.parseInt(subscriptionId));
                                             }
                                     );

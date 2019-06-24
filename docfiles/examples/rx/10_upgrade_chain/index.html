@@ -1,0 +1,128 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+
+<h1>
+	Chain upgrade
+</h1>
+<p>
+Performs a chain upgrade using the `sudo` module. This may brick your chain, so us it as an educational sample. (use `substrate --dev purge-chain` to remove DB and recover).
+
+</p>
+
+<pre><code class="java">
+package org.polkadot.example.rx;
+
+import io.reactivex.Observable;
+import io.reactivex.functions.BiFunction;
+import org.apache.commons.lang3.tuple.Pair;
+import org.polkadot.api.SubmittableExtrinsic;
+import org.polkadot.api.rx.ApiRx;
+import org.polkadot.common.keyring.Types;
+import org.polkadot.example.TestingPairs;
+import org.polkadot.rpc.provider.ws.WsProvider;
+import org.polkadot.types.codec.CodecUtils;
+import org.polkadot.types.rpc.ExtrinsicStatus;
+import org.polkadot.types.type.Event;
+import org.polkadot.types.type.EventRecord;
+import org.polkadot.utils.Utils;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class E10_UpgradeChain {
+
+    static String ALICE = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY";
+    static int AMOUNT = 10000;
+
+    //static String endPoint = "wss://poc3-rpc.polkadot.io/";
+    //static String endPoint = "wss://substrate-rpc.parity.io/";
+    //static String endPoint = "ws://45.76.157.229:9944/";
+    static String endPoint = "ws://127.0.0.1:9944";
+
+    static void initEndPoint(String[] args) {
+        if (args != null && args.length >= 1) {
+            endPoint = args[0];
+            System.out.println(" connect to endpoint [" + endPoint + "]");
+        } else {
+            System.out.println(" connect to default endpoint [" + endPoint + "]");
+        }
+    }
+
+    static {
+        System.loadLibrary("jni");
+        System.out.println("load ");
+    }
+
+    //-Djava.library.path=./libs
+    public static void main(String[] args) throws InterruptedException {
+        initEndPoint(args);
+
+        WsProvider wsProvider = new WsProvider(endPoint);
+
+        Observable<ApiRx> apiRxObservable = ApiRx.create(wsProvider);
+
+        apiRxObservable.flatMap((apiRx) -> {
+            return Observable.combineLatest(
+                    Observable.just(apiRx),
+                    apiRx.query().section("sudo").function("key").call(),
+                    new BiFunction<ApiRx, Object, Pair<ApiRx, String>>() {
+                        @Override
+                        public Pair<ApiRx, String> apply(ApiRx apiRx, Object adminId) throws Exception {
+                            System.out.println("BiFunction  ");
+                            return Pair.of(apiRx, CodecUtils.arrayLikeToList(adminId).get(0).toString());
+                        }
+                    }
+            );
+        }).switchMap((result) -> {
+            Pair<ApiRx, String> pair = (Pair<ApiRx, String>) result;
+            ApiRx apiRx = pair.getLeft();
+            String adminId = pair.getRight();
+
+            System.out.println(" get adminId " + adminId);
+
+            Types.KeyringInstance keyring = TestingPairs.testKeyring();
+
+            // find the actual keypair in the keyring
+            Types.KeyringPair adminPair = keyring.getPair(adminId);
+
+            // retrieve the runtime to upgrade to
+            byte[] bytes = Files.readAllBytes(Paths.get("test.wasm"));
+            String code = Utils.u8aToHex(bytes);
+
+            SubmittableExtrinsic proposal = apiRx.tx().section("consensus").function("setCode").call("0x" + code);
+
+            System.out.println("Upgrading chain runtime from " + adminId);
+
+            return apiRx.tx().section("sudo").function("sudo").call(proposal)
+                    .signAndSendCb(adminPair, null);
+
+        }).subscribe((result) -> {
+            System.out.println("rx result " + result);
+
+            SubmittableExtrinsic.SubmittableResult submittableResult = (SubmittableExtrinsic.SubmittableResult) result;
+            ExtrinsicStatus status = submittableResult.getStatus();
+            System.out.println("Proposal status:" + status.getType());
+            if (status.isFinalized()) {
+                System.out.println("You have just upgraded your chain");
+
+                System.out.println("Completed at block hash" + status.asFinalized().toHex());
+
+                System.out.println("Events:");
+
+                for (EventRecord event : submittableResult.getEvents()) {
+                    Event eventEvent = event.getEvent();
+                    System.out.println("\t" + event.getPhase().toString()
+                            + ": " + eventEvent.getSection() + "." + eventEvent.getMethod() + " " + eventEvent.getData().toString());
+                }
+                System.exit(0);
+            }
+        });
+    }
+}
+</code></pre>
+
+</body>
+</html>
