@@ -71,29 +71,5 @@ The project uses [Gradle](https://gradle.org/) as build tool. You need to instal
 
 There are several runnable samples. To run the samples, go to folder `examples_runnable/LastestDate` (such as examples_runnable/20190525), then run each shell script.
 
-Here lists all the samples, there purpose is self explained in the shell script file name.
-
-Promise_01_simple_connect.sh (added in version 20190511)   
-Promise_02_listen_to_blocks_and_unsubscribe.sh (added in version 20190511)  
-Promise_03_listen_to_balance_change.sh (added in version 20190518)   
-Promise_04_unsubscribe.sh (added in version 20190518)   
-Promise_05_read_storage.sh (added in version 20190518)   
-Promise_06_make_transfer.sh (added in version 20190525)   
-Promise_07 (it was not in JS version)   
-Promise_08_system_events.sh (added in version 20190601)   
-Promise_09_transfer_events.sh (added in version 20190601)  
-Promise_10_upgrade_chain.sh (added in version 20190601)  
-Rx_01_simple_connect.sh (added in version 20190616)  
-Rx_02_listen_to_blocks.sh (added in version 20190616)  
-Rx_03_listen_to_balance_change.sh (added in version 20190616)  
-Rx_04_unsubscribe.sh (added in version 20190616)  
-Rx_05_read_storage.sh (added in version 20190616)  
-Rx_06_make_transfer.sh (added in version 20190616)  
-Rx_08_system_events.sh (added in version 20190616)   
-Rx_09_transfer_events.sh (added in version 20190616)  
-Rx_10_upgrade_chain.sh (added in version 20190616)  
-101_democracy.sh (added in version 20190525)    
-102_staking.sh (added in version 20190525)   
-
 3. To change the Substrate address, change the `endPoint` variable in each demo main file.
 
