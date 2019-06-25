@@ -30,12 +30,9 @@ The API is split up into a number of internal packages
 
 ## Document
 
-See the generated JavaDoc in /doc folder.  
-Or visit the [document site](https://polkadot-java.github.io/)
-
-To generate JavaDoc by yourself, reference `gendoc.sh` in the root folder.
-
-To understand how the system works, you may reference [Substrate](https://github.com/paritytech/substrate) and [Polkadot Network](https://polkadot.network/)
+* See the generated JavaDoc in /doc folder. Or visit the [document site](https://polkadot-java.github.io/)
+* To generate JavaDoc by yourself, reference `gendoc.sh` in the root folder  
+* To understand how the system works, you may reference [Substrate](https://github.com/paritytech/substrate) and [Polkadot Network](https://polkadot.network/)
 
 ## Integrate the API into your projects
 
@@ -64,11 +61,9 @@ The project uses [Gradle](https://gradle.org/) as build tool. You need to instal
 ## How to run examples
 
 1. Install substrate local node:  
-
 `https://github.com/paritytech/substrate`  
 
 2. Running the samples:  
-
 There are several runnable samples. To run the samples, go to folder `examples_runnable/LastestDate` (such as examples_runnable/20190525), then run each shell script.
 
 3. To change the Substrate address, change the `endPoint` variable in each demo main file.

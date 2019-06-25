@@ -237,11 +237,11 @@ public interface Types {
 
 
     interface OnCallDefinition<ApplyResult> {
-        ApplyResult apply(OnCallFunction<ApplyResult> method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback);
+        ApplyResult apply(OnCallFunction method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback);
     }
 
-    interface OnCallFunction<ApplyResult> {
-        ApplyResult apply(Object... params);
+    interface OnCallFunction {
+        Promise apply(Object... params);
     }
 
     class DecoratedRpc<ApplyResult> implements IModule<DecoratedRpcSection<ApplyResult>> {

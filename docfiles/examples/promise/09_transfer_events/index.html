@@ -1,0 +1,146 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+
+<h1>
+	Transfer events
+</h1>
+<p>
+Display the events that occur during a transfer by sending a value to a random account
+
+</p>
+
+<pre><code class="java">
+package org.polkadot.example.promise;
+
+import com.onehilltech.promises.Promise;
+import org.polkadot.api.SubmittableExtrinsic;
+import org.polkadot.api.Types.QueryableModuleStorage;
+import org.polkadot.api.Types.SubmittableExtrinsicFunction;
+import org.polkadot.api.promise.ApiPromise;
+import org.polkadot.common.keyring.Types;
+import org.polkadot.example.TestingPairs;
+import org.polkadot.rpc.provider.ws.WsProvider;
+import org.polkadot.types.Types.SignatureOptions;
+import org.polkadot.types.rpc.ExtrinsicStatus;
+import org.polkadot.types.type.Event;
+import org.polkadot.types.type.EventRecord;
+import org.polkadot.utils.UtilsCrypto;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
+public class E09_TransferEvents {
+    static String ALICE = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY";
+    static int AMOUNT = 10000;
+
+    //static String endPoint = "wss://poc3-rpc.polkadot.io/";
+    //static String endPoint = "wss://substrate-rpc.parity.io/";
+    //static String endPoint = "ws://45.76.157.229:9944/";
+    static String endPoint = "ws://127.0.0.1:9944";
+
+    static void initEndPoint(String[] args) {
+        if (args != null && args.length >= 1) {
+            endPoint = args[0];
+            System.out.println(" connect to endpoint [" + endPoint + "]");
+        } else {
+            System.out.println(" connect to default endpoint [" + endPoint + "]");
+        }
+    }
+
+    static {
+        System.loadLibrary("jni");
+        System.out.println("load ");
+    }
+
+    //-Djava.library.path=./libs
+    public static void main(String[] args) throws InterruptedException {
+        // Create an await for the API
+        //Promise<ApiPromise> ready = ApiPromise.create();
+        initEndPoint(args);
+
+        WsProvider wsProvider = new WsProvider(endPoint);
+
+        Promise<ApiPromise> ready = ApiPromise.create(wsProvider);
+
+        String BOB = "5FHneW46xGXgs5mUiveU4sbTyGBzmstUspZC92UhjJM694ty";
+
+        /////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////
+        AtomicReference<Types.KeyringInstance> keyring = new AtomicReference<>();
+        AtomicReference<ApiPromise> apiRef = new AtomicReference<>();
+        // Create the API and wait until ready
+        ready.then(api -> {
+            apiRef.set(api);
+            // create an instance of our testing keyring
+            // If you"re using ES6 module imports instead of require, just change this line to:
+            // const keyring = testKeyring();
+            keyring.set(TestingPairs.testKeyring());
+
+            // get the nonce for the admin key
+            //  const nonce = await api.query.system.accountNonce(ALICE);
+            QueryableModuleStorage<Promise> system = api.query().section("system");
+            return system.function("accountNonce").call(ALICE);
+
+        }).then(nonce -> {
+
+
+            // find the actual keypair in the keyring
+            Types.KeyringPair alicePair = keyring.get().getPair(ALICE);
+
+            // create a new random recipient
+            String recipient = keyring.get().addFromSeed(UtilsCrypto.randomAsU8a(32), null, null).address();
+
+            System.out.println("Sending " + AMOUNT + " from " + alicePair.address() + " to " + recipient + " with nonce " + nonce.toString());
+
+            SubmittableExtrinsicFunction transfer = apiRef.get().tx().section("balances").function("transfer");
+            Object sign =  transfer.call(recipient, AMOUNT)
+                    .sign(alicePair, new SignatureOptions().setNonce(nonce));
+
+            SubmittableExtrinsic<Promise> sign1 = (SubmittableExtrinsic) sign;
+            return sign1.send(new SubmittableExtrinsic.StatusCb() {
+                @Override
+                public Object callback(SubmittableExtrinsic.SubmittableResult result) {
+                    ExtrinsicStatus status = result.getStatus();
+                    List<EventRecord> events = result.getEvents();
+
+                    System.out.println("Transaction status:" + status.getType());
+
+                    if (status.isFinalized()) {
+                        System.out.println("Completed at block hash" + status.asFinalized().toHex());
+
+                        System.out.println("Events");
+
+                        for (EventRecord event : events) {
+                            EventRecord.Phase phase = event.getPhase();
+                            Event eventEvent = event.getEvent();
+                            System.out.println("\t" + phase.toString()
+                                    + ": " + eventEvent.getSection() + "." + eventEvent.getMethod()
+                                    + " " + eventEvent.getData().toString());
+                        }
+                        System.exit(0);
+                    }
+
+
+                    return null;
+                }
+            });
+        }).then(result -> {
+            System.out.println("result : " + result);
+            return null;
+        })._catch(err -> {
+            err.printStackTrace();
+            return null;
+        });
+
+
+    }
+}
+</code></pre>
+
+</body>
+</html>

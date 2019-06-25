@@ -1,0 +1,57 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+</head>
+<body>
+
+<h1>
+	Listen to balance changes
+</h1>
+<p>
+This example shows how to instantiate a Polkadot API object and use it to connect to a node and retrieve balance updates.
+
+</p>
+
+<pre><code class="java">
+package org.polkadot.example.rx;
+
+import io.reactivex.Observable;
+import org.polkadot.api.rx.ApiRx;
+import org.polkadot.rpc.provider.ws.WsProvider;
+
+public class E03_ListenToBalanceChange {
+    static String Alice = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY";
+
+    //static String endPoint = "wss://poc3-rpc.polkadot.io/";
+    //static String endPoint = "wss://substrate-rpc.parity.io/";
+    //static String endPoint = "ws://45.76.157.229:9944/";
+    static String endPoint = "ws://127.0.0.1:9944";
+
+    static void initEndPoint(String[] args) {
+        if (args != null && args.length >= 1) {
+            endPoint = args[0];
+            System.out.println(" connect to endpoint [" + endPoint + "]");
+        } else {
+            System.out.println(" connect to default endpoint [" + endPoint + "]");
+        }
+    }
+
+    public static void main(String[] args) {
+        initEndPoint(args);
+
+        WsProvider wsProvider = new WsProvider(endPoint);
+
+        Observable<ApiRx> apiRxObservable = ApiRx.create(wsProvider);
+
+        apiRxObservable.flatMap((apiRx) -> {
+            return apiRx.query().section("balances").function("freeBalance").call(Alice);
+        }).subscribe((result) -> {
+            System.out.println("freeBalance result " + result);
+        });
+
+    }
+}
+</code></pre>
+
+</body>
+</html>

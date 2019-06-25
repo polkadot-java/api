@@ -4,7 +4,6 @@ package org.polkadot.api;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.onehilltech.promises.Promise;
-import io.reactivex.Observable;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -19,7 +18,6 @@ import org.polkadot.direct.IRpcModule;
 import org.polkadot.rpc.core.IRpc;
 import org.polkadot.rpc.core.RpcCore;
 import org.polkadot.rpc.provider.IProvider;
-import org.polkadot.rpc.rx.RpcRx;
 import org.polkadot.type.storage.FromMetadata;
 import org.polkadot.type.storage.Types.ModuleStorage;
 import org.polkadot.type.storage.Types.Storage;
@@ -66,7 +64,6 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
     public Signer signer;
 
     public RpcCore rpcBase;
-    public RpcRx rpcRx;
 
     protected DecoratedRpc<ApplyResult> decoratedRpc;
 
@@ -88,7 +85,6 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      * Yields the current attached runtime metadata. Generally this is only used to construct extrinsics & storage, but is useful for current runtime inspection.
      */
     private Metadata runtimeMetadata;
-
     /**
      * Contains the version information for the current runtime.
      */
@@ -137,9 +133,6 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
         this.type = apiType;
 
         this.rpcBase = new RpcCore(thisProvider);
-
-        this.rpcRx = new RpcRx(thisProvider);
-
         this.eventemitter = new EventEmitter();
         //this.rpcRx = new RpcRx(thisProvider);
         //this.rpc = this.decoratedRpc(this.rpcRx, this::onCall);
@@ -203,16 +196,9 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
 
     }
 
-    private OnCallDefinition<Observable> rxOnCall = new OnCallDefinition<Observable>() {
-        @Override
-        public Observable apply(OnCallFunction<Observable> method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback) {
-            return method.apply(params.toArray(new Object[0]));
-        }
-    };
-
     private OnCallDefinition<Promise> promiseOnCall = new OnCallDefinition<Promise>() {
         @Override
-        public Promise apply(OnCallFunction<Promise> method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback) {
+        public Promise apply(OnCallFunction method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback) {
             List<Object> args = Lists.newArrayList();
             if (params != null) {
                 args.addAll(params);
