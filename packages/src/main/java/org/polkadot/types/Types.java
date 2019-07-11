@@ -239,4 +239,42 @@ export type RegistryTypes = {
         boolean isSigned();
     }
 
+    class ContractABIArg {
+        public String name;
+        public String type;
+    }
+
+    class ContractABIMethodBase {
+        public List<ContractABIArg> args;
+    }
+
+    class ContractABIMethod extends ContractABIMethodBase {
+        public boolean mutates;
+        public String name;
+        public long selector;
+        public String returnType;
+    }
+
+    class ContractABI {
+        public ContractABIMethodBase deploy;
+        public List<ContractABIMethod> messages;
+        public String name;
+    }
+
+    interface ContractABIFn {
+        byte[] call(Object... args);
+
+        List<ContractABIArg> getArgs();
+
+        boolean isConstant();
+
+        String getType();
+    }
+
+    abstract class Contract {
+        protected ContractABI abi;
+        protected ContractABIFn deploy;
+        protected Map<String, ContractABIFn> messages;
+    }
+
 }

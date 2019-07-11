@@ -8,12 +8,16 @@ import org.polkadot.common.keyring.pair.Index;
 import org.polkadot.common.keyring.pair.Types.PairInfo;
 import org.polkadot.utils.MapUtils;
 
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.polkadot.utils.Utils.hexToU8a;
 import static org.polkadot.utils.crypto.Types.KeypairType_SR;
 
 public class TestingPairs {
+    static Map<String, Types.KeyringPair> keyringPairMap = new ConcurrentHashMap<>();
+
     // As per substrate
     static String[] SEEDS = new String[]{"Alice", "Alice//stash", "Bob", "Charlie", "Dave", "Eve", "Ferdie"};
     // NOTE This is not great, but a testing keyring is for testing - what happens is that in most cases
@@ -64,6 +68,11 @@ public class TestingPairs {
         return testKeyring(new Types.KeyringOptions(KeypairType_SR), true);
     }
 
+    public static Types.KeyringInstance testKeyring(String keyringType) {
+        return testKeyring(new Types.KeyringOptions(keyringType), true);
+    }
+
+
     //export default function testKeyring (options: KeyringOptions = {}, isDerived: boolean = true): KeyringInstance {
     public static Types.KeyringInstance testKeyring(Types.KeyringOptions options, boolean isDerived) {
 
@@ -93,6 +102,20 @@ public class TestingPairs {
             //};
         }
         return keyring;
+    }
+
+    public static Map<String, Types.KeyringPair> testKeyringPairs(String keyringType) {
+        return testKeyringPairs(new Types.KeyringOptions(keyringType), true);
+    }
+
+    public static Map<String, Types.KeyringPair> testKeyringPairs(Types.KeyringOptions options, boolean isDerived) {
+        Types.KeyringInstance keyringInstance = testKeyring(options, isDerived);
+        List<Types.KeyringPair> pairs = keyringInstance.getPairs();
+
+        for (Types.KeyringPair pair : pairs) {
+            keyringPairMap.put((String) pair.getMeta().get("name"), pair);
+        }
+        return keyringPairMap;
     }
 
     public static Pair<byte[], byte[]> getKeys(String seed) {

@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class RpcCoder {
@@ -17,7 +16,7 @@ public class RpcCoder {
     private AtomicInteger id = new AtomicInteger(0);
 
     public Object decodeResponse(JsonRpcResponse response) {
-        assert Objects.isNull(response) : "Empty response object received";
+        assert response != null : "Empty response object received";
         assert "2.0".equals(response.getJsonrpc()) : "Invalid jsonrpc field in decoded object";
 
         boolean isSubscription = response.getParams() != null && response.getMethod() != null;
@@ -49,7 +48,7 @@ public class RpcCoder {
     private void checkError(JsonRpcError error) {
         if (error != null) {
             String data = error.getData() == null ?
-                    "" : "(" + error.getData().substring(0, Math.min(10,error.getData().length())) + ")";
+                    "" : "(" + error.getData().substring(0, Math.min(10, error.getData().length())) + ")";
             String msg = String.format("%d : %s%s", error.getCode(), error.getMessage(), data);
             logger.error("{}", msg);
             throw new RuntimeException(msg);

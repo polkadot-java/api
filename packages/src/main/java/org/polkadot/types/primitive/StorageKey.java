@@ -4,6 +4,7 @@ package org.polkadot.types.primitive;
 import org.apache.commons.lang3.ArrayUtils;
 import org.polkadot.direct.IFunction;
 import org.polkadot.types.codec.CodecUtils;
+import org.polkadot.types.codec.U8a;
 import org.polkadot.types.metadata.v0.Modules;
 
 import java.util.List;
@@ -106,7 +107,8 @@ public class StorageKey extends Bytes {
 
     static Object decodeStorageKey(Object value) {
         if (value instanceof IFunction) {
-            return ((StorageFunction) value).apply();
+            byte[] apply = ((StorageFunction) value).apply();
+            return new U8a(apply);
         } else if (value.getClass().isArray()) {
             List<Object> elements = CodecUtils.arrayLikeToList(value);
             Object remove = elements.remove(0);

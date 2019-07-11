@@ -1,14 +1,15 @@
 package org.polkadot.type.storage;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.polkadot.types.codec.CreateType;
 import org.polkadot.types.metadata.v0.Modules;
 import org.polkadot.types.metadata.v2.Storage;
 import org.polkadot.types.primitive.Bytes;
 import org.polkadot.types.primitive.StorageKey;
-import org.polkadot.utils.UtilsCrypto;
 import org.polkadot.utils.Utils;
+import org.polkadot.utils.UtilsCrypto;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -68,11 +69,13 @@ public class CreateFunction {
         // - storage.timestamp.blockPeriod()
         StorageKey.StorageFunction storageFn = new StorageKey.StorageFunction() {
             String strKey = stringKey;
+
             @Override
             public byte[] apply(Object... args) {
                 byte[] key = rawKey;
                 if (meta.getType().isMap()) {
-                    assert args == null || args.length != 1
+                    //assert args == null || args.length != 1
+                    assert ArrayUtils.isNotEmpty(args)
                             : meta.getName() + "expects one argument";
 
                     String type = meta.getType().asMap().getKey().toString();

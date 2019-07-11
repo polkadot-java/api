@@ -46,6 +46,8 @@ public class Event extends Struct {
                          String section, String method) {
             super(new Types.ConstructorDef(types), value);
 
+            System.out.println("EventData " + method + " : " + section);
+
             this.meta = meta;
             this.method = method;
             this.section = section;

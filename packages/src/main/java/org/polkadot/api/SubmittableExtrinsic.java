@@ -251,8 +251,12 @@ public interface SubmittableExtrinsic<ApplyResult> extends Types.IExtrinsic {
 
         ExtrinsicStatus.Finalized blockHash = status.asFinalized();
 
+        System.out.println("====== handle status.isFinalized() " + blockHash);
+
         DecoratedRpcMethod<Promise> getBlock = apiInterfacePromise.rpc().chain().function("getBlock");
         QueryableStorageFunction<Promise> events = apiInterfacePromise.query().section("system").function("events");
+
+        System.out.println("======try get events" );
 
         return Promise.all(
                 getBlock.invoke(blockHash),
@@ -260,6 +264,9 @@ public interface SubmittableExtrinsic<ApplyResult> extends Types.IExtrinsic {
         ).then((results) -> {
             SignedBlock signedBlock = (SignedBlock) results.get(0);
             Vector<EventRecord> allEvents = (Vector<EventRecord>) results.get(1);
+
+
+            System.out.println("====== get events" + allEvents);
 
             SubmittableResult result = new SubmittableResult(MapUtils.ofMap(
                     //          events: filterEvents(_extrinsic.hash, signedBlock, allEvents),
@@ -279,11 +286,12 @@ public interface SubmittableExtrinsic<ApplyResult> extends Types.IExtrinsic {
         });
     }
 
-    static <ApplyResult> SubmittableExtrinsic<ApplyResult> createSubmittableExtrinsic(ApiInterfacePromise apiPromise, Method extrinsic, StatusCb trackingCb,
+    static <ApplyResult> SubmittableExtrinsic<ApplyResult> createSubmittableExtrinsic(ApiBase.ApiType apiType, ApiInterfacePromise apiPromise, Method extrinsic, StatusCb trackingCb,
                                                                                       OnCallDefinition<ApplyResult> onCallDefinition) {
         Types.ConstructorCodec type = TypeRegistry.getDefaultRegistry().getOrThrow("Extrinsic", "erro");
         Types.IExtrinsic _extrinsic = (Types.IExtrinsic) type.newInstance(extrinsic);
 
+        boolean noStatusCb = apiType == ApiBase.ApiType.RX;
 
         SubmittableExtrinsic submittableExtrinsic = new SubmittableExtrinsicImpl(_extrinsic) {
 
@@ -309,14 +317,33 @@ public interface SubmittableExtrinsic<ApplyResult> extends Types.IExtrinsic {
 
             @Override
             public ApplyResult send() {
+                boolean isSubscription = noStatusCb;
                 return onCallDefinition.apply(
                         new OnCallFunction() {
                             @Override
                             public Promise apply(Object... params) {
-                                return sendObservable(apiPromise, -1, _extrinsic);
+                                if (isSubscription) {
+                                    StatusCb statusCb = null;
+                                    //    StatusCb statusCb = new StatusCb() {
+                                    //    @Override
+                                    //    public Object callback(SubmittableResult result) {
+                                    //        System.out.println("  in empty  StatusCb " + result);
+                                    //        return null;
+                                    //    }
+                                    //};
+                                    return subscribeObservable(apiPromise, -1, _extrinsic, statusCb);
+                                } else {
+                                    return sendObservable(apiPromise, -1, _extrinsic);
+                                }
+
+
+                                //return isSubscription
+                                //        ? subscribeObservable(apiPromise, -1, _extrinsic, null)
+                                //        : sendObservable(apiPromise, -1, _extrinsic);
                             }
                         },
                         Lists.newArrayList(),
+                        //noStatusCb,
                         false,
                         null
                 );
