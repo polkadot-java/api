@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.onehilltech.promises.Promise;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
+import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import org.polkadot.api.ApiBase;
 import org.polkadot.api.Types;
@@ -17,64 +18,64 @@ import java.util.List;
 
 /**
  * # @polkadot/api/rx
- * 
+ * <p>
  * ## Overview
- *
+ * <p>
  * ApiRx is a powerfull RxJS Observable wrapper around the RPC and interfaces on the Polkadot network. As a full Observable API, all interface calls return RxJS Observables, including the static `.create(...)`. In the same fashion and subscription-based methods return long-running Observables that update with the latest values.
- * 
+ * <p>
  * The API is well suited to real-time applications where the latest state is needed, unlocking the subscription-based features of Polkadot (and Substrate) clients. Some familiarity with RxJS is a requirement to use the API, however just understanding `.subscribe` and `.pipe` on Observables will unlock full-scale use thereof.
- * 
+ * <p>
  * ## Usage
- * 
+ * <p>
  * Making rpc calls -
- *
- * 
+ * <p>
+ * <p>
  * ```java
  * import org.polkadot.api.rx.ApiRx;
- * 
+ * <p>
  * // initialise via Promise & static create
  * ApiRx api = ApiRx.create().toPromise();
- * 
+ * <p>
  * // make a call to retrieve the current network head
  * api.rpc.chain.subscribeNewHead().subscribe((header) => {
- *     System.out.print("Chain is at ");
- *     System.out.println(header.blockNumber);
+ * System.out.print("Chain is at ");
+ * System.out.println(header.blockNumber);
  * });
  * ```
  * Subscribing to chain state -
- * 
+ * <p>
  * ```java
  * import org.polkadot.api.rx.ApiRx;
- * 
+ * <p>
  * // initialise a provider with a specific endpoint
  * WsProvider provider = new WsProvider('wss://example.com:9944')
- * 
+ * <p>
  * // initialise via isReady & new with specific provider
  * new ApiRx(provider)
- *     .isReady
- *     .pipe(
- *         switchMap((api) =>
- *         combineLatest([
- *             api.query.timestamp.blockPeriod(),
- *             api.query.timestamp.now().pipe(pairwise())
- *         ])
- *     )
+ * .isReady
+ * .pipe(
+ * switchMap((api) =>
+ * combineLatest([
+ * api.query.timestamp.blockPeriod(),
+ * api.query.timestamp.now().pipe(pairwise())
+ * ])
+ * )
  * )
  * .subscribe(([blockPeriod, timestamp]) => {
- *     int elapsed = timestamp[1] - timestamp[0];
- *     System.out.printf("timestamp %d \nelapsed %d \n(%d target)", timestamp[1], elapsed, blockPeriod);
+ * int elapsed = timestamp[1] - timestamp[0];
+ * System.out.printf("timestamp %d \nelapsed %d \n(%d target)", timestamp[1], elapsed, blockPeriod);
  * });
- * 
+ * <p>
  * Submitting a transaction -
- * 
+ * <p>
  * ```java
  * import org.polkadot.api.rx.ApiRx;
- * 
+ * <p>
  * const keyring = testingPairs();
- * 
+ * <p>
  * // get api via Promise
  * ApiRx api = ApiRx.create().toPromise();
- * 
+ * <p>
  * // retrieve nonce for the account
  * api.query.system
  * .accountNonce(keyring.alice.address())
@@ -94,8 +95,8 @@ import java.util.List;
  * // subscribe to overall result
  * .subscribe(({ status }) => {
  * if (status.isFinalized) {
- *     System.out.print("Completed at block hash ");
- *     System.out.println(status.asFinalized.toHex());
+ * System.out.print("Completed at block hash ");
+ * System.out.println(status.asFinalized.toHex());
  * }
  * });
  * ```
@@ -122,22 +123,22 @@ public class ApiRx extends ApiBase<Observable> {
      * Creates an ApiRx instance using the supplied provider. Returns an Observable containing the actual Api instance.
      *
      * @param provider provider that is passed to the class contructor
-     * 
-     * **Example**  
-     * 
-     * ```java
-     * import org.polkadot.api.rx.ApiRx;
-     * 
-     * ApiRx.create()
-     * .pipe(
-     * switchMap((api) =>
-     *     api.rpc.chain.subscribeNewHead()
-     * ))
-     * .subscribe((header) => {
-     *     System.out.print("new block ");
-     *     System.out.println(header.blockNumber);
-     * });
-     * ```
+     *                 <p>
+     *                 **Example**
+     *                 <p>
+     *                 ```java
+     *                 import org.polkadot.api.rx.ApiRx;
+     *                 <p>
+     *                 ApiRx.create()
+     *                 .pipe(
+     *                 switchMap((api) =>
+     *                 api.rpc.chain.subscribeNewHead()
+     *                 ))
+     *                 .subscribe((header) => {
+     *                 System.out.print("new block ");
+     *                 System.out.println(header.blockNumber);
+     *                 });
+     *                 ```
      */
     public static Observable<ApiRx> create(IProvider provider) {
         ApiRx apiRx = new ApiRx(provider);
@@ -155,12 +156,16 @@ public class ApiRx extends ApiBase<Observable> {
         Observable ret = null;
 
         if (needCallback && callback == null) {
-            //BehaviorSubject<Object> subject = BehaviorSubject.createDefault(new Object());
-            PublishSubject subject = PublishSubject.create();
+            BehaviorSubject<Object> subject = BehaviorSubject.create();
+            //PublishSubject subject = PublishSubject.create();
             callback = new IRpcFunction.SubscribeCallback() {
                 @Override
                 public void callback(Object o) {
-                    subject.onNext(o);
+                    if (method instanceof StorageOnCallFunction && o instanceof List) {
+                        subject.onNext(((List) o).get(0));
+                    } else {
+                        subject.onNext(o);
+                    }
                 }
             };
             //ret = publishSubject.publish().refCount();

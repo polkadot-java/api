@@ -4,6 +4,7 @@ package org.polkadot.api;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.onehilltech.promises.Promise;
+import io.reactivex.Observable;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,6 +19,7 @@ import org.polkadot.direct.IRpcModule;
 import org.polkadot.rpc.core.IRpc;
 import org.polkadot.rpc.core.RpcCore;
 import org.polkadot.rpc.provider.IProvider;
+import org.polkadot.rpc.rx.RpcRx;
 import org.polkadot.type.storage.FromMetadata;
 import org.polkadot.type.storage.Types.ModuleStorage;
 import org.polkadot.type.storage.Types.Storage;
@@ -64,6 +66,7 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
     public Signer signer;
 
     public RpcCore rpcBase;
+    public RpcRx rpcRx;
 
     protected DecoratedRpc<ApplyResult> decoratedRpc;
 
@@ -85,6 +88,7 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      * Yields the current attached runtime metadata. Generally this is only used to construct extrinsics & storage, but is useful for current runtime inspection.
      */
     private Metadata runtimeMetadata;
+
     /**
      * Contains the version information for the current runtime.
      */
@@ -100,16 +104,16 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      *
      * @param provider the Provider instance
      * @param apiType  the type of the API
-     * 
-     * **Example**  
-     * ```java
-     * import org.polkadot.api.ApiBase;
-     * ApiBase api = new ApiBase();
-     * api.rpc().subscribeNewHead((header) => {
-     *     System.out.println("new block ");
-     *     System.out.println(header.blockNumber);
-     * });
-     * ```
+     *                 <p>
+     *                 **Example**
+     *                 ```java
+     *                 import org.polkadot.api.ApiBase;
+     *                 ApiBase api = new ApiBase();
+     *                 api.rpc().subscribeNewHead((header) => {
+     *                 System.out.println("new block ");
+     *                 System.out.println(header.blockNumber);
+     *                 });
+     *                 ```
      */
     public ApiBase(IProvider provider, ApiType apiType) {
         this(new ApiOptions(), provider, apiType);
@@ -133,6 +137,9 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
         this.type = apiType;
 
         this.rpcBase = new RpcCore(thisProvider);
+
+        this.rpcRx = new RpcRx(thisProvider);
+
         this.eventemitter = new EventEmitter();
         //this.rpcRx = new RpcRx(thisProvider);
         //this.rpc = this.decoratedRpc(this.rpcRx, this::onCall);
@@ -195,6 +202,15 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
         }
 
     }
+
+    private OnCallDefinition<Observable> rxOnCall = new OnCallDefinition<Observable>() {
+        @Override
+        public Observable apply(OnCallFunction method, List<Object> params, boolean needCallback, IRpcFunction.SubscribeCallback callback) {
+            //return method.apply(params.toArray(new Object[0]));
+            //TODO 2019-06-24 21:51
+            throw new UnsupportedOperationException();
+        }
+    };
 
     private OnCallDefinition<Promise> promiseOnCall = new OnCallDefinition<Promise>() {
         @Override
@@ -463,7 +479,7 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
 
             @Override
             public SubmittableExtrinsic call(Object... params) {
-                return SubmittableExtrinsic.createSubmittableExtrinsic(promisApi, method.apply(params), null, onCallDefinition);
+                return SubmittableExtrinsic.createSubmittableExtrinsic(ApiBase.this.type, promisApi, method.apply(params), null, onCallDefinition);
             }
         };
         return ret;
@@ -477,8 +493,8 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      * **Example**
      * ```java
      * api.derive.chain.bestNumber((number) => {
-     *     System.out.print("best number ");
-     *     System.out.println(number);
+     * System.out.print("best number ");
+     * System.out.println(number);
      * });
      * ```
      */
@@ -496,8 +512,8 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      * <p>
      * ```java
      * api.query.balances.freeBalance(<accountId>, (balance) => {
-     *     System.out.print("new balance ");
-     *     System.out.println(balance);
+     * System.out.print("new balance ");
+     * System.out.println(balance);
      * });
      * ```
      */
@@ -514,8 +530,8 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      * **Example**
      * ```java
      * api.rpc.chain.subscribeNewHead((header) => {
-     *     System.out.print("new header ");
-     *     System.out.println(header);
+     * System.out.print("new header ");
+     * System.out.println(header);
      * });
      * ```
      */
@@ -532,8 +548,8 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      * api.tx.balances
      * .transfer(<recipientId>, <balance>)
      * .signAndSend(<keyPair>, ({status}) => {
-     *     System.out.print("tx status ");
-     *     System.out.println(status.asFinalized.toHex());
+     * System.out.print("tx status ");
+     * System.out.println(status.asFinalized.toHex());
      * });
      * ```
      */
@@ -555,16 +571,16 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      *
      * @param type    The type of event to listen to. Available events are `connected`, `disconnected`, `ready` and `error`
      * @param handler The callback to be called when the event fires. Depending on the event type, it could fire with additional arguments.
-     * **Example**  
-	 *
-     * ```java
-     * api.on('connected', () => {
-     *     System.out.println("API has been connected to the endpoint");
-     * });
-     * api.on('disconnected', () => {
-     *     System.out.println("API has been disconnected from the endpoint");
-     * });
-     * ```
+     *                **Example**
+     *                <p>
+     *                ```java
+     *                api.on('connected', () => {
+     *                System.out.println("API has been connected to the endpoint");
+     *                });
+     *                api.on('disconnected', () => {
+     *                System.out.println("API has been disconnected from the endpoint");
+     *                });
+     *                ```
      */
     @Override
     public EventEmitter on(IProvider.ProviderInterfaceEmitted type, EventEmitter.EventListener handler) {
@@ -576,15 +592,15 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
      *
      * @param type    The type of event to listen to. Available events are `connected`, `disconnected`, `ready` and `error`
      * @param handler The callback to be called when the event fires. Depending on the event type, it could fire with additional arguments.
-     * **Example**  
-     * ```java
-     * api.once('connected', () => {
-     *     System.out.println("API has been connected to the endpoint");
-     * });
-     * api.once('disconnected', () => {
-     *     System.out.println("API has been disconnected from the endpoint");
-     * });
-     * ```
+     *                **Example**
+     *                ```java
+     *                api.once('connected', () => {
+     *                System.out.println("API has been connected to the endpoint");
+     *                });
+     *                api.once('disconnected', () => {
+     *                System.out.println("API has been disconnected from the endpoint");
+     *                });
+     *                ```
      */
     @Override
     public EventEmitter once(IProvider.ProviderInterfaceEmitted type, EventEmitter.EventListener handler) {
@@ -607,6 +623,9 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
             queryableStorage.addSection(sectionName, moduleStorage);
         }
         return queryableStorage;
+    }
+
+    protected static abstract class StorageOnCallFunction implements OnCallFunction {
     }
 
     private <ApplyResult> QueryableStorageFunction<ApplyResult> decorateStorageEntry(StorageKey.StorageFunction storageMethod, OnCallDefinition<ApplyResult> onCallDefinition) {
@@ -652,21 +671,23 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
                     };
                 }
                 return onCallDefinition.apply(
-                        new OnCallFunction() {
+                        new StorageOnCallFunction() {
                             @Override
                             public Promise apply(Object... params) {
-                                return subscribeStorage.invoke(
-                                        params
-                                ).then((result) ->
-                                        {
-                                            //TODO 2019-06-16 15:29 promise api return first, rx api return list
-                                            if (finalCallback == null) {
-                                                return Promise.value(((List) result).get(0));
-                                            }
-                                            IRpcFunction.Unsubscribe<Promise> result1 = (IRpcFunction.Unsubscribe<Promise>) result;
-                                            return Promise.value(result1);
-                                        }
-                                );
+                                return subscribeStorage.invoke(params)
+                                        .then((result) ->
+                                                {
+                                                    //TODO 2019-06-16 15:29 promise api return first, rx api return list
+                                                    if (finalCallback == null && result instanceof List) {
+                                                        return Promise.value(((List) result).get(0));
+                                                    }
+                                                    IRpcFunction.Unsubscribe<Promise> result1 = (IRpcFunction.Unsubscribe<Promise>) result;
+                                                    return Promise.value(result1);
+                                                }
+                                        )._catch(err -> {
+                                            err.printStackTrace();
+                                            return null;
+                                        });
                             }
                         },
                         Lists.newArrayList(new Object[]{new Object[]{new Object[]{storageMethod, args}}}),
@@ -762,7 +783,7 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
         return subscribeStorage.invoke(
                 new Object[]{
                         new Object[]{
-                                new Object[]{storageMethod, key}
+                                new Object[]{storageMethod, new Object[]{key}}
                         }
                 }
         ).then((data) -> {
@@ -838,26 +859,29 @@ public abstract class ApiBase<ApplyResult> implements Types.ApiBaseInterface<App
                     @Override
                     public Promise apply(Object... params) {
 
-                        return subscribeStorage.invoke(
-                                new Object[]{
-                                        new Object[]{
-                                                params
-                                        }
-                                }
-                        ).then(result -> {
-                            List<Object> list = CodecUtils.arrayLikeToList(result);
-                            if (!list.isEmpty()) {
-                                head.set((Codec) list.get(0));
-                            }
-                            return getNext(head.get(), head.get(), storageMethod);
-
-                        });
-
+                        return subscribeStorage.invoke(params)
+                                .then(result -> {
+                                    List<Object> list = CodecUtils.arrayLikeToList(result);
+                                    if (!list.isEmpty()) {
+                                        head.set((Codec) list.get(0));
+                                    }
+                                    //return getNext(head.get(), head.get(), storageMethod);
+                                    Promise next = getNext(head.get(), head.get(), storageMethod);
+                                    if (callback != null) {
+                                        return next.then(ret -> {
+                                            callback.callback(ret);
+                                            return Promise.value(ret);
+                                        });
+                                    } else {
+                                        return next;
+                                    }
+                                });
                     }
                 },
-                Lists.newArrayList(storageMethod.getHeadKey()),
-                true,
-                callback
+                Lists.newArrayList(new Object[]{new Object[]{storageMethod.getHeadKey()}}),
+                //Lists.newArrayList(storageMethod.getHeadKey()),
+                ApiBase.this instanceof ApiRx,
+                null
         );
     }
 

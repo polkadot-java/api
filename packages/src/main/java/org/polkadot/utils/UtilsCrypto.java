@@ -15,8 +15,8 @@ public class UtilsCrypto {
     /**
      * Creates a blake2b u8a from the input.
      * From a `Uint8Array` input, create the blake2b and return the result as a u8a with the specified `bitLength`.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * blake2AsU8a("abc"); // => [0xba, 0x80, 0xa53, 0xf98, 0x1c, 0x4d, 0x0d]
      * ```
@@ -64,8 +64,8 @@ public class UtilsCrypto {
     /**
      * Creates a xxhash64 u8a from the input.
      * From either a `string`, `Uint8Array` or a `Buffer` input, create the xxhash64 and return the result as a `Uint8Array` with the specified `bitLength`.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * xxhashAsU8a("abc"); // => 0x44bc2cf5ad770999
      * ```
@@ -96,8 +96,8 @@ public class UtilsCrypto {
     /**
      * Creates a xxhash BN from the input.
      * From either a `string`, `Uint8Array` or a `Buffer` input, create the xxhash and return the result as a BN.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * xxhash64AsBn("abcd", 0xabcd)); // => new BN(0xe29f70f8b8c96df7)
      * ```
@@ -116,8 +116,8 @@ public class UtilsCrypto {
     /**
      * Creates a xxhash non-prefixed hex from the input.
      * From either a `string`, `Uint8Array` or a `Buffer` input, create the xxhash and return the result as a non-prefixed hex string.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * xxhash64AsRaw("abcd", 0xabcd)); // => e29f70f8b8c96df7
      * ```
@@ -133,8 +133,8 @@ public class UtilsCrypto {
     /**
      * Creates a hex number from the input.
      * From either a `string`, `Uint8Array` or a `Buffer` input, create the xxhash and return the result as a hex number
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * xxhash64AsValue("abcd", 0xabcd)); // => e29f70f8b8c96df7
      * ```
@@ -171,8 +171,8 @@ public class UtilsCrypto {
     /**
      * Creates a Uint8Array filled with random bytes.
      * Returns a `Uint8Array` with the specified (optional) length filled with random bytes.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * randomAsU8a(); // => Uint8Array([...])
      * ```
@@ -189,6 +189,27 @@ public class UtilsCrypto {
     public static byte[] randomAsU8a() {
         return randomAsU8a(32);
     }
+
+    /**
+     * @name randomAsHex
+     * @summary Creates a hex string filled with random bytes.
+     * @description Returns a hex string with the specified (optional) length filled with random bytes.
+     * @example <BR>
+     * <p>
+     * ```javascript
+     * import { randomAsHex } from '@polkadot/util-crypto';
+     * <p>
+     * randomAsHex(); // => 0x...
+     * ```
+     */
+    public static String randomAsHex(int length) {
+        return Utils.u8aToHex(randomAsU8a(length));
+    }
+
+    public static String randomAsHex() {
+        return randomAsHex(32);
+    }
+
 
     public static void main(String[] args) {
         //e29f70f8b8c96df7

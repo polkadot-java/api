@@ -1,17 +1,24 @@
 package org.polkadot.rpc.rx;
 
+import com.google.common.collect.Lists;
 import com.onehilltech.promises.Promise;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
 import org.polkadot.common.EventEmitter;
 import org.polkadot.direct.IRpcFunction;
 import org.polkadot.rpc.core.IRpc;
 import org.polkadot.rpc.core.RpcCore;
 import org.polkadot.rpc.provider.IProvider;
 import org.polkadot.utils.RxUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * RpcRx
@@ -28,15 +35,11 @@ import org.polkadot.utils.RxUtils;
  * ```
  */
 public class RpcRx extends Types.RpcRxInterface {
+    private static final Logger logger = LoggerFactory.getLogger(RpcRx.class);
 
     private RpcCore api;
     private EventEmitter eventEmitter;
     private BehaviorSubject<Boolean> isConnected;
-
-    //protected RpcRxInterfaceSection author;
-    //protected RpcRxInterfaceSection chain;
-    //protected RpcRxInterfaceSection state;
-    //protected RpcRxInterfaceSection system;
 
     /**
      * @param provider An API provider using HTTP or WebSocket
@@ -114,7 +117,7 @@ public class RpcRx extends Types.RpcRxInterface {
             return new Types.RpcRxInterfaceMethod() {
                 @Override
                 public Observable<Object> call(Object... params) {
-                    return createReplay(name, section, params);
+                    return createReplayV2(name, section, params);
                 }
             };
         }
@@ -126,6 +129,45 @@ public class RpcRx extends Types.RpcRxInterface {
                 return RxUtils.fromPromise(invoke);
             }
         };
+    }
+
+    private Observable createReplayV2(String name, IRpc.RpcInterfaceSection section, Object... params) {
+
+        IRpcFunction function = section.function(name);
+
+        PublishSubject subject = PublishSubject.create();
+        IRpcFunction.SubscribeCallback replayCallBack = new IRpcFunction.SubscribeCallback() {
+            @Override
+            public void callback(Object o) {
+                subject.onNext(o);
+            }
+        };
+
+        List<Object> args = Lists.newArrayList(params);
+        args.add(replayCallBack);
+
+        Promise subscribe = function.invoke(args.toArray(new Object[0]))
+                ._catch(error -> {
+                    subject.onError(error);
+                    return null;
+                });
+
+        Observable ret = subject.doOnDispose(new Action() {
+            @Override
+            public void run() throws Exception {
+                subscribe.then((result) -> {
+                    IRpcFunction.Unsubscribe unsubscribe = (IRpcFunction.Unsubscribe) result;
+                    logger.debug(" doOnDispose unsub");
+                    unsubscribe.unsubscribe();
+                    return null;
+                })._catch(err -> {
+                    err.printStackTrace();
+                    return null;
+                });
+            }
+        });
+
+        return ret.replay(1).refCount();
     }
 
     private Observable createReplay(String name, IRpc.RpcInterfaceSection section, Object... params) {

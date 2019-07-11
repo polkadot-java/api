@@ -141,7 +141,7 @@ public class Base58 {
             String encode = Base58.encode(decode);
             System.out.println(encode);
 
-            System.out.println();
+            //System.out.println();
         }
 
         System.out.println("=========");
@@ -164,7 +164,7 @@ public class Base58 {
             String encode = org.bitcoinj.core.Base58.encode(decode);
             System.out.println(encode);
 
-            System.out.println();
+            //System.out.println();
         }
 
         //for (byte b : ndata) {

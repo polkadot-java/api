@@ -35,7 +35,8 @@ public class Tuple extends AbstractArray<Codec> {
     private static List<Codec> decodeTuple(List<Types.ConstructorCodec> types, Object value) {
         if (Utils.isU8a(value)) {
             ArrayList<Codec> results = Lists.newArrayList();
-            CodecUtils.decodeU8a((byte[]) value, types, results);
+            //CodecUtils.decodeU8a((byte[]) value, types, results);
+            CodecUtils.decodeU8a(Utils.u8aToU8a(value), types, results);
             return results;
         } else if (Utils.isHex(value)) {
             return decodeTuple(types, Utils.hexToU8a((String) value));
@@ -109,7 +110,7 @@ public class Tuple extends AbstractArray<Codec> {
 
     /**
      * @param isBare true when the value has none of the type-specific prefixes (internal)
-     * Encodes the value as a Uint8Array as per the parity-codec specifications
+     *               Encodes the value as a Uint8Array as per the parity-codec specifications
      */
     @Override
     public byte[] toU8a(boolean isBare) {

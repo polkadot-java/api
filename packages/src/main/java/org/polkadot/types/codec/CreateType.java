@@ -192,7 +192,7 @@ public class CreateType {
             return type;
         }
 
-        assert CollectionUtils.isEmpty(value.sub) : "Expected subtype for " + value.info;
+        assert CollectionUtils.isNotEmpty(value.sub) : "Expected subtype for " + value.info;
 
         switch (value.info) {
             case Compact:
