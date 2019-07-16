@@ -52,7 +52,7 @@ public class E05_ReadStorage {
                     }
             );
         }).switchMap((result) -> {
-            Pair<ApiRx, Object> pair = result;
+            Pair<ApiRx, Object> pair = (Pair<ApiRx, Object>)result;
             ApiRx apiRx = pair.getLeft();
             Object param = pair.getRight();
 
@@ -91,12 +91,12 @@ public class E05_ReadStorage {
             );
 
         }).subscribe((result) -> {
+            List<Object> resultList = (List<Object>)result;
+            System.out.println("accountNonce(" + Alice + ") " + resultList.get(0));
 
-            System.out.println("accountNonce(" + Alice + ") " + result.get(0));
-
-            List<Object> validators = CodecUtils.arrayLikeToList(result.get(2));
+            List<Object> validators = CodecUtils.arrayLikeToList(resultList.get(2));
             if (CollectionUtils.isNotEmpty(validators)) {
-                List<Object> balances = CodecUtils.arrayLikeToList(result.get(3));
+                List<Object> balances = CodecUtils.arrayLikeToList(resultList.get(3));
 
                 System.out.println("validators");
                 for (int i = 0; i < validators.size(); i++) {

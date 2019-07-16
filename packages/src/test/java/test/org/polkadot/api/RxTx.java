@@ -51,7 +51,8 @@ public class RxTx {
     public static void main(String[] args) {
         initApi();
 
-        makeProposal();
+        makeTransfer();
+        //makeProposal();
     }
 
     //@After

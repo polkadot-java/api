@@ -46,8 +46,9 @@ public class E01_SimpleConnect {
                     }
 
             );
-        }).subscribe((String[] result) -> {
-            System.out.println("You are connected to chain [" + result[0] + "] using [" + result[1] + "] v[" + result[2] + "]");
+        }).subscribe((result) -> {
+            String[] infos = (String[])result;
+            System.out.println("You are connected to chain [" + infos[0] + "] using [" + infos[1] + "] v[" + infos[2] + "]");
         });
     }
 }

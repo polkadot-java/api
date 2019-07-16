@@ -24,6 +24,8 @@ public class PromiseTx {
 
     //-Djava.library.path=./libs
     public static void main(String[] args) {
+        initApi();
+
         //makeTransferSignThenSend();
         makeAProposal();
     }
