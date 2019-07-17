@@ -51,7 +51,7 @@ public class RxTx {
     public static void main(String[] args) {
         initApi();
 
-        makeTransfer();
+        makeTransferCB();
         //makeProposal();
     }
 
@@ -101,6 +101,55 @@ public class RxTx {
                     }
                 });
     }
+
+
+    static void makeTransferCB() {
+
+        System.out.println(" ======= makeTransfer");
+
+        api.query()
+                .section("system")
+                .function("accountNonce")
+                .call(keyring.get("alice").address())
+                .switchMap((nonce) -> {
+
+                    System.out.println(" nonce " + nonce);
+
+                    org.polkadot.types.Types.IExtrinsic sign = api.tx()
+                            .section("balances")
+                            .function("transfer")
+                            .call(keyring.get("bob").address(), 123)
+                            .sign(keyring.get("alice"), new org.polkadot.types.Types.SignatureOptions().setNonce(nonce));
+
+                    SubmittableExtrinsic<Promise> sign1 = (SubmittableExtrinsic) sign;
+                    return sign1.send(
+                            new SubmittableExtrinsic.StatusCb() {
+
+                                @Override
+                                public Object callback(SubmittableExtrinsic.SubmittableResult result) {
+                                    SubmittableExtrinsic.SubmittableResult submittableResult = result;
+                                    System.out.println("result  " + result + " \n " + result.getClass());
+                                    System.out.println("status  " + submittableResult.getStatus());
+                                    if (submittableResult.getStatus().isFinalized()) {
+                                        System.exit(0);
+                                    }
+                                    return null;
+                                }
+                            }
+
+                    );
+                })
+                .subscribe((result) -> {
+                    //SubmittableExtrinsic.SubmittableResult submittableResult = (SubmittableExtrinsic.SubmittableResult) result;
+                    //System.out.println("result  " + result + " \n " + result.getClass());
+                    //System.out.println("status  " + submittableResult.getStatus());
+                    //if (submittableResult.getStatus().isFinalized()) {
+                    //    System.exit(0);
+                    //}
+                    System.out.println(" rx result " + result);
+                });
+    }
+
 
     static void makeProposal() {
 
