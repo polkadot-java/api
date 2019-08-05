@@ -7,6 +7,8 @@ plugins {
     id('signing')
 }
 
+// FIXME: For the origin project, something like io.github.polkadot-java would be a suitable group name
+// which has to be registered with the central OOSRH (sonatype org)
 group = "net.cloudburo"
 archivesBaseName = "polkadot-java"
 version '1.0-SNAPSHOT'
@@ -133,6 +135,7 @@ uploadArchives {
                 name 'Java Substrate Client Library'
                 packaging 'jar'
                 // optionally artifactId can be defined here
+                // FIXME: Decscription to be adjusted 
                 description 'Java Polkadot API, this is a clone of https://github.com/polkadot-java/api'
                 url 'https://cloudburo.net'
 
@@ -148,7 +151,8 @@ uploadArchives {
                         url 'https://www.gnu.org/licenses/gpl-3.0.html'
                     }
                 }
-
+                
+                // FIXME: Adjust developer to the one supporting the initial library
                 developers {
                     developer {
                         id 'felix'
