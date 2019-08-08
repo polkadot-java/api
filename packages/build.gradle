@@ -7,9 +7,8 @@ plugins {
     id('signing')
 }
 
-// FIXME: For the origin project, something like io.github.polkadot-java would be a suitable group name
-// which has to be registered with the central OOSRH (sonatype org)
-group = "net.cloudburo"
+// Group Name which has to be registered with the central OOSRH (sonatype org)
+group = "io.github.polkadot-java"
 archivesBaseName = "polkadot-java"
 version '1.0-SNAPSHOT'
 
@@ -135,14 +134,13 @@ uploadArchives {
                 name 'Java Substrate Client Library'
                 packaging 'jar'
                 // optionally artifactId can be defined here
-                // FIXME: Decscription to be adjusted 
-                description 'Java Polkadot API, this is a clone of https://github.com/polkadot-java/api'
+                description 'Java APIs around Polkadot and any Substrate-based chain RPC calls. It is dynamically generated based on what the Substrate runtime provides in terms of metadata.'
                 url 'https://cloudburo.net'
 
                 scm {
-                    connection 'scm:git:https://github.com/cloudburo/api'
-                    developerConnection 'scm:git:https://github.com/cloudburo/api'
-                    url 'https://github.com/cloudburo/api'
+                    connection 'scm:git:https://github.com/polkadot-java/api'
+                    developerConnection 'scm:git:https://github.com/polkadot-java/api'
+                    url 'https://github.com/polkadot-java/api'
                 }
 
                 licenses {
@@ -152,13 +150,7 @@ uploadArchives {
                     }
                 }
                 
-                // FIXME: Adjust developer to the one supporting the initial library
                 developers {
-                    developer {
-                        id 'felix'
-                        name 'Felix Kuestahler'
-                        email 'support@cloudburo.net'
-                    }
                     developer {
                         id 'security'
                         name 'SecurityIssueReporting'
