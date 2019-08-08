@@ -4,10 +4,13 @@ plugins {
     id('idea')
     id('eclipse')
     id('application')
-
+    id('signing')
 }
 
-group 'polkadot-java'
+// FIXME: For the origin project, something like io.github.polkadot-java would be a suitable group name
+// which has to be registered with the central OOSRH (sonatype org)
+group = "net.cloudburo"
+archivesBaseName = "polkadot-java"
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
@@ -23,7 +26,7 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 
-
+        
 dependencies {
     compile fileTree(dir: 'libs', includes: ['*jar'])
 
@@ -90,3 +93,82 @@ dependencies {
 
 }
 
+javadoc {
+    options.addBooleanOption('Xdoclint:none', true )
+}
+
+tasks {
+
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+        from javadoc
+    }
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+}
+
+// javadoc removed
+artifacts {
+    archives  javadocJar,sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Java Substrate Client Library'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                // FIXME: Decscription to be adjusted 
+                description 'Java Polkadot API, this is a clone of https://github.com/polkadot-java/api'
+                url 'https://cloudburo.net'
+
+                scm {
+                    connection 'scm:git:https://github.com/cloudburo/api'
+                    developerConnection 'scm:git:https://github.com/cloudburo/api'
+                    url 'https://github.com/cloudburo/api'
+                }
+
+                licenses {
+                    license {
+                        name 'GNU Public Licences, Version 3.0'
+                        url 'https://www.gnu.org/licenses/gpl-3.0.html'
+                    }
+                }
+                
+                // FIXME: Adjust developer to the one supporting the initial library
+                developers {
+                    developer {
+                        id 'felix'
+                        name 'Felix Kuestahler'
+                        email 'support@cloudburo.net'
+                    }
+                    developer {
+                        id 'security'
+                        name 'SecurityIssueReporting'
+                        organizationUrl 'https://hackerone.com/central-security-project'
+                        roles {
+                                role  'security'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
