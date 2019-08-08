@@ -135,7 +135,7 @@ uploadArchives {
                 packaging 'jar'
                 // optionally artifactId can be defined here
                 description 'Java APIs around Polkadot and any Substrate-based chain RPC calls. It is dynamically generated based on what the Substrate runtime provides in terms of metadata.'
-                url ''https://polkadot-java.github.io/
+                url 'https://polkadot-java.github.io/'
 
                 scm {
                     connection 'scm:git:https://github.com/polkadot-java/api'
