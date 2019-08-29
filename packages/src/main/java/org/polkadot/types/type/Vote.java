@@ -34,4 +34,12 @@ public class Vote extends I8 {
     public boolean isNay() {
         return !this.isAye();
     }
+
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    @Override
+    public String toRawType() {
+        return "Vote";
+    }
 }

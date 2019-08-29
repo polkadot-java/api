@@ -37,25 +37,25 @@ public class AccountId extends U8aFixed {
     }
 
 
-  /**
-   * Compares the value of the input to see if there is a match
-   */
+    /**
+     * Compares the value of the input to see if there is a match
+     */
     @Override
     public boolean eq(Object other) {
         return super.eq(AccountId.decodeAccountId(other));
     }
 
-  /**
-   * Converts the Object to JSON, typically used for RPC transfers
-   */
+    /**
+     * Converts the Object to JSON, typically used for RPC transfers
+     */
     @Override
     public Object toJson() {
         return this.toString();
     }
 
-  /**
-   * Returns the string representation of the value
-   */
+    /**
+     * Returns the string representation of the value
+     */
     @Override
     public String toString() {
         return AccountId.encode(this);
@@ -68,5 +68,13 @@ public class AccountId extends U8aFixed {
         public AccountIdOf(Object value) {
             super(value);
         }
+    }
+
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    @Override
+    public String toRawType() {
+        return "AccountId";
     }
 }

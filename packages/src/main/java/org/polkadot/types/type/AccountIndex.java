@@ -122,4 +122,12 @@ public class AccountIndex extends U32 {
         int length = calcLength(this);
         return AddressCodec.encodeAddress(ArrayUtils.subarray(this.toU8a(), 0, length));
     }
+
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    @Override
+    public String toRawType() {
+        return "AccountIndex";
+    }
 }

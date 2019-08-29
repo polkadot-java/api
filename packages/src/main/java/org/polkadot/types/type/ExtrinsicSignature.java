@@ -177,4 +177,12 @@ public class ExtrinsicSignature extends Struct implements Types.IExtrinsicSignat
             return new byte[]{(byte) this.version()};
         }
     }
+
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    @Override
+    public String toRawType() {
+        return "Method";
+    }
 }

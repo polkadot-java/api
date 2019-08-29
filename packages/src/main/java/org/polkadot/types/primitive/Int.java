@@ -9,6 +9,7 @@ import org.polkadot.utils.Utils;
  * the bitLength is provided and any additional use keeps the number to this
  * length. This extends `BN`, so all methods available on a normal `BN` object
  * is available here.
+ *
  * @noInheritDoc
  */
 public class Int extends AbstractInt {
@@ -29,11 +30,18 @@ public class Int extends AbstractInt {
 
     /**
      * @param isBare true when the value has none of the type-specific prefixes (internal)
-     * Encodes the value as a Uint8Array as per the parity-codec specifications
+     *               Encodes the value as a Uint8Array as per the parity-codec specifications
      */
     @Override
     public byte[] toU8a(boolean isBare) {
         return Utils.bnToU8a(this, true, true, this.bitLength());
     }
 
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    @Override
+    public String toRawType() {
+        return "i" + this.bitLength();
+    }
 }

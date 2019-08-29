@@ -12,6 +12,19 @@ public interface Codec {
 
     Object toJson();
 
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    default String toRawType(boolean isBare) {
+        return toRawType();
+    }
+
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    String toRawType();
+
+
     //String toString();
 
     default byte[] toU8a() {
