@@ -57,12 +57,4 @@ public class Linkage<T extends Codec> extends Struct {
                     , Lists.newArrayList(keys, values));
         }
     }
-
-    /**
-     * @description Returns the base runtime type name for this instance
-     */
-    @Override
-    public String toRawType() {
-        return "Linkage<" + this.getNext().toRawType(true) + ">";
-    }
 }

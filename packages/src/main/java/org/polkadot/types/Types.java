@@ -1,6 +1,5 @@
 package org.polkadot.types;
 
-import com.google.common.collect.Maps;
 import org.polkadot.types.codec.U8a;
 import org.polkadot.types.metadata.v0.Modules;
 import org.polkadot.types.primitive.Method;
@@ -81,14 +80,6 @@ public interface Types {
                 //String name = gType instanceof Class ? ((Class) gType).getSimpleName() : gType.getTypeName();
                 //this.add(name, type);
             }
-        }
-
-        public Map<String, ConstructorCodec> getAsMap() {
-            Map<String, ConstructorCodec> ret = Maps.newLinkedHashMap();
-            for (int i = 0; i < this.names.size(); i++) {
-                ret.put(this.names.get(i), this.types.get(i));
-            }
-            return ret;
         }
 
         //

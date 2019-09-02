@@ -354,12 +354,4 @@ public class Method extends Struct implements Types.IMethod {
         return this.meta;
     }
 
-
-    /**
-     * @description Returns the base runtime type name for this instance
-     */
-    @Override
-    public String toRawType() {
-        return "Method";
-    }
 }

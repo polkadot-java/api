@@ -10,12 +10,4 @@ public class H160 extends U8aFixed {
     public H160(Object value) {
         super(value, 160);
     }
-
-    /**
-     * @description Returns the base runtime type name for this instance
-     */
-    @Override
-    public String toRawType() {
-        return "H160";
-    }
 }

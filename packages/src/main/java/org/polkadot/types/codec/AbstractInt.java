@@ -130,12 +130,4 @@ public abstract class AbstractInt extends BigInteger implements Codec {
      */
     @Override
     public abstract byte[] toU8a(boolean isBare);
-
-
-    /**
-     * @description Returns the base runtime type name for this instance
-     */
-    @Override
-    public abstract String toRawType();
-
 }

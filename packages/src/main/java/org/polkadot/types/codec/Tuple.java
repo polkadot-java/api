@@ -116,27 +116,4 @@ public class Tuple extends AbstractArray<Codec> {
     public byte[] toU8a(boolean isBare) {
         return Utils.u8aConcat(this.stream().map(e -> e.toU8a(isBare)).collect(Collectors.toList()));
     }
-
-    /*
-    *
-
-    public toRawType (): string {
-    const types = (
-                Array.isArray(this._Types)
-                        ? this._Types
-                        : Object.values(this._Types)
-        ).map((Type): string => new Type().toRawType());
-
-        return `(${types.join(',')})`;
-    }
-    * */
-
-    /**
-     * @description Returns the base runtime type name for this instance
-     */
-    @Override
-    public String toRawType() {
-        List<String> types = this.types.getTypes().stream().map(type -> type.newInstance().toRawType()).collect(Collectors.toList());
-        return String.join(",", types.toArray(new String[0]));
-    }
 }

@@ -1,7 +1,6 @@
 package org.polkadot.types.primitive;
 
 
-import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.ArrayUtils;
 import org.polkadot.types.Codec;
 import org.polkadot.types.codec.Compactable;
@@ -141,13 +140,4 @@ public class Moment extends Date implements Compactable {
             super(value);
         }
     }
-
-    /**
-     * @description Returns the base runtime type name for this instance
-     */
-    @Override
-    public String toRawType() {
-        return "Moment";
-    }
-
 }
