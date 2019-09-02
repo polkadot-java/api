@@ -14,28 +14,29 @@ import static org.polkadot.utils.Utils.compactToU8a;
  * AbstractArray
  * This manages codec arrays. It is an extension to Array, providing
  * specific encoding/decoding on top of the base type.
+ *
  * @noInheritDoc
  */
-public class AbstractArray<T extends Codec> extends ArrayList<T> implements Codec {
+public abstract class AbstractArray<T extends Codec> extends ArrayList<T> implements Codec {
 
-	/**
-	* Checks if the value is an empty value
-	*/
+    /**
+     * Checks if the value is an empty value
+     */
     @Override
     public boolean isEmpty() {
         return this.size() == 0;
     }
 
-	/**
-	* The length of the value
-	*/
+    /**
+     * The length of the value
+     */
     public int length() {
         return this.size();
     }
 
-	/**
-	* The length of the value when encoded as a Uint8Array
-	*/
+    /**
+     * The length of the value when encoded as a Uint8Array
+     */
     @Override
     public int getEncodedLength() {
         int total = 0;
@@ -46,26 +47,26 @@ public class AbstractArray<T extends Codec> extends ArrayList<T> implements Code
         return total;
     }
 
-	/**
-	* Compares the value of the input to see if there is a match
-	*/
+    /**
+     * Compares the value of the input to see if there is a match
+     */
     @Override
     public boolean eq(Object other) {
         //TODO 2019-05-07 19:13     return compareArray(this, other);
         return CodecUtils.compareArray(this, other);
     }
 
-	/**
-	* Returns a hex string representation of the value
-	*/
+    /**
+     * Returns a hex string representation of the value
+     */
     @Override
     public String toHex() {
         return Utils.u8aToHex(this.toU8a());
     }
 
-	/**
-	* Converts the Object to JSON, typically used for RPC transfers
-	*/
+    /**
+     * Converts the Object to JSON, typically used for RPC transfers
+     */
     @Override
     public Object toJson() {
         List<Object> collect = this.stream().map(e ->
@@ -74,10 +75,11 @@ public class AbstractArray<T extends Codec> extends ArrayList<T> implements Code
         return JSONArray.toJSON(collect);
     }
 
-	/**
-	* Encodes the value as a Uint8Array as per the parity-codec specifications
-	* @param isBare true when the value has none of the type-specific prefixes (internal)
-	*/
+    /**
+     * Encodes the value as a Uint8Array as per the parity-codec specifications
+     *
+     * @param isBare true when the value has none of the type-specific prefixes (internal)
+     */
     @Override
     public byte[] toU8a(boolean isBare) {
         List<byte[]> encoded = this.stream().map(e -> e.toU8a(isBare)).collect(Collectors.toList());
@@ -104,7 +106,7 @@ public class AbstractArray<T extends Codec> extends ArrayList<T> implements Code
     /**
      * @param callbackfn The mapping function
      * @param thisArg    The `this` onject to apply the result to
-     * Maps the array with the callback
+     *                   Maps the array with the callback
      */
     //map<U> (callbackfn: (value: T, index: number, array: Array<T>) => U, thisArg?: any): Array<U> {
     //      return this.toArray().map(callbackfn, thisArg);
@@ -112,4 +114,11 @@ public class AbstractArray<T extends Codec> extends ArrayList<T> implements Code
     public <T> T getFiled(int index) {
         return (T) get(index);
     }
+
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    @Override
+    public abstract String toRawType();
+
 }

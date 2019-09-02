@@ -26,9 +26,9 @@ public class Utils {
     /**
      * Tests for a hex string.
      * Checks to see if the input value is a `0x` prefixed hex string. Optionally (`bitLength` !== -1) checks to see if the bitLength is correct.
-	 * 
-     * **example** 
-     * 
+     * <p>
+     * **example**
+     * <p>
      * ```java
      * isHex("0x1234"); // => true
      * isHex("0x1234", 8); // => false
@@ -60,8 +60,8 @@ public class Utils {
     /**
      * Creates a Buffer object from a hex string.
      * `null` inputs returns an empty `Uint8Array` result. Hex input values return the actual bytes value converted to a Uint8Array. Anything that is not a hex string (including the `0x` prefix) throws an error.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * hexToU8a("0x80001f"); // Uint8Array([0x80, 0x00, 0x1f])
      * hexToU8a("0x80001f", 32); // Uint8Array([0x00, 0x80, 0x00, 0x1f])
@@ -100,8 +100,8 @@ public class Utils {
     /**
      * Strips any leading `0x` prefix.
      * Tests for the existence of a `0x` prefix, and returns the value without the prefix. Un-prefixed values are returned as-is.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * System.out.println(hexStripPrefix("0x1234")); // => 1234
      * ```
@@ -128,8 +128,8 @@ public class Utils {
     /**
      * Tests for the existence of a `0x` prefix.
      * Checks for a valid hex input value and if the start matched `0x`
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * System.out.println(hexHasPrefix("0x1234")); // => true
      * ```
@@ -150,8 +150,8 @@ public class Utils {
     /**
      * Tests for a `Uint8Array` object instance.
      * Checks to see if the input object is an instance of `Uint8Array`.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * System.out.println(isU8a([])); // => false
      * ```
@@ -168,13 +168,13 @@ public class Utils {
      * @param _options            Options to pass while converting
      * @param _options.isLe       Convert using Little Endian
      * @param _options.isNegative Convert using two's complement
-     * Creates a BN.js bignumber object from a hex string.
-     * `null` inputs returns a `BN(0)` result. Hex input values return the actual value converted to a BN. Anything that is not a hex string (including the `0x` prefix) throws an error.
-     * **example**  
-     * 
-     * ```java
-     * hexToBn("0x123480001f"); // => BN(0x123480001f)
-     * ```
+     *                            Creates a BN.js bignumber object from a hex string.
+     *                            `null` inputs returns a `BN(0)` result. Hex input values return the actual value converted to a BN. Anything that is not a hex string (including the `0x` prefix) throws an error.
+     *                            **example**
+     *                            <p>
+     *                            ```java
+     *                            hexToBn("0x123480001f"); // => BN(0x123480001f)
+     *                            ```
      */
     //export default function hexToBn (value?: string | number | null, options: ToBnOptions | boolean = { isLe: false, isNegative: false }): BN {
     public static BigInteger hexToBn(Object value, boolean isLe, boolean isNegative) {
@@ -198,7 +198,7 @@ public class Utils {
         }
 
         BigInteger bigInteger = BigInteger.ZERO;
-        if (rawValue.length() > 0){
+        if (rawValue.length() > 0) {
             bigInteger = new BigInteger(rawValue, 16);
         }
         //BigInteger bigInteger = new BigInteger(rawValue, 16);
@@ -223,13 +223,13 @@ public class Utils {
      * @param options            Options to pass while converting
      * @param options.isLe       Convert using Little Endian
      * @param options.isNegative Convert using two's complement
-     * Creates a BN from a Uint8Array object.
-     * `UInt8Array` input values return the actual BN. `null` or `undefined` values returns an `0x0` value.
-     * **example**  
-     * 
-     * ```java
-     * u8aToHex(new Uint8Array([0x68, 0x65, 0x6c, 0x6c, 0xf])); // 0x68656c0f
-     * ```
+     *                           Creates a BN from a Uint8Array object.
+     *                           `UInt8Array` input values return the actual BN. `null` or `undefined` values returns an `0x0` value.
+     *                           **example**
+     *                           <p>
+     *                           ```java
+     *                           u8aToHex(new Uint8Array([0x68, 0x65, 0x6c, 0x6c, 0xf])); // 0x68656c0f
+     *                           ```
      */
     //export default function u8aToBn (value: Uint8Array, options: ToBnOptions | boolean = { isLe: true, isNegative: false }):
     public static BigInteger u8aToBn(byte[] value, boolean isLe, boolean isNegative) {
@@ -243,8 +243,8 @@ public class Utils {
     /**
      * Creates a BN value from a BN.js bignumber or number input.
      * `null` inputs returns a `0x0` result, BN values returns the value, numnbers returns a BN representation.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * bnToBn(0x1234); // => BN(0x1234)
      * bnToBn(new BN(0x1234)); // => BN(0x1234)
@@ -273,8 +273,8 @@ public class Utils {
     /**
      * Creates a hex value from a BN.js bignumber object.
      * `null` inputs returns a `0x` result, BN values return the actual value as a `0x` prefixed hex value. Anything that is not a BN object throws an error. With `bitLength` set, it fixes the number to the specified length.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * bnToHex(new BN(0x123456)); // => '0x123456'
      * ```
@@ -311,8 +311,8 @@ public class Utils {
     /**
      * Creates a Uint8Array object from a BN.
      * `null`/`undefined`/`NaN` inputs returns an empty `Uint8Array` result. `BN` input values return the actual bytes value converted to a `Uint8Array`. Optionally convert using little-endian format if `isLE` is set.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * bnToU8a(new BN(0x1234)); // => [0x12, 0x34]
      * ```
@@ -407,11 +407,11 @@ public class Utils {
 
     /**
      * Retrievs the offset and encoded length from a compact-prefixed value
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * Pair<Integer, BigInteger> = compactFromU8a(new Uint8Array([254, 255, 3, 0]), 32));
-     * 
+     * <p>
      * System.out.printf("value offset=%d length=%d", offset, length); // 4, 0xffff
      * ```
      */
@@ -473,8 +473,8 @@ public class Utils {
     /**
      * Creates a utf-8 string from a Uint8Array object.
      * `UInt8Array` input values return the actual decoded utf-8 string. `null` or `undefined` values returns an empty string.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * u8aToString(new Uint8Array([0x68, 0x65, 0x6c, 0x6c, 0x6f])); // hello
      * ```
@@ -505,8 +505,8 @@ public class Utils {
     /**
      * Creates a hex string from a Uint8Array object.
      * `UInt8Array` input values return the actual hex string. `null` or `undefined` values returns an `0x` string.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * u8aToHex(new Uint8Array([0x68, 0x65, 0x6c, 0x6c, 0xf])); // 0x68656c0f
      * ```
@@ -552,8 +552,8 @@ public class Utils {
     /**
      * Creates a Uint8Array object from a utf-8 string.
      * String input values return the actual encoded `UInt8Array`. `null` or `undefined` values returns an empty encoded array.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * stringToU8a("hello"); // [0x68, 0x65, 0x6c, 0x6c, 0x6f]
      * ```
@@ -571,8 +571,8 @@ public class Utils {
 
     /**
      * Adds a length prefix to the input value
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * System.out.println(compactAddLength(new Uint8Array([0xde, 0xad, 0xbe, 0xef]))); // Uint8Array([4 << 2, 0xde, 0xad, 0xbe, 0xef])
      * ```
@@ -595,8 +595,8 @@ public class Utils {
 
     /**
      * Encodes a number into a compact representation
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * System.out.println(compactToU8a(511, 32)); // Uint8Array([0b11111101, 0b00000111])
      * ```
@@ -632,8 +632,8 @@ public class Utils {
     /**
      * Creates a concatenated Uint8Array from the inputs.
      * Concatenates the input arrays into a single `UInt8Array`.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * u8aConcat(
      * new Uint8Array([1, 2, 3]),
@@ -660,8 +660,8 @@ public class Utils {
     /**
      * Creates a Uint8Array value from a Uint8Array, Buffer, string or hex input.
      * `null` ior `undefined` nputs returns a `[]` result, Uint8Array values returns the value, hex strings returns a Uint8Array representation.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * u8aToU8a(new Uint8Array([0x12, 0x34]); // => Uint8Array([0x12, 0x34])
      * u8aToU8a(0x1234); // => Uint8Array([0x12, 0x34])
@@ -709,8 +709,8 @@ public class Utils {
     /**
      * Lowercase the first letter of a string
      * Lowercase the first letter of a string
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * stringLowerFirst("ABC"); // => 'aBC'
      * ```
@@ -773,8 +773,8 @@ public class Utils {
     /**
      * Shifts a Uint8Array to a specific bitLength
      * Returns a uint8Array with the specified number of bits contained in the return value. (If bitLength is -1, length checking is not done). Values with more bits are trimmed to the specified length.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * u8aFixLength("0x12", -1, false) // => 0x12
      * u8aFixLength("0x12", 16, false) // => 0x0012
@@ -813,8 +813,8 @@ public class Utils {
     /**
      * Creates a Uint8Array filled with random bytes.
      * Returns a `Uint8Array` with the specified (optional) length filled with random bytes.
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * randomAsU8a(); // => Uint8Array([...])
      * ```
@@ -835,8 +835,8 @@ public class Utils {
 
     /**
      * Removes the length prefix, returning both the total length (including the value + compact encoding) and the decoded value with the correct length
-     * **example**  
-     * 
+     * **example**
+     * <p>
      * ```java
      * System.out.println(compactStripLength(new Uint8Array([2 << 2, 0xde, 0xad]))); // [2, Uint8Array[0xde, 0xad]]
      * ```

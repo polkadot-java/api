@@ -145,4 +145,13 @@ public class Address extends Base<Codec> implements Codec {
                 encoded
         ));
     }
+
+
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    @Override
+    public String toRawType() {
+        return "Address";
+    }
 }
