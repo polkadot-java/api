@@ -1,40 +1,37 @@
-package org.polkadot.types.primitive;
+package org.polkadot.types.codec;
 
-
-import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.ArrayUtils;
 import org.polkadot.types.Codec;
-import org.polkadot.types.codec.Compactable;
+import org.polkadot.types.primitive.Moment;
 import org.polkadot.utils.Utils;
 
 import java.math.BigInteger;
-import java.util.Date;
 
 /**
- * A wrapper around seconds/timestamps. Internally the representation only has
+ * @name Date
+ * @description A wrapper around seconds/timestamps. Internally the representation only has
  * second precicion (aligning with Rust), so any numbers passed an/out are always
  * per-second. For any encoding/decoding the 1000 multiplier would be applied to
  * get it in line with JavaScript formats. It extends the base JS `Date` object
  * and has all the methods available that are applicable to any `Date`
- * @noInheritDoc
+ * @noInheritDoc TODO test
  */
-//export default class Moment extends Date implements Codec {
-public class Moment extends Date implements Compactable {
+public class Date extends java.util.Date implements Codec {
 
-    protected Date raw;// FIXME Remove this once we convert all types out of Base
+    protected java.util.Date raw;// FIXME Remove this once we convert all types out of Base
 
     public static int BITLENGTH = 64;
 
     //  constructor (value: Moment | Date | AnyNumber = 0) {
-    public Moment(Object value) {
-        this.raw = decodeMoment(value);
+    public Date(Object value) {
+        this.raw = decodeDate(value);
         this.setTime(this.raw.getTime());
     }
 
 
-    static Date decodeMoment(Object value) {
-        if (value instanceof Date) {
-            return (Date) value;
+    static java.util.Date decodeDate(Object value) {
+        if (value instanceof java.util.Date) {
+            return (java.util.Date) value;
         } else if (Utils.isU8a(value)) {
             byte[] bytes = Utils.u8aToU8a(value);
             value = Utils.u8aToBn(ArrayUtils.subarray(bytes, 0, BITLENGTH / 8), true, false);
@@ -43,7 +40,7 @@ public class Moment extends Date implements Compactable {
             value = new BigInteger((String) value, 10);
         }
 
-        return new Date(Utils.bnToBn(value).longValue() * 1000);
+        return new java.util.Date(Utils.bnToBn(value).longValue() * 1000);
     }
 
 
@@ -68,14 +65,13 @@ public class Moment extends Date implements Compactable {
      */
     @Override
     public boolean eq(Object other) {
-        return Moment.decodeMoment(other).getTime() == this.getTime();
+        return Date.decodeDate(other).getTime() == this.getTime();
     }
 
 
     /**
      * Returns the number of bits in the value
      */
-    @Override
     public int bitLength() {
         return BITLENGTH;
     }
@@ -84,7 +80,6 @@ public class Moment extends Date implements Compactable {
     /**
      * Returns the BN representation of the timestamp
      */
-    @Override
     public BigInteger toBn() {
         return BigInteger.valueOf(this.toNumber());
     }
@@ -109,7 +104,6 @@ public class Moment extends Date implements Compactable {
     /**
      * Returns the number representation for the timestamp
      */
-    @Override
     public long toNumber() {
         return (long) Math.ceil(this.getTime() / 1000);
     }
@@ -126,7 +120,7 @@ public class Moment extends Date implements Compactable {
 
     /**
      * @param isBare true when the value has none of the type-specific prefixes (internal)
-     * Encodes the value as a Uint8Array as per the parity-codec specifications
+     *               Encodes the value as a Uint8Array as per the parity-codec specifications
      */
     @Override
     public byte[] toU8a(boolean isBare) {
@@ -141,6 +135,7 @@ public class Moment extends Date implements Compactable {
             super(value);
         }
     }
+
 
     /**
      * @description Returns the base runtime type name for this instance

@@ -12,4 +12,11 @@ public class H256 extends U8aFixed {
         super(value, 256);
     }
 
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    @Override
+    public String toRawType () {
+        return "H256";
+    }
 }

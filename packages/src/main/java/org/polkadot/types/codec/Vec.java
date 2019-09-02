@@ -1,5 +1,6 @@
 package org.polkadot.types.codec;
 
+
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -13,63 +14,39 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * Vector
+ * Vec
  * This manages codec arrays. Internally it keeps track of the length (as decoded) and allows
  * construction with the passed `Type` in the constructor. It is an extension to Array, providing
  * specific encoding/decoding on top of the base type.
  */
-public class Vector<T extends Codec> extends AbstractArray<T> {
+public class Vec<T extends Codec> extends AbstractArray<T> {
+
+    public static final int MAX_LENGTH = 32768;
 
     private Types.ConstructorCodec<T> type;
 
-    public Vector(Types.ConstructorCodec<T> type, Object value) {
+    public Vec(Types.ConstructorCodec<T> type, Object value) {
 
         this.type = type;
-        this.addAll(decodeVector(type, value));
+        this.addAll(decodeVec(type, value));
     }
 
     //Vector<any> | Uint8Array | string | Array<any>
-    static <T extends Codec> List<T> decodeVector(Types.ConstructorCodec<T> type, Object value) {
+    static <T extends Codec> List<T> decodeVec(Types.ConstructorCodec<T> type, Object value) {
         List<T> ret = new ArrayList<>();
         if (value instanceof List) {
             for (Object obj : ((List) value)) {
                 genInstance(ret, type, obj);
             }
             return ret;
-        } else if (value != null && value.getClass().isArray() && !(value instanceof byte[])){
+        } else if (value != null && value.getClass().isArray() && !(value instanceof byte[])) {
             List<Object> objects = CodecUtils.arrayLikeToList(value);
             for (Object obj : objects) {
                 genInstance(ret, type, obj);
             }
             return ret;
         }
-
-        //else if (value.getClass().isArray()) {
-        //
-        //    Type gType = ((ParameterizedType) type.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        //    int length = Array.getLength(value);
-        //    for (int i = 0; i < length; i++) {
-        //        Object obj = Array.get(value, i);
-        //        genInstance(ret, type, obj);
-        //    }
-        //
-        //    //Class<?> componentType = value.getClass().getComponentType();
-        //    //if (componentType.isPrimitive()) {
-        //    //    int length = Array.getLength(value);
-        //    //    for (int i = 0; i < length; i++) {
-        //    //        Object obj = Array.get(value, i);
-        //    //        System.out.println(obj);
-        //    //    }
-        //    //} else {
-        //    //    Object[] objects = (Object[]) value;
-        //    //    for (Object obj : objects) {
-        //    //        System.out.println(obj);
-        //    //    }
-        //    //}
-        //    return ret;
-        //}
 
         byte[] u8a = Utils.u8aToU8a(value);
         Pair<Integer, BigInteger> pair = Utils.compactFromU8a(u8a);
@@ -96,7 +73,7 @@ public class Vector<T extends Codec> extends AbstractArray<T> {
         }
     }
 
-    static class Builder<T extends Codec> implements Types.ConstructorCodec<Vector> {
+    static class Builder<T extends Codec> implements Types.ConstructorCodec<Vec> {
         Types.ConstructorCodec<T> type;
 
         Builder(Types.ConstructorCodec<T> type) {
@@ -104,17 +81,17 @@ public class Vector<T extends Codec> extends AbstractArray<T> {
         }
 
         @Override
-        public Vector newInstance(Object... values) {
-            return new Vector<>(type, values[0]);
+        public Vec newInstance(Object... values) {
+            return new Vec<>(type, values[0]);
         }
 
         @Override
-        public Class<Vector> getTClass() {
-            return Vector.class;
+        public Class<Vec> getTClass() {
+            return Vec.class;
         }
     }
 
-    public static <O extends Codec> Types.ConstructorCodec<Vector<O>> with(Types.ConstructorCodec<O> type) {
+    public static <O extends Codec> Types.ConstructorCodec<Vec<O>> with(Types.ConstructorCodec<O> type) {
         //TODO 2019-05-10 10:07 lost type
         return new Builder(type);
     }

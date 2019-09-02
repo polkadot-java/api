@@ -10,8 +10,8 @@ import org.polkadot.types.codec.Struct;
 import org.polkadot.types.codec.U8a;
 import org.polkadot.types.metadata.v0.Modules;
 import org.polkadot.types.primitive.Method;
-import org.polkadot.utils.UtilsCrypto;
 import org.polkadot.utils.Utils;
+import org.polkadot.utils.UtilsCrypto;
 
 import java.math.BigInteger;
 import java.util.LinkedHashMap;
@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Representation of an Extrinsic in the system. It contains the actual call,
  * (optional) signature and encodes with an actual length prefix
- * 
+ * <p>
  * Can be:
  * - signed, to create a transaction
  * - left as is, to create an inherent
@@ -221,4 +221,11 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
                 : Utils.compactAddLength(encoded);
     }
 
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    @Override
+    public String toRawType() {
+        return "Extrinsic";
+    }
 }

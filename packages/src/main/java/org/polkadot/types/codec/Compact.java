@@ -147,4 +147,14 @@ public class Compact extends Base<Compactable> implements Codec {
     public byte[] toU8a(boolean isBare) {
         return Utils.compactToU8a(this.raw.toBn());
     }
+
+
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    @Override
+    public String toRawType() {
+        return "Compact<" + this.raw.toRawType() + ">";
+    }
+
 }

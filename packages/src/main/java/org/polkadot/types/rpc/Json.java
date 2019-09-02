@@ -11,6 +11,7 @@ import java.util.Map;
  * Wraps the a JSON structure retrieve via RPC. It extends the standard JS Map with. While it
  * implements a Codec, it is limited in that it can only be used with input objects via RPC,
  * i.e. no hex decoding. Unlike a struct, this waps a JSON object with unknown keys
+ *
  * @noInheritDoc
  */
 public class Json extends JSONObject implements Codec {
@@ -75,6 +76,15 @@ public class Json extends JSONObject implements Codec {
      */
     @Override
     public byte[] toU8a(boolean isBare) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    @Override
+    public String toRawType() {
+        //TODO 2019-08-29 19:36
         throw new UnsupportedOperationException();
     }
 }

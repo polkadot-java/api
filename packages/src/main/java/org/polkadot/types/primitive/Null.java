@@ -62,4 +62,12 @@ public class Null implements Codec {
     public byte[] toU8a(boolean isBare) {
         return new byte[0];
     }
+
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    @Override
+    public String toRawType() {
+        return "Null";
+    }
 }

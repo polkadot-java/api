@@ -1,5 +1,6 @@
 package org.polkadot.types.codec;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -12,7 +13,10 @@ import org.polkadot.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Struct
         //<
@@ -310,5 +314,20 @@ public class Struct
         return true;
     }
 
+    /**
+     * @description Returns the base runtime type name for this instance
+     */
+    @Override
+    public String toRawType() {
+        return JSON.toJSONString(typesToMap(this.constructorDef.getAsMap()));
+    }
+
+    public static Map<String, String> typesToMap(Map<String, Types.ConstructorCodec> types) {
+        Map<String, String> result = Maps.newLinkedHashMap();
+        for (String key : types.keySet()) {
+            result.put(key, types.get(key).newInstance().toRawType());
+        }
+        return result;
+    }
 
 }
