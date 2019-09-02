@@ -10,12 +10,4 @@ public class H512 extends U8aFixed {
     public H512(Object value) {
         super(value, 512);
     }
-
-    /**
-     * @description Returns the base runtime type name for this instance
-     */
-    @Override
-    public String toRawType() {
-        return "H512";
-    }
 }

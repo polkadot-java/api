@@ -40,7 +40,7 @@ public class Bytes extends U8a {
                     : u8a.toU8a();
 
 
-            //} else if (value.getClass().isArray() || value instanceof String) {
+        //} else if (value.getClass().isArray() || value instanceof String) {
         } else if (value instanceof String) {
             byte[] u8a = Utils.u8aToU8a(value);
             return Bytes.decodeBytes(Utils.compactAddLength(u8a));
@@ -73,21 +73,13 @@ public class Bytes extends U8a {
 
     /**
      * @param isBare true when the value has none of the type-specific prefixes (internal)
-     *               Encodes the value as a Uint8Array as per the parity-codec specifications
+     * Encodes the value as a Uint8Array as per the parity-codec specifications
      */
     @Override
     public byte[] toU8a(boolean isBare) {
         return isBare
                 ? super.toU8a(isBare)
                 : Utils.compactAddLength(this.raw);
-    }
-
-    /**
-     * @description Returns the base runtime type name for this instance
-     */
-    @Override
-    public String toRawType() {
-        return "Bytes";
     }
 
 }

@@ -174,22 +174,4 @@ public class Option<T extends Codec> extends Base<T> implements Codec {
         return this.raw;
     }
 
-
-
-    /**
-     * @description Returns the base runtime type name for this instance
-     */
-    //public toRawType (isBare?: boolean): string {
-    //const wrapped = new this._Type().toRawType();
-    //
-    //    return isBare
-    //            ? wrapped
-    //            : `Option<${wrapped}>`;
-    //}
-    /**
-     * @description Returns the base runtime type name for this instance
-     */
-    public String toRawType() {
-        return "Base";
-    }
 }

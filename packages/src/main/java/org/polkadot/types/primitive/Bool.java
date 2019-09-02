@@ -30,25 +30,25 @@ public class Bool implements Codec {
         return value == null;
     }
 
-    /**
-     * The length of the value when encoded as a Uint8Array
-     */
+  /**
+   * The length of the value when encoded as a Uint8Array
+   */
     @Override
     public int getEncodedLength() {
         return 1;
     }
 
-    /**
-     * Checks if the value is an empty value (always false)
-     */
+  /**
+   * Checks if the value is an empty value (always false)
+   */
     @Override
     public boolean isEmpty() {
         return false;
     }
 
-    /**
-     * Compares the value of the input to see if there is a match
-     */
+  /**
+   * Compares the value of the input to see if there is a match
+   */
     @Override
     public boolean eq(Object other) {
         return this.raw == (
@@ -66,27 +66,26 @@ public class Bool implements Codec {
         return Utils.u8aToHex(this.toU8a());
     }
 
-    /**
-     * Converts the Object to JSON, typically used for RPC transfers
-     */
+  /**
+   * Converts the Object to JSON, typically used for RPC transfers
+   */
     @Override
     public Object toJson() {
         return this.raw;
     }
 
-    /**
-     * Encodes the value as a Uint8Array as per the parity-codec specifications
-     *
-     * @param isBare true when the value has none of the type-specific prefixes (internal)
-     */
+  /**
+   * Encodes the value as a Uint8Array as per the parity-codec specifications
+   * @param isBare true when the value has none of the type-specific prefixes (internal)
+   */
     @Override
     public byte[] toU8a(boolean isBare) {
         return new byte[]{(byte) (this.raw ? 1 : 0)};
     }
 
-    /**
-     * Returns the string representation of the value
-     */
+  /**
+   * Returns the string representation of the value
+   */
     @Override
     public String toString() {
         return this.toJson().toString();
@@ -94,13 +93,5 @@ public class Bool implements Codec {
 
     public boolean rawBool() {
         return this.raw;
-    }
-
-    /**
-     * @description Returns the base runtime type name for this instance
-     */
-    @Override
-    public String toRawType() {
-        return "bool";
     }
 }

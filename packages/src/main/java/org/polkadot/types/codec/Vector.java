@@ -138,12 +138,4 @@ public class Vector<T extends Codec> extends AbstractArray<T> {
         }
         return super.indexOf(o1);
     }
-
-    /**
-     * @description Returns the base runtime type name for this instance
-     */
-    @Override
-    public String toRawType() {
-        return "Vec<" + this.type.getTClass().getSimpleName() + ">";
-    }
 }
