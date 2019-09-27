@@ -7,6 +7,7 @@ import org.polkadot.types.Codec;
 import org.polkadot.types.Types;
 import org.polkadot.types.codec.Vector;
 import org.polkadot.types.codec.*;
+import org.polkadot.types.interfaces.metadata.Types.FunctionMetadataV7;
 import org.polkadot.types.metadata.v0.Modules;
 import org.polkadot.utils.Utils;
 import org.slf4j.Logger;
@@ -17,7 +18,6 @@ import java.util.stream.Collectors;
 
 /**
  * Extrinsic function descriptor, as defined in
- * {@link https://github.com/paritytech/wiki/blob/master/Extrinsic.md#the-extrinsic-format-for-node}.
  */
 public class Method extends Struct implements Types.IMethod {
 
@@ -73,20 +73,20 @@ public class Method extends Struct implements Types.IMethod {
     public static class DecodedMethod extends DecodeMethodInput {
 
 
-        public DecodedMethod(Object args, MethodIndex callIndex, Types.ConstructorDef argsDef, Modules.FunctionMetadata meta) {
+        public DecodedMethod(Object args, MethodIndex callIndex, Types.ConstructorDef argsDef, FunctionMetadataV7 meta) {
             super(args, callIndex);
             this.argsDef = argsDef;
             this.meta = meta;
         }
 
         public Types.ConstructorDef argsDef;
-        public Modules.FunctionMetadata meta;
+        public FunctionMetadataV7 meta;
 
         public Types.ConstructorDef getArgsDef() {
             return argsDef;
         }
 
-        public Modules.FunctionMetadata getMeta() {
+        public FunctionMetadataV7 getMeta() {
             return meta;
         }
     }
@@ -104,7 +104,7 @@ public class Method extends Struct implements Types.IMethod {
         public abstract Method apply(Object... args);
 
         byte[] callIndex;
-        Modules.FunctionMetadata meta;
+        org.polkadot.types.interfaces.metadata.Types.FunctionMetadataV7 meta;
         String method;
         String section;
 
@@ -118,11 +118,11 @@ public class Method extends Struct implements Types.IMethod {
             this.callIndex = callIndex;
         }
 
-        public Modules.FunctionMetadata getMeta() {
+        public org.polkadot.types.interfaces.metadata.Types.FunctionMetadataV7 getMeta() {
             return meta;
         }
 
-        public void setMeta(Modules.FunctionMetadata meta) {
+        public void setMeta(org.polkadot.types.interfaces.metadata.Types.FunctionMetadataV7 meta) {
             this.meta = meta;
         }
 
@@ -159,9 +159,9 @@ public class Method extends Struct implements Types.IMethod {
 
     }
 
-    protected Modules.FunctionMetadata meta;
+    protected FunctionMetadataV7 meta;
 
-    public Method(Object value, Modules.FunctionMetadata meta) {
+    public Method(Object value, FunctionMetadataV7 meta) {
         super(new Types.ConstructorDef()
                         .add("callIndex", MethodIndex.class)
                         .add("args", Struct.with(decodeMethod(value, meta).argsDef))
@@ -176,11 +176,11 @@ public class Method extends Struct implements Types.IMethod {
      *              - hex
      *              - Uint8Array
      *              - @see DecodeMethodInput
-     * @param _meta - Metadata to use, so that `injectMethods` lookup is not
+     * @param meta  - Metadata to use, so that `injectMethods` lookup is not
      *              necessary.
      */
     //private static decodeMethod (value: DecodedMethod | Uint8Array | string, _meta?: FunctionMetadata): DecodedMethod {
-    private static DecodedMethod decodeMethod(Object value, Modules.FunctionMetadata meta) {
+    private static DecodedMethod decodeMethod(Object value, FunctionMetadataV7 meta) {
         if (Utils.isHex(value)) {
             return decodeMethod(Utils.hexToU8a((String) value), meta);
         } else if (Utils.isU8a(value)) {
@@ -191,7 +191,7 @@ public class Method extends Struct implements Types.IMethod {
             //U8a callIndex = u8a.subarray(0, 2);
 
             // Find metadata with callIndex
-            Modules.FunctionMetadata fMeta = meta;
+            FunctionMetadataV7 fMeta = meta;
             if (fMeta == null) {
                 fMeta = findFunction(callIndex).meta;
             }
@@ -227,7 +227,7 @@ public class Method extends Struct implements Types.IMethod {
             }
 
             // Find metadata with callIndex
-            Modules.FunctionMetadata fMeta = meta;
+            FunctionMetadataV7 fMeta = meta;
             if (fMeta == null) {
                 fMeta = findFunction(lookupIndex).meta;
             }
@@ -246,7 +246,7 @@ public class Method extends Struct implements Types.IMethod {
                 new U8a(new byte[0]),
                 new MethodIndex(new byte[]{UnsignedBytes.MAX_VALUE, UnsignedBytes.MAX_VALUE}),
                 new Types.ConstructorDef(),
-                new Modules.FunctionMetadata(null)
+                new FunctionMetadataV7(null)
         );
     }
 
@@ -269,7 +269,7 @@ public class Method extends Struct implements Types.IMethod {
      *
      * @param meta - The function metadata used to get the definition.
      */
-    private static Types.ConstructorDef getArgsDef(Modules.FunctionMetadata meta) {
+    private static Types.ConstructorDef getArgsDef(FunctionMetadataV7 meta) {
         Types.ConstructorDef constructorDef = new Types.ConstructorDef();
         filterOrigin(meta).stream().forEach((argumentMetadata) -> {
             Types.ConstructorCodec type = CreateType.getTypeClass(CreateType.getTypeDef(argumentMetadata.getType().toString(), null));
@@ -279,7 +279,7 @@ public class Method extends Struct implements Types.IMethod {
     }
 
     // If the extrinsic function has an argument of type `Origin`, we ignore it
-    public static List<Modules.FunctionArgumentMetadata> filterOrigin(Modules.FunctionMetadata meta) {
+    public static List<Modules.FunctionArgumentMetadata> filterOrigin(FunctionMetadataV7 meta) {
         // FIXME should be `arg.type !== Origin`, but doesn't work...
         if (meta != null) {
             Vector<Modules.FunctionArgumentMetadata> arguments = meta.getArguments();
@@ -350,7 +350,7 @@ public class Method extends Struct implements Types.IMethod {
      * The FunctionMetadata
      */
     @Override
-    public Modules.FunctionMetadata getMeta() {
+    public FunctionMetadataV7 getMeta() {
         return this.meta;
     }
 

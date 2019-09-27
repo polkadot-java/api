@@ -7,7 +7,9 @@ import org.polkadot.types.Types;
 import org.polkadot.types.TypesUtils;
 import org.polkadot.types.codec.Option;
 import org.polkadot.types.codec.Struct;
+import org.polkadot.types.codec.Vec;
 import org.polkadot.types.codec.Vector;
+import org.polkadot.types.interfaces.metadata.Types.FunctionMetadataV7;
 import org.polkadot.types.metadata.MetadataUtils;
 import org.polkadot.types.metadata.Types.MetadataInterface;
 import org.polkadot.types.primitive.Type;
@@ -92,7 +94,7 @@ public class MetadataV0 extends Struct implements MetadataInterface {
         return this.getModules().stream().map((runtimeModuleMetadata -> {
             Modules.ModuleMetadata moduleMetadata = runtimeModuleMetadata.getField("module");
             Modules.CallMetadata call = moduleMetadata.getField("call");
-            Vector<Modules.FunctionMetadata> functions = call.getField("functions");
+            Vector<FunctionMetadataV7> functions = call.getField("functions");
             return functions.stream().map(fn -> {
                 Vector<Modules.FunctionArgumentMetadata> arguments = fn.getField("arguments");
                 return arguments.stream().map((functionArgumentMetadata -> {
@@ -134,7 +136,6 @@ public class MetadataV0 extends Struct implements MetadataInterface {
     /**
      * Helper to retrieve a list of all type that are found, sorted and de-deuplicated
      */
-    @Override
     public List<String> getUniqTypes(boolean throwError) {
         List<Object> types = MetadataUtils.flattenUniq(Lists.newArrayList(this.getArgNames(), this.getEventNames(), this.getStorageNames()));
         List<String> ret = new ArrayList<>();
@@ -143,5 +144,10 @@ public class MetadataV0 extends Struct implements MetadataInterface {
         MetadataUtils.validateTypes(ret, throwError);
 
         return ret;
+    }
+
+    @Override
+    public Vec getVecModules() {
+        return null;
     }
 }
