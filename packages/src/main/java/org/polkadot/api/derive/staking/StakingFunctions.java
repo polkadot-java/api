@@ -1,13 +1,12 @@
 package org.polkadot.api.derive.staking;
 
 import com.onehilltech.promises.Promise;
-import org.polkadot.api.ApiBase;
 import org.polkadot.api.Types.ApiInterfacePromise;
 import org.polkadot.api.derive.Types;
 import org.polkadot.api.derive.balances.BalancesFunctions;
 import org.polkadot.types.codec.CodecUtils;
 import org.polkadot.types.codec.Vector;
-import org.polkadot.types.type.AccountId;
+import org.polkadot.types.primitive.generic.AccountId;
 
 import java.util.List;
 import java.util.stream.Collectors;

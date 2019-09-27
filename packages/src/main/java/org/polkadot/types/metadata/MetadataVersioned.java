@@ -3,6 +3,7 @@ package org.polkadot.types.metadata;
 import org.polkadot.types.Types.ConstructorDef;
 import org.polkadot.types.codec.EnumType;
 import org.polkadot.types.codec.Struct;
+import org.polkadot.types.codec.Vec;
 import org.polkadot.types.metadata.v0.MetadataV0;
 import org.polkadot.types.metadata.v1.MetadataV1;
 import org.polkadot.types.metadata.v1.ToV0;
@@ -17,6 +18,7 @@ import java.util.List;
  * The versioned runtime metadata as a decoded structure
  */
 public class MetadataVersioned extends Struct implements Types.MetadataInterface {
+
 
     //class MetadataEnum extends EnumType<Null | MetadataV1 | MetadataV2> {
     public static class MetadataEnum extends EnumType<Types.MetadataInterface> {
@@ -166,8 +168,15 @@ public class MetadataVersioned extends Struct implements Types.MetadataInterface
     }
 
 
-    @Override
     public List<String> getUniqTypes(boolean throwError) {
-        return ((Types.MetadataInterface) this.getMetadata().value()).getUniqTypes(throwError);
+        //return ((Types.MetadataInterface) this.getMetadata().value()).getUniqTypes(throwError);
+        //TODO 2019-09-28 04:09
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Vec getVecModules() {
+        //TODO 2019-09-28 03:59
+        return null;
     }
 }

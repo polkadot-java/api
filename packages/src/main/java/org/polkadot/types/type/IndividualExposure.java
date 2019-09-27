@@ -4,6 +4,7 @@ import org.polkadot.types.Types;
 import org.polkadot.types.TypesUtils;
 import org.polkadot.types.codec.Compact;
 import org.polkadot.types.codec.Struct;
+import org.polkadot.types.primitive.generic.AccountId;
 
 /**
  * The Substrate IndividualExposure for staking

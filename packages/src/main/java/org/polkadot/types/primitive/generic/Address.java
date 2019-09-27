@@ -1,4 +1,4 @@
-package org.polkadot.types.type;
+package org.polkadot.types.primitive.generic;
 
 import com.google.common.collect.Lists;
 import com.google.common.primitives.UnsignedBytes;

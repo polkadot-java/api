@@ -3,13 +3,12 @@ package org.polkadot.api.derive.balances;
 import com.google.common.collect.Lists;
 import com.onehilltech.promises.Promise;
 import org.apache.commons.collections4.CollectionUtils;
-import org.polkadot.api.ApiBase;
 import org.polkadot.api.Types.ApiInterfacePromise;
 import org.polkadot.api.Types.QueryableModuleStorage;
 import org.polkadot.api.derive.Types;
 import org.polkadot.api.derive.accounts.AccountFunctions;
 import org.polkadot.api.derive.accounts.AccountFunctions.AccountIdAndIndex;
-import org.polkadot.types.type.AccountId;
+import org.polkadot.types.primitive.generic.AccountId;
 import org.polkadot.types.type.Balance;
 
 import java.math.BigInteger;

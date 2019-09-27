@@ -1,6 +1,7 @@
 package org.polkadot.types.metadata.v1;
 
 import com.google.common.collect.Lists;
+import org.polkadot.types.interfaces.metadata.Types;
 import org.polkadot.types.metadata.v0.Calls;
 import org.polkadot.types.metadata.v0.Events;
 import org.polkadot.types.metadata.v0.MetadataV0;
@@ -50,7 +51,7 @@ public class ToV0 {
                     funcValues.put("name", metadataCall.getName());
                     funcValues.put("arguments", metadataCall.getArgs());
                     funcValues.put("documentation", metadataCall.getArgs());
-                    return new Modules.FunctionMetadata(funcValues);
+                    return new Types.FunctionMetadataV7(funcValues);
                 })
 
         ).collect(Collectors.toList()));

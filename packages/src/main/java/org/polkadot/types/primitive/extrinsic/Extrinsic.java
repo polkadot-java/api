@@ -1,15 +1,22 @@
-package org.polkadot.types.type;
+package org.polkadot.types.primitive.extrinsic;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.polkadot.common.keyring.Types.KeyringPair;
 import org.polkadot.types.Codec;
 import org.polkadot.types.Types;
-import org.polkadot.types.codec.Struct;
+import org.polkadot.types.codec.Base;
 import org.polkadot.types.codec.U8a;
-import org.polkadot.types.metadata.v0.Modules;
+import org.polkadot.types.interfaces.metadata.Types.FunctionMetadataV7;
 import org.polkadot.types.primitive.Method;
+import org.polkadot.types.primitive.extrinsic.Types.ExtrinsicOptions;
+import org.polkadot.types.primitive.extrinsic.v1.ExtrinsicV1;
+import org.polkadot.types.primitive.extrinsic.v2.ExtrinsicV2;
+import org.polkadot.types.primitive.extrinsic.v3.ExtrinsicV3;
+import org.polkadot.types.primitive.generic.Call;
+import org.polkadot.types.type.Hash;
 import org.polkadot.utils.Utils;
 import org.polkadot.utils.UtilsCrypto;
 
@@ -17,16 +24,21 @@ import java.math.BigInteger;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import static org.polkadot.types.primitive.extrinsic.Constants.*;
+
 
 /**
- * Representation of an Extrinsic in the system. It contains the actual call,
+ * @name Extrinsic
+ * @description Representation of an Extrinsic in the system. It contains the actual call,
  * (optional) signature and encodes with an actual length prefix
+ * <p>
+ * {@link https://github.com/paritytech/wiki/blob/master/Extrinsic.md#the-extrinsic-format-for-node}.
  * <p>
  * Can be:
  * - signed, to create a transaction
  * - left as is, to create an inherent
  */
-public class Extrinsic extends Struct implements Types.IExtrinsic {
+public class Extrinsic extends Base<Types.IExtrinsicImpl> implements Types.IExtrinsic {
 
     public static class ExtrinsicValue {
         Method method;
@@ -34,21 +46,18 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     }
 
     //  constructor (value?: ExtrinsicValue | AnyU8a | Method) {
-    public Extrinsic(Object value) {
-        super(new Types.ConstructorDef()
-                        .add("signature", ExtrinsicSignature.class)
-                        .add("method", Method.class)
-                , decodeExtrinsic(value));
+    public Extrinsic(Object value, int version) {
+        super((Types.IExtrinsicImpl) decodeExtrinsic(value, version));
     }
 
     //  static decodeExtrinsic (value: ExtrinsicValue | AnyU8a | Method): ExtrinsicValue | Array<number> | Uint8Array {
-    static Object decodeExtrinsic(Object value) {
+    static Types.IExtrinsicImpl decodeExtrinsic(Object value, int version) {
         if (Utils.isU8a(value)) {
             Pair<Integer, BigInteger> pair = Utils.compactFromU8a(value);
             int offset = pair.getKey();
             int length = pair.getValue().intValue();
 
-            return ArrayUtils.subarray((byte[]) value, offset, offset + length);
+            return decodeU8a(ArrayUtils.subarray((byte[]) value, offset, offset + length));
         } else if (value.getClass().isArray() || Utils.isHex(value)) {
             // Instead of the block below, it should simply be:
             // return Extrinsic.decodeExtrinsic(hexToU8a(value as string));
@@ -63,16 +72,40 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
             boolean withPrefix = u8a.length == (offset + length);
             return decodeExtrinsic(withPrefix
                     ? u8a
-                    : Utils.compactAddLength(u8a));
-        } else if (value instanceof Method) {
+                    : Utils.compactAddLength(u8a), version);
+        } else if (value instanceof Call) {
             LinkedHashMap<Object, Object> values = Maps.newLinkedHashMap();
             values.put("method", value);
-            return values;
+            return Extrinsic.newFromValue(values, version);
         }
 
-        return value;
+        return Extrinsic.newFromValue(value, version);
     }
 
+    private static Types.IExtrinsicImpl decodeU8a(byte[] value) {
+        return Extrinsic.newFromValue(ArrayUtils.subarray(value, 1, value.length), value[0]);
+    }
+
+
+    private static Types.IExtrinsicImpl newFromValue(Object value, int version) {
+        if (value instanceof Extrinsic) {
+            return ((Extrinsic) value).raw;
+        }
+
+        boolean isSigned = (version & BIT_SIGNED) == BIT_SIGNED;
+        int type = version & UNMASK_VERSION;
+
+        switch (type) {
+            case 1:
+                return new ExtrinsicV1(value, new ExtrinsicOptions(isSigned));
+            case 2:
+                return new ExtrinsicV2(value, new ExtrinsicOptions(isSigned));
+            case 3:
+                return new ExtrinsicV3(value, new ExtrinsicOptions(isSigned));
+            default://TODO 2019-09-28 01:31
+                throw new UnsupportedOperationException();
+        }
+    }
 
     /**
      * The arguments passed to for the call, exposes args so it is compatible with {@link org.polkadot.types.primitive.Method}
@@ -115,6 +148,16 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
         return length + Utils.compactToU8a(length).length;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public boolean eq(Object other) {
+        return false;
+    }
+
     /**
      * Convernience function, encodes the extrinsic and returns the actual hash
      */
@@ -152,7 +195,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
      * The FunctionMetadata that describes the extrinsic
      */
     @Override
-    public Modules.FunctionMetadata getMeta() {
+    public FunctionMetadataV7 getMeta() {
         return this.getMethod().getMeta();
     }
 
@@ -160,8 +203,8 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
      * The {@link org.polkadot.types.primitive.Method} this extrinsic wraps
      */
     @Override
-    public Method getMethod() {
-        return this.getField("method");
+    public Call getMethod() {
+        return this.raw.getMethod();
     }
 
     /**
@@ -169,7 +212,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
      */
     @Override
     public ExtrinsicSignature getSignature() {
-        return this.getField("signature");
+        return (ExtrinsicSignature) this.raw.getSignature();
     }
 
     /**
@@ -215,7 +258,7 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
 
     @Override
     public byte[] toU8a(boolean isBare) {
-        byte[] encoded = super.toU8a(false);
+        byte[] encoded = Utils.u8aConcat(Lists.newArrayList(new byte[]{(byte) this.getVersion()}, this.raw.toU8a(isBare)));
         return isBare
                 ? encoded
                 : Utils.compactAddLength(encoded);
@@ -228,4 +271,20 @@ public class Extrinsic extends Struct implements Types.IExtrinsic {
     public String toRawType() {
         return "Extrinsic";
     }
+
+
+    /**
+     * @description Returns the raw transaction version (not flagged with signing information)
+     */
+    public int getType() {
+        return this.raw.getVersion();
+    }
+
+    /**
+     * @description Returns the encoded version flag
+     */
+    public int getVersion() {
+        return this.getType() | (this.isSigned() ? BIT_SIGNED : BIT_UNSIGNED);
+    }
+
 }

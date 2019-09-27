@@ -5,6 +5,7 @@ import org.polkadot.types.Types;
 import org.polkadot.types.TypesUtils;
 import org.polkadot.types.codec.Enum;
 import org.polkadot.types.codec.*;
+import org.polkadot.types.interfaces.metadata.Types.FunctionMetadataV7;
 import org.polkadot.types.metadata.v1.Storage;
 import org.polkadot.types.primitive.Bytes;
 import org.polkadot.types.primitive.Text;
@@ -37,51 +38,51 @@ public interface Modules {
         }
     }
 
-    class FunctionMetadata extends Struct {
-        public FunctionMetadata(Object value) {
-            super(new Types.ConstructorDef()
-                            .add("id", U16.class)
-                            .add("name", Text.class)
-                            .add("arguments", Vector.with(TypesUtils.getConstructorCodec(FunctionArgumentMetadata.class)))
-                            .add("documentation", Vector.with(TypesUtils.getConstructorCodec(Text.class)))
-                    , value);
-        }
-
-
-        /**
-         * The FunctionArgumentMetadata for arguments
-         */
-        public Vector<FunctionArgumentMetadata> getArguments() {
-            return this.getField("arguments");
-        }
-
-        /**
-         * The {@link org.polkadot.types.primitive.Text} documentation
-         */
-        public Vector<Text> getDocumentation() {
-            return this.getField("documentation");
-        }
-
-        /**
-         * The `[sectionIndex, methodIndex]` call id
-         */
-        public U16 getId() {
-            return this.getField("id");
-        }
-
-        /**
-         * The call name
-         */
-        public Text getName() {
-            return this.getField("name");
-        }
-    }
+    //class FunctionMetadata extends Struct {
+    //    public FunctionMetadata(Object value) {
+    //        super(new Types.ConstructorDef()
+    //                        .add("id", U16.class)
+    //                        .add("name", Text.class)
+    //                        .add("arguments", Vector.with(TypesUtils.getConstructorCodec(FunctionArgumentMetadata.class)))
+    //                        .add("documentation", Vector.with(TypesUtils.getConstructorCodec(Text.class)))
+    //                , value);
+    //    }
+    //
+    //
+    //    /**
+    //     * The FunctionArgumentMetadata for arguments
+    //     */
+    //    public Vector<FunctionArgumentMetadata> getArguments() {
+    //        return this.getField("arguments");
+    //    }
+    //
+    //    /**
+    //     * The {@link org.polkadot.types.primitive.Text} documentation
+    //     */
+    //    public Vector<Text> getDocumentation() {
+    //        return this.getField("documentation");
+    //    }
+    //
+    //    /**
+    //     * The `[sectionIndex, methodIndex]` call id
+    //     */
+    //    public U16 getId() {
+    //        return this.getField("id");
+    //    }
+    //
+    //    /**
+    //     * The call name
+    //     */
+    //    public Text getName() {
+    //        return this.getField("name");
+    //    }
+    //}
 
     class CallMetadata extends Struct {
         public CallMetadata(Object value) {
             super(new Types.ConstructorDef()
                             .add("name", Text.class)
-                            .add("functions", Vector.with(TypesUtils.getConstructorCodec(FunctionMetadata.class)))
+                            .add("functions", Vector.with(TypesUtils.getConstructorCodec(FunctionMetadataV7.class)))
                     , value);
         }
 
@@ -89,7 +90,7 @@ public interface Modules {
         /**
          * The functions available as FunctionMetadata
          */
-        public Vector<FunctionMetadata> getFunctions() {
+        public Vector<FunctionMetadataV7> getFunctions() {
             return this.getField("functions");
         }
 
@@ -185,7 +186,7 @@ public interface Modules {
         }
     }
 
-    //export class StorageFunctionType extends EnumType<PlainType | MapType> {
+    //export class StorageFunctionTypeV5 extends EnumType<PlainType | MapType> {
     class StorageFunctionType extends EnumType {
         public StorageFunctionType(Object value, int index) {
             super(new Types.ConstructorDef()
@@ -240,7 +241,7 @@ public interface Modules {
         /**
          * name string | Text,
          * modifier StorageFunctionModifier | AnyNumber,
-         * type StorageFunctionType,
+         * type StorageFunctionTypeV5,
          * default Bytes,
          * documentation Vector<Text> | Array<string>
          */
@@ -254,7 +255,7 @@ public interface Modules {
     }
 
     class StorageFunctionMetadata extends Struct {
-        //  constructor (value? StorageFunctionMetadataValue | Uint8Array) {
+        //  constructor (value? StorageFunctionMetadataValueV5 | Uint8Array) {
         public StorageFunctionMetadata(Object value) {
             super(new Types.ConstructorDef()
                             .add("name", Text.class)

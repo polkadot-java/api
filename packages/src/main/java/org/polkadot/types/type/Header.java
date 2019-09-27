@@ -7,13 +7,15 @@ import org.polkadot.types.TypesUtils;
 import org.polkadot.types.codec.Compact;
 import org.polkadot.types.codec.Struct;
 import org.polkadot.types.primitive.U64;
+import org.polkadot.types.primitive.generic.AccountId;
+import org.polkadot.types.primitive.generic.Block;
 import org.polkadot.utils.UtilsCrypto;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
- * A {@link org.polkadot.types.type.Block} header
+ * A {@link Block} header
  */
 public class Header extends Struct {
 
@@ -99,7 +101,7 @@ public class Header extends Struct {
 
 
     /**
-     * A {@link org.polkadot.types.type.Block} header with an additional `author` field that indicates the block author
+     * A {@link Block} header with an additional `author` field that indicates the block author
      */
     public static class HeaderExtended extends Header {
         private AccountId author;

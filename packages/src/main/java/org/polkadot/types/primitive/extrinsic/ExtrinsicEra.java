@@ -1,4 +1,4 @@
-package org.polkadot.types.type;
+package org.polkadot.types.primitive.extrinsic;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.polkadot.types.codec.U8a;

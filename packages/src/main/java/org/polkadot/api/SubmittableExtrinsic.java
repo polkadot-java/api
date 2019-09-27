@@ -12,13 +12,13 @@ import org.polkadot.types.codec.Struct;
 import org.polkadot.types.codec.TypeRegistry;
 import org.polkadot.types.codec.U8a;
 import org.polkadot.types.codec.Vector;
-import org.polkadot.types.metadata.v0.Modules;
 import org.polkadot.types.primitive.Method;
+import org.polkadot.types.primitive.extrinsic.Extrinsic;
+import org.polkadot.types.primitive.extrinsic.ExtrinsicSignature;
+import org.polkadot.types.primitive.generic.Call;
 import org.polkadot.types.rpc.ExtrinsicStatus;
 import org.polkadot.types.rpc.SignedBlock;
 import org.polkadot.types.type.EventRecord;
-import org.polkadot.types.type.Extrinsic;
-import org.polkadot.types.type.ExtrinsicSignature;
 import org.polkadot.utils.MapUtils;
 
 import java.util.List;
@@ -86,7 +86,8 @@ public interface SubmittableExtrinsic<ApplyResult> extends Types.IExtrinsic {
     abstract class SubmittableExtrinsicImpl extends Extrinsic implements SubmittableExtrinsic {
 
         public SubmittableExtrinsicImpl(Types.IExtrinsic _extrinsic) {
-            super(_extrinsic);
+            //TODO 2019-09-28 04:06 check
+            super(_extrinsic, 0);
             this._extrinsic = _extrinsic;
         }
 
@@ -118,7 +119,7 @@ public interface SubmittableExtrinsic<ApplyResult> extends Types.IExtrinsic {
         }
 
         @Override
-        public Modules.FunctionMetadata getMeta() {
+        public org.polkadot.types.interfaces.metadata.Types.FunctionMetadataV7 getMeta() {
             return _extrinsic.getMeta();
         }
 
@@ -133,7 +134,7 @@ public interface SubmittableExtrinsic<ApplyResult> extends Types.IExtrinsic {
         }
 
         @Override
-        public Method getMethod() {
+        public Call getMethod() {
             return _extrinsic.getMethod();
         }
 
@@ -256,7 +257,7 @@ public interface SubmittableExtrinsic<ApplyResult> extends Types.IExtrinsic {
         DecoratedRpcMethod<Promise> getBlock = apiInterfacePromise.rpc().chain().function("getBlock");
         QueryableStorageFunction<Promise> events = apiInterfacePromise.query().section("system").function("events");
 
-        System.out.println("======try get events" );
+        System.out.println("======try get events");
 
         return Promise.all(
                 getBlock.invoke(blockHash),
@@ -395,7 +396,8 @@ public interface SubmittableExtrinsic<ApplyResult> extends Types.IExtrinsic {
                     ? { nonce: _options as any as number }
                     : _options;
                  */
-                Types.IExtrinsic sign = _extrinsic.sign(account, expandOptions(options));
+                //TODO 2019-09-28 04:07 check
+                Types.IExtrinsic sign = (Types.IExtrinsic) _extrinsic.sign(account, expandOptions(options));
                 return this;
             }
 
