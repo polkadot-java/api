@@ -1,4 +1,4 @@
-package org.polkadot.types.type;
+package org.polkadot.types.primitive.generic;
 
 import com.google.common.primitives.UnsignedBytes;
 import org.apache.commons.lang3.ArrayUtils;

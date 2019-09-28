@@ -2,8 +2,8 @@ package org.polkadot.types;
 
 import com.google.common.collect.Maps;
 import org.polkadot.types.codec.U8a;
-import org.polkadot.types.metadata.v0.Modules;
-import org.polkadot.types.primitive.Method;
+import org.polkadot.types.interfaces.metadata.Types.FunctionMetadataV7;
+import org.polkadot.types.primitive.generic.Call;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -155,7 +155,7 @@ export type RegistryTypes = {
 
         boolean hasOrigin();
 
-        Modules.FunctionMetadata getMeta();
+        FunctionMetadataV7 getMeta();
     }
 
 
@@ -183,21 +183,39 @@ export type RegistryTypes = {
 
     }
 
-    interface IExtrinsic extends IMethod {
+    // eslint-disable-next-line @typescript-eslint/interface-name-prefix
+    interface IExtrinsicSignable<T> {
+        T addSignature(Object signer, byte[] signature, Object nonce, byte[] era);
+
+        //sign(account:KeyringPair, options:SignatureOptions):IExtrinsic;
+        T sign(org.polkadot.common.keyring.Types.KeyringPair account, Types.SignatureOptions options);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/interface-name-prefix
+    interface IExtrinsicImpl extends IExtrinsicSignable<IExtrinsicImpl>, Codec {
+        Call getMethod();
+
+        IExtrinsicSignature getSignature();
+
+        int getVersion();
+    }
+
+
+    interface IExtrinsic extends IMethod, IExtrinsicSignable {
         U8a getHash();
 
         boolean isSigned();
 
-        Method getMethod();
+        Call getMethod();
 
         IExtrinsicSignature getSignature();
 
         //addSignature(signer:Address|Uint8Array, signature:Uint8Array, nonce:AnyNumber, era?:Uint8Array):IExtrinsic;
 
-        IExtrinsic addSignature(Object signer, byte[] signature, Object nonce, byte[] era);
+        //IExtrinsic addSignature(Object signer, byte[] signature, Object nonce, byte[] era);
 
         //sign(account:KeyringPair, options:SignatureOptions):IExtrinsic;
-        IExtrinsic sign(org.polkadot.common.keyring.Types.KeyringPair account, Types.SignatureOptions options);
+        //IExtrinsic sign(org.polkadot.common.keyring.Types.KeyringPair account, Types.SignatureOptions options);
     }
 
     class SignatureOptions {

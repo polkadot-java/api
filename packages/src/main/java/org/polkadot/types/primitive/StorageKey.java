@@ -27,7 +27,7 @@ public class StorageKey extends Bytes {
         //byte[] headKey;
         StorageKey headKey;
         //(arg?: any): Uint8Array;
-        //      meta: StorageFunctionMetadata;
+        //      meta: StorageFunctionMetadataV5;
         //      method: string;
         //      section: string;
         //      toJSON: () => any;

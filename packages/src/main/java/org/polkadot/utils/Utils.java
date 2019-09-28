@@ -11,7 +11,7 @@ import org.polkadot.types.codec.Compact;
 import org.polkadot.types.codec.Option;
 import org.polkadot.types.codec.U8a;
 import org.polkadot.types.type.Event;
-import org.polkadot.types.type.ExtrinsicSignature;
+import org.polkadot.types.primitive.extrinsic.ExtrinsicSignature;
 
 import java.math.BigInteger;
 import java.util.Arrays;

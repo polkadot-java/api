@@ -5,6 +5,7 @@ import org.polkadot.types.Types.ConstructorDef;
 import org.polkadot.types.TypesUtils;
 import org.polkadot.types.codec.Option;
 import org.polkadot.types.codec.Struct;
+import org.polkadot.types.codec.Vec;
 import org.polkadot.types.codec.Vector;
 import org.polkadot.types.metadata.MetadataUtils;
 import org.polkadot.types.metadata.Types;
@@ -16,7 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MetadataV1 extends Struct implements Types.MetadataInterface {
-
 
     /**
      * The definition of a module in the system
@@ -135,7 +135,6 @@ public class MetadataV1 extends Struct implements Types.MetadataInterface {
     }
 
 
-    @Override
     public List<String> getUniqTypes(boolean throwError) {
 
         List<Object> types = MetadataUtils.flattenUniq(Lists.newArrayList(this.getCallNames(), this.getEventNames(), this.getStorageNames()));
@@ -146,4 +145,11 @@ public class MetadataV1 extends Struct implements Types.MetadataInterface {
 
         return null;
     }
+
+
+    @Override
+    public Vec getVecModules() {
+        return null;
+    }
+
 }

@@ -2,7 +2,7 @@ package org.polkadot.types.rpc;
 
 import org.polkadot.types.Types;
 import org.polkadot.types.codec.Struct;
-import org.polkadot.types.type.Block;
+import org.polkadot.types.primitive.generic.Block;
 import org.polkadot.types.type.Hash;
 import org.polkadot.types.type.Justification;
 

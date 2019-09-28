@@ -2,7 +2,7 @@ package org.polkadot.api.derive;
 
 import com.onehilltech.promises.Promise;
 import org.polkadot.direct.IFunction;
-import org.polkadot.types.type.AccountId;
+import org.polkadot.types.primitive.generic.AccountId;
 import org.polkadot.types.type.Balance;
 import org.polkadot.types.type.Vote;
 

@@ -1,7 +1,10 @@
-package org.polkadot.types.type;
+package org.polkadot.types.primitive.generic;
 
 import org.polkadot.types.Types;
 import org.polkadot.types.codec.Struct;
+import org.polkadot.types.primitive.extrinsic.Extrinsics;
+import org.polkadot.types.type.Hash;
+import org.polkadot.types.type.Header;
 import org.polkadot.utils.UtilsCrypto;
 
 import java.util.List;

@@ -1,21 +1,20 @@
 package org.polkadot.api.derive.accounts;
 
 import com.onehilltech.promises.Promise;
-import org.polkadot.api.ApiBase;
 import org.polkadot.api.Types.ApiInterfacePromise;
 import org.polkadot.api.Types.QueryableModuleStorage;
 import org.polkadot.api.derive.Types;
 import org.polkadot.common.keyring.address.AddressCodec;
 import org.polkadot.types.codec.Vector;
-import org.polkadot.types.type.AccountId;
-import org.polkadot.types.type.AccountIndex;
+import org.polkadot.types.primitive.generic.AccountId;
+import org.polkadot.types.primitive.generic.AccountIndex;
 import org.polkadot.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static org.polkadot.types.type.AccountIndex.ENUMSET_SIZE;
+import static org.polkadot.types.primitive.generic.AccountIndex.ENUMSET_SIZE;
 
 public class AccountFunctions {
 

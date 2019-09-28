@@ -4,6 +4,7 @@ import org.polkadot.common.keyring.Types.KeyringPair;
 import org.polkadot.types.Types;
 import org.polkadot.types.codec.Struct;
 import org.polkadot.types.primitive.Method;
+import org.polkadot.types.primitive.extrinsic.ExtrinsicEra;
 import org.polkadot.types.rpc.RuntimeVersion;
 import org.polkadot.utils.UtilsCrypto;
 

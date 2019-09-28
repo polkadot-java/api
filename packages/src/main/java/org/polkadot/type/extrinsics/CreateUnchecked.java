@@ -2,6 +2,7 @@ package org.polkadot.type.extrinsics;
 
 import com.google.common.collect.Maps;
 import com.google.common.primitives.UnsignedBytes;
+import org.polkadot.types.interfaces.metadata.Types;
 import org.polkadot.types.metadata.v0.Modules;
 import org.polkadot.types.primitive.Method;
 
@@ -16,7 +17,7 @@ public class CreateUnchecked {
      *
      * @param index - Index of the module section in the modules array.
      */
-    public static Method.MethodFunction createDescriptor(String section, String method, int index, Modules.FunctionMetadata meta) {
+    public static Method.MethodFunction createDescriptor(String section, String method, int index, Types.FunctionMetadataV7 meta) {
 
         byte[] callIndex = new byte[]{UnsignedBytes.checkedCast(index), UnsignedBytes.checkedCast(meta.getId().toNumber())};
 

@@ -9,6 +9,7 @@ import org.polkadot.types.codec.Vector;
 import org.polkadot.types.primitive.Bytes;
 import org.polkadot.types.primitive.Null;
 import org.polkadot.types.primitive.U64;
+import org.polkadot.types.primitive.generic.AccountId;
 
 /**
  * An attested candidate

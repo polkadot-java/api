@@ -3,6 +3,7 @@ package org.polkadot.types.type;
 
 import org.polkadot.types.Types;
 import org.polkadot.types.codec.Struct;
+import org.polkadot.types.primitive.generic.AccountId;
 
 /**
  * A Proposal made for Treasury

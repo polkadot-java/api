@@ -1,4 +1,4 @@
-package org.polkadot.types.type;
+package org.polkadot.types.primitive.generic;
 
 import org.polkadot.common.keyring.address.AddressCodec;
 import org.polkadot.types.codec.U8a;
