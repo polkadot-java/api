@@ -24,7 +24,6 @@ public interface Codec {
      */
     String toRawType();
 
-
     //String toString();
 
     default byte[] toU8a() {
@@ -34,9 +33,7 @@ public interface Codec {
     byte[] toU8a(boolean isBare);
 
     //TODO 2019-05-07 18:27 start check
-    //public static Types.ConstructorCodec<? extends  Codec> builder();
     static Types.ConstructorCodec getConstructorCodec() {
-        //return TypesUtils.getConstructorCodec(Thread.currentThread().getStackTrace()[1].getClassName());
         return null;
     }
 
