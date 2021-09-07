@@ -6,6 +6,15 @@ This library provides a Java wrapper around all the methods exposed by a Polkado
 - [examples](https://github.com/polkadot-java/api/tree/master/examples) -- Demo projects (Gradle).  
 - [examples_runnable](https://github.com/polkadot-java/api/tree/master/examples_runnable) -- Demo executable JARs.  
 
+## Build
+
+Integration test require local polkadot node running (run with `polkadot --dev`),
+then  
+`./gradlew build`
+
+Alternatively build without running unit tests, but still compiling them  
+`./gradlew build testClasses -x test`
+
 ## JDK
 
 Java 1.8
