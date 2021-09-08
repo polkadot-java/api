@@ -21,9 +21,16 @@ mainClassName = 'org.polkadot.example.SimpleConnect'
 repositories {
     mavenCentral()
     //maven { url "https://repo.boundlessgeo.com/main/" } // This site can’t be reached over DNS error, For what was it here?
-    maven { url "https://jitpack.io" } // on demand GitHub repositories build ONLY for com.onehilltech.promises:promises-jvm
-    // as suggested by https://github.com/onehilltech/promises README.
-    // Abandoned? Last commit Feb 2019 https://github.com/onehilltech/promises/issues/7
+    maven { url "https://jitpack.io"
+        // on demand GitHub repositories build ONLY for com.onehilltech.promises:promises-jvm
+        // as suggested by https://github.com/onehilltech/promises README.
+
+        // https://docs.gradle.org/current/userguide/declaring_repositories.html#sec:repository-content-filtering
+        content {
+            // this repository *only* contains artifacts with group "io.emeraldpay.polkaj"
+            includeGroup "com.onehilltech.promises"
+        }
+    }
     //maven { url "https://repo.spring.io/libs-release/" } // ONLY for com.onehilltech.promises:promises-jvm,
     // onehilltech.promises is listed by not available there
 }
