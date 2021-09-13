@@ -1,68 +1,84 @@
 plugins {
     id('java')
-    id('maven')
+    //id('maven')
     id('idea')
     id('eclipse')
     id('application')
-    id('signing')
+    //id('signing')
 }
 
 // Group Name which has to be registered with the central OOSRH (sonatype org)
 group = "io.github.polkadot-java"
 archivesBaseName = "polkadot-java"
-version '1.0-SNAPSHOT'
+version '1.1-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 mainClassName = 'org.polkadot.example.SimpleConnect'
 
+
 repositories {
     mavenCentral()
-    maven {
-        url "https://repo.boundlessgeo.com/main/"
+    //maven { url "https://repo.boundlessgeo.com/main/" } // This site can’t be reached over DNS error, For what was it here?
+    maven { url "https://jitpack.io"
+        // on demand GitHub repositories build ONLY for com.onehilltech.promises:promises-jvm
+        // as suggested by https://github.com/onehilltech/promises README.
+
+        // https://docs.gradle.org/current/userguide/declaring_repositories.html#sec:repository-content-filtering
+        content {
+            // this repository *only* contains artifacts with group "io.emeraldpay.polkaj"
+            includeGroup "com.onehilltech.promises"
+        }
     }
-    maven { url "https://jitpack.io" }
+    //maven { url "https://repo.spring.io/libs-release/" } // ONLY for com.onehilltech.promises:promises-jvm,
+    // onehilltech.promises is listed by not available there
 }
 
         
 dependencies {
-    compile fileTree(dir: 'libs', includes: ['*jar'])
+    //compile fileTree(dir: 'libs', includes: ['*jar']) // Has no jars
 
 //    compile group: 'it.unimi.dsi', name: 'fastutil', version: '8.1.0'
 
 // https://mvnrepository.com/artifact/org.jdeferred.v2/jdeferred-core
 //    compile group: 'org.jdeferred.v2', name: 'jdeferred-core', version: '2.0.0-beta2'
-// https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjava
-    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.8'
+    // https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjava
+    //compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.8'
+    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.21' //(Feb 13, 2021)
 
     // https://mvnrepository.com/artifact/com.github.briandilley.jsonrpc4j/jsonrpc4j
     compile group: 'com.github.briandilley.jsonrpc4j', name: 'jsonrpc4j', version: '1.5.3'
-// https://mvnrepository.com/artifact/org.java-websocket/Java-WebSocket
-    compile group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.4.0'
+    // https://mvnrepository.com/artifact/org.java-websocket/Java-WebSocket
+    //compile group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.4.0'
+    compile group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.5.2' //(Apr 05, 2021)
 
     // https://mvnrepository.com/artifact/com.alibaba/fastjson
-    compile group: 'com.alibaba', name: 'fastjson', version: '1.2.48'
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8'
-// https://mvnrepository.com/artifact/com.google.guava/guava
-    compile group: 'com.google.guava', name: 'guava', version: '27.1-jre'
+    //compile group: 'com.alibaba', name: 'fastjson', version: '1.2.48'
+    compile group: 'com.alibaba', name: 'fastjson', version: '1.2.76' //(Apr 05, 2021)
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+    //compile group: 'com.google.guava', name: 'guava', version: '27.1-jre'
+    compile group: 'com.google.guava', name: 'guava', version: '30.1.1-jre' //(Mar 19, 2021) //TODO Is this only transitive for rxjava?
 
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8'
+    //compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8'
+    //compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8' //This is usually just transitive dependency
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
     compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.2'
 
 
     // for JVM-only projects
-    compile 'com.onehilltech.promises:promises-jvm:0.10.3'
+    // https://mvnrepository.com/artifact/com.onehilltech.promises/promises-jvm
+    compile 'com.onehilltech.promises:promises-jvm:0.10.3' // (Jan 15, 2020), NOTE rarely used,
+    // listed ONLY in spring-libs repository, but not really available there.
 
     // https://mvnrepository.com/artifact/org.jooq/joou-java-6
     compile group: 'org.jooq', name: 'joou-java-6', version: '0.9.4'
-// https://mvnrepository.com/artifact/org.jooq/jool-java-8
+    // https://mvnrepository.com/artifact/org.jooq/jool-java-8
     compile group: 'org.jooq', name: 'jool-java-8', version: '0.9.14'
-// https://mvnrepository.com/artifact/org.jooq/joor-java-8
+    // https://mvnrepository.com/artifact/org.jooq/joor-java-8
     compile group: 'org.jooq', name: 'joor-java-8', version: '0.9.11'
 
     compile 'net.i2p.crypto:eddsa:0.3.0'
@@ -81,9 +97,10 @@ dependencies {
 
 
     // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
-    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.6'
+    //compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.6'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13' //(Oct 06, 2020)
     // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore
-    compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.8'
+    //compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.8' //Transitive for httpclient
 
 
     implementation 'org.lz4:lz4-java:1.5.1'
@@ -97,7 +114,6 @@ javadoc {
 }
 
 tasks {
-
     task javadocJar(type: Jar) {
         classifier = 'javadoc'
         from javadoc
@@ -107,7 +123,7 @@ tasks {
         from sourceSets.main.allSource
     }
 }
-
+/* Section below and 2 plugins were diabled
 // javadoc removed
 artifacts {
     archives  javadocJar,sourcesJar
@@ -164,3 +180,4 @@ uploadArchives {
         }
     }
 }
+*/

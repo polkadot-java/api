@@ -1,0 +1,3 @@
+rootProject.name = 'polkadot-java'
+
+include 'packages'

@@ -6,6 +6,15 @@ This library provides a Java wrapper around all the methods exposed by a Polkado
 - [examples](https://github.com/polkadot-java/api/tree/master/examples) -- Demo projects (Gradle).  
 - [examples_runnable](https://github.com/polkadot-java/api/tree/master/examples_runnable) -- Demo executable JARs.  
 
+## Build
+
+Integration test require local polkadot node running (run with `polkadot --dev`),
+then  
+`./gradlew build`
+
+Alternatively build without running unit tests, but still compiling them  
+`./gradlew build testClasses -x test`
+
 ## JDK
 
 Java 1.8
@@ -41,16 +50,15 @@ The project uses [Gradle](https://gradle.org/) as build tool. You need to instal
 ### Build the library with Gradle then link to the JAR
 
 1. `git clone https://github.com/polkadot-java/api.git`
-2. `cd api`
 3. `gradle build`
-4. Get the JARs in folder `build/libs/`
-5. Add the JARs into your projects.
+4. Check the JARs in folder `api/build/libs/`
+5. Add the JARs into your projects (TODO publish on MavenCentral).
 
 ### Link to the source code directly,
 
 1. `git clone https://github.com/polkadot-java/api.git`
-2. Import the gradle project in folder api/packages to your workspace.
-3. Add links or dependencies in the IDE. This is different in different IDEs, please reference to your IDE document.
+2. Import the gradle project in folder `api` to your workspace.
+3. Add links or dependencies in the IDE. This differs, please reference to your IDE help (IDEA, Eclipse).
 
 ## How to build and use sr25591 JNI
 
